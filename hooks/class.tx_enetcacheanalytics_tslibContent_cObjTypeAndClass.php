@@ -59,7 +59,9 @@ class tx_enetcacheanalytics_tslibContent_cObjTypeAndClass {
 			'tx_enetcache_log',
 			'uid=' . $uid,
 			array('data' => $parseTime)
-		);	
+		);
 		return $content;
 	}
 }
+
+?>
