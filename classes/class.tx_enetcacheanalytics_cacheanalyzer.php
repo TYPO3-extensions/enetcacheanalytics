@@ -101,7 +101,9 @@ class tx_enetcacheanalytics_cacheanalyzer implements tx_enetcacheanalytics_bemod
 
 		switch ($this->GPvars['tx_enetcacheanalytics_action']) {
 			case 'dropTag':
-				t3lib_div::makeInstance('tx_enetcache')->drop(array($this->GPvars['tx_enetcacheanalytics_identifier']));
+				if (t3lib_extMgm::isLoaded('enetcache')) {
+					t3lib_div::makeInstance('tx_enetcache')->drop(array($this->GPvars['tx_enetcacheanalytics_identifier']));
+				}
 			break;
 			case 'dropPageCache':
 				$pageCache = $GLOBALS['typo3CacheManager']->getCache('cache_pages');
@@ -393,7 +395,9 @@ class tx_enetcacheanalytics_cacheanalyzer implements tx_enetcacheanalytics_bemod
 				$result .= $this->renderLogTableTD($row['page_uid'], '');
 			}
 
-			t3lib_div::makeInstance('tx_enetcache');
+			if (t3lib_extMgm::isLoaded('enetcache')) {
+				t3lib_div::makeInstance('tx_enetcache');
+			}
 			if (( $row['request_type'] === 'GET' || $row['request_type'] === 'SET' ) && 
 					$GLOBALS['typo3CacheManager']->getCache('cache_enetcache_contentcache')->get($row['identifier'])) {
 				$dropTagIcon = '<img style="cursor: pointer;" ' . t3lib_iconWorks::skinImg($GLOBALS['BACK_PATH'], 'gfx/garbage.gif') . ' onclick="setAction(\'dropTag\'); setFieldValue(\'identifier\', \'' . $row['identifier'] . '\'); document.enetcacheanalytics.submit();" alt="Drop cache entry (content element and page) with this identifier" title="Drop cache entry (content element and page) with this identifier" />';

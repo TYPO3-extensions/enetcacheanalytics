@@ -1,8 +1,10 @@
 <?php
 $TYPO3_CONF_VARS['FE']['eID_include']['tx_kresscache'] = 'EXT:enetcache/classes/class.tx_enetcache_log_analytics.php';
 
-
-$TYPO3_CONF_VARS['EXTCONF']['enetcache']['hooks']['tx_enetcache'][] = 'tx_enetcacheanalytics_log';
+if (t3lib_extMgm::isLoaded('enetcache')) {
+		// Register hook in enetcache
+	$TYPO3_CONF_VARS['EXTCONF']['enetcache']['hooks']['tx_enetcache'][] = 'tx_enetcacheanalytics_log';
+}
 
 	// Add new entry to cache handling (flash icon in toolbar menu) to delete log elements
 $TYPO3_CONF_VARS['BE']['AJAX']['enetcacheanalytics::truncateLogTables'] = 'EXT:enetcacheanalytics/hooks/class.tx_enetcacheanalytics_backendContentCacheAction.php:tx_enetcacheanalytics_backendContentCacheAction->truncateLogTables';
