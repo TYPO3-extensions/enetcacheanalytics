@@ -36,6 +36,11 @@ class tx_enetcacheanalytics_performance_backend_DbBackend extends tx_enetcachean
 	const tagsTable = 'tx_enetcacheanalytics_performance_tags';
 
 	/**
+	 * Query counter when test starts
+	 */
+	protected $queryCountStart;
+
+	/**
 	 * Set up this backend
 	 */
 	public function setUp() {
@@ -81,8 +86,43 @@ class tx_enetcacheanalytics_performance_backend_DbBackend extends tx_enetcachean
 	}
 
 	public function setCacheEntriesWithSingleTag($numberOfEntries = 100) {
+		$this->queryCountStart();
 		$message = parent::setCacheEntriesWithSingleTag($numberOfEntries);
+		$message[] = $this->getQueryCountMessage();
 		return $message;
+	}
+
+	public function getCacheEntriesWithSingleTagByIdentifier($numberOfEntries = 100) {
+		$this->queryCountStart();
+		$message = parent::getCacheEntriesWithSingleTagByIdentifier($numberOfEntries);
+		$message[] = $this->getQueryCountMessage();
+		return $message;
+	}
+
+	protected function getQueryCountMessage() {
+		$message = array(
+			'type' => self::INFO,
+			'value' => $this->getNumberOfQueriesPerformed(),
+			'message' => 'Queries performed',
+		);
+		return $message;
+	}
+	protected function queryCountStart() {
+		$this->queryCountStart = $this->getQueryCounter();
+	}
+	protected function getNumberOfQueriesPerformed() {
+		return ($this->getQueryCounter() - $this->queryCountStart - 1);
+	}
+	protected function getQueryCounter() {
+		$res = $GLOBALS['TYPO3_DB']->admin_query('SHOW STATUS;');
+		while ($row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res)) {
+			if ($row['Variable_name'] == 'Questions') {
+				$queryCount = $row['Value'];
+				break;
+			}
+		}
+		$GLOBALS['TYPO3_DB']->sql_free_result($res);
+		return $queryCount;
 	}
 }
 ?>

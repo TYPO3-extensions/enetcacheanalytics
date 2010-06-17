@@ -56,10 +56,28 @@ abstract class tx_enetcacheanalytics_performance_backend_AbstractBackend impleme
 			$this->backend->set($prefix . $i, $data, array($prefix . $i), 10000);
 		}
 		$message = array();
+		$message[] = $this->getTimeTakenMessage();
+		return $message;
+	}
+
+	public function getCacheEntriesWithSingleTagByIdentifier($numberOfEntries = 100) {
+		$prefix = 'singleTag_' . $numberOfEntries . '_';
+
+		$numberOfCacheMisses = 0;
+		$this->timeTrackStart();
+		for ($i = 0; $i < $numberOfEntries; $i ++) {
+			$result = $this->backend->get($prefix . $i);
+			if (!$result) {
+				$numberOfCacheMisses ++;
+			}
+		}
+
+		$message = array();
+		$message[] = $this->getTimeTakenMessage();
 		$message[] = array(
-			'type' => self::TIME,
-			'value' => $this->getTimeTaken(),
-			'message' => 'seconds taken'
+			'type' => self::INFO,
+			'value' => $numberOfCacheMisses,
+			'message' => 'Cache misses',
 		);
 		return $message;
 	}
@@ -73,6 +91,14 @@ abstract class tx_enetcacheanalytics_performance_backend_AbstractBackend impleme
 		return t3lib_div::makeInstance('tx_enetcacheanalytics_performance_utility_MockFrontend');
 	}
 
+	protected function getTimeTakenMessage() {
+		$message = array(
+			'type' => self::TIME,
+			'value' => $this->getTimeTaken(),
+			'message' => 'Seconds taken',
+		);
+		return $message;
+	}
 	protected function timeTrackStart() {
 		$this->timeStart = microtime(1);
 	}
