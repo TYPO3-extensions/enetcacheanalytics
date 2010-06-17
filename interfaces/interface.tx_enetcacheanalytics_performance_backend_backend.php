@@ -48,5 +48,10 @@ interface tx_enetcacheanalytics_performance_backend_Backend {
 	 * Get number of cache entries by identifier
 	 */
 	public function getCacheEntriesWithSingleTagByIdentifier($numberOfEntries = 100);
+
+	/**
+	 * Drop cache entries by single tag
+	 */
+	public function dropCacheEntriesBySingleTag($numberOfEntries = 100);
 }
 ?>

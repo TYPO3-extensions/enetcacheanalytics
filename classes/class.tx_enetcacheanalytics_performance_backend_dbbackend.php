@@ -99,6 +99,13 @@ class tx_enetcacheanalytics_performance_backend_DbBackend extends tx_enetcachean
 		return $message;
 	}
 
+	public function dropCacheEntriesBySingleTag($numberOfEntries = 100) {
+		$this->queryCountStart();
+		$message = parent::dropCacheEntriesBySingleTag($numberOfEntries);
+		$message[] = $this->getQueryCountMessage();
+		return $message;
+	}
+
 	protected function getQueryCountMessage() {
 		$message = array(
 			'type' => self::INFO,

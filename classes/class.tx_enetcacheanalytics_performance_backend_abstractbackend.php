@@ -82,6 +82,19 @@ abstract class tx_enetcacheanalytics_performance_backend_AbstractBackend impleme
 		return $message;
 	}
 
+	public function dropCacheEntriesBySingleTag($numberOfEntries = 100) {
+		$prefix = 'singleTag_' . $numberOfEntries . '_';
+
+		$this->timeTrackStart();
+		for ($i = 0; $i < $numberOfEntries; $i ++) {
+			$this->backend->flushByTag($prefix . $i);
+		}
+
+		$message = array();
+		$message[] = $this->getTimeTakenMessage();
+		return $message;
+	}
+
 	/**
 	 * Get an instance of a mockend cache frontend class that returns an identifier
 	 *

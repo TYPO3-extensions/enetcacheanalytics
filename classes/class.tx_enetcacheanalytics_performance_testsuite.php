@@ -43,16 +43,23 @@ class tx_enetcacheanalytics_performance_TestSuite {
 		foreach (self::$configuredBackends as $backendName) {
 			$backend = t3lib_div::makeInstance('tx_enetcacheanalytics_performance_backend_' . $backendName);
 			$backend->setUp();
+
 			$this->testResults['setWithSingleTag_100_1'][$backendName] = $backend->setCacheEntriesWithSingleTag(100);
 			$this->testResults['setWithSingleTag_100_2'][$backendName] = $backend->setCacheEntriesWithSingleTag(100);
 			$this->testResults['setWithSingleTag_100_3'][$backendName] = $backend->setCacheEntriesWithSingleTag(100);
 			$this->testResults['setWithSingleTag_400'][$backendName] = $backend->setCacheEntriesWithSingleTag(400);
 			$this->testResults['setWithSingleTag_1600'][$backendName] = $backend->setCacheEntriesWithSingleTag(1600);
+
 			$this->testResults['getPeviouslySetEntriesWithSingleTag_100_1'][$backendName] = $backend->getCacheEntriesWithSingleTagByIdentifier(100);
 			$this->testResults['getPeviouslySetEntriesWithSingleTag_100_2'][$backendName] = $backend->getCacheEntriesWithSingleTagByIdentifier(100);
 			$this->testResults['getPeviouslySetEntriesWithSingleTag_100_3'][$backendName] = $backend->getCacheEntriesWithSingleTagByIdentifier(100);
 			$this->testResults['getPeviouslySetEntriesWithSingleTag_400'][$backendName] = $backend->getCacheEntriesWithSingleTagByIdentifier(400);
 			$this->testResults['getPeviouslySetEntriesWithSingleTag_1600'][$backendName] = $backend->getCacheEntriesWithSingleTagByIdentifier(1600);
+
+			$this->testResults['dropPeviouslySetEntriesWithSingleTag_100'][$backendName] = $backend->dropCacheEntriesBySingleTag(100);
+			$this->testResults['dropPeviouslySetEntriesWithSingleTag_400'][$backendName] = $backend->dropCacheEntriesBySingleTag(400);
+			$this->testResults['dropPeviouslySetEntriesWithSingleTag_1600'][$backendName] = $backend->dropCacheEntriesBySingleTag(1600);
+
 			$backend->tearDown();
 		}
 	}
