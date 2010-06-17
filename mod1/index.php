@@ -134,7 +134,7 @@ class tx_enetcacheanalytics_module1 extends t3lib_SCbase {
 		}
 		switch ($module) {
 			default:
-				$moduleObject = t3lib_div::makeInstance('tx_enetcacheanalytics_cacheanalyzer');
+				$moduleObject = t3lib_div::makeInstance('tx_enetcacheanalytics_bemodule_cacheanalyzer');
 		}
 		if ($moduleObject instanceof tx_enetcacheanalytics_bemodule) {
 			$moduleObject->init($this);

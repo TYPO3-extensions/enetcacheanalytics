@@ -29,7 +29,7 @@
  * @author Michael Knabe <mk@e-netconsulting.de>
  * @author Christian Kuhn <lolli@schwarzbu.ch>
  */
-class tx_enetcacheanalytics_cacheanalyzer implements tx_enetcacheanalytics_bemodule {
+class tx_enetcacheanalytics_bemodule_cacheanalyzer implements tx_enetcacheanalytics_bemodule {
 	/**
 	 * @var tx_enetcacheanalytics_module1 Default parent object
 	 */
