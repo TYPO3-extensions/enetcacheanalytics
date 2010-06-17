@@ -9,5 +9,6 @@ return array(
 	'tx_enetcacheanalytics_eofe' => $extensionPath . 'hooks/class.tx_enetcacheanalytics_eofe.php',
 	'tx_enetcacheanalytics_bemodule' => $extensionPath . 'interfaces/interface.tx_enetcacheanalytics_bemodule.php',
 	'tx_enetcacheanalytics_bemodule_cacheanalyzer' => $extensionPath . 'classes/class.tx_enetcacheanalytics_bemodule_cacheanalyzer.php',
+	'tx_enetcacheanalytics_bemodule_performance' => $extensionPath . 'classes/class.tx_enetcacheanalytics_bemodule_performance.php',
 );
 ?>
