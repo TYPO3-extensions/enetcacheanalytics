@@ -28,7 +28,7 @@
  * @subpackage tx_enetcacheanalytics
  * @author Christian Kuhn <lolli@schwarzbu.ch>
  */
-class tx_enetcacheanalytics_performance_TestRunner {
+class tx_enetcacheanalytics_performance_TestSuite {
 	/**
 	 * @var array Holds gathered test results
 	 */
