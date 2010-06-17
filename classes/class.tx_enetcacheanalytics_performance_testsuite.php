@@ -36,7 +36,7 @@ class tx_enetcacheanalytics_performance_TestSuite {
 
 	protected static $configuredBackends = array(
 		'DbBackend',
-//		'MemcachedBackend',
+		'MemcachedBackend',
 	);
 
 	public function run() {
@@ -61,6 +61,8 @@ class tx_enetcacheanalytics_performance_TestSuite {
 			$this->testResults['dropPeviouslySetEntriesWithSingleTag_1600'][$backendName] = $backend->dropCacheEntriesBySingleTag(1600);
 
 			$backend->tearDown();
+
+			sleep(1);
 		}
 	}
 
