@@ -62,7 +62,7 @@ class tx_enetcacheanalytics_module1 extends t3lib_SCbase {
 	 */
 	public function __construct() {
 			// Sets absolute extPath
-		$this->extPath = t3lib_extMgm::extPath(tx_enetcacheanalytics_module1::extKey);
+		$this->extPath = t3lib_extMgm::extPath(self::extKey);
 
 			// Initialize GPvars array
 		$this->GPvars = t3lib_div::_GP('DATA');
@@ -127,7 +127,7 @@ class tx_enetcacheanalytics_module1 extends t3lib_SCbase {
 		if ($moduleGP['function']) {
 			$module = $moduleGP['function'];
 		} else {
-			$moduleUC = $GLOBALS['BE_USER']->getModuleData('tools_txenetcacheanalyticsM1');
+			$moduleUC = $GLOBALS['BE_USER']->getModuleData('tools_tx' . self::extKey . 'M1');
 			if (strlen($moduleUC['function']) > 0) {
 				$module = $moduleUC['function'];
 			}
@@ -156,18 +156,18 @@ class tx_enetcacheanalytics_module1 extends t3lib_SCbase {
 		$this->doc->backPath = $GLOBALS['BACK_PATH'];
 
 			// Main template
-		$this->doc->setModuleTemplate('EXT:' . tx_enetcacheanalytics_module1::extKey . '/res/mod1_template.html');
+		$this->doc->setModuleTemplate('EXT:' . self::extKey . '/res/mod1_template.html');
 
 			// Additional styles
-		$this->doc->addStyleSheet('enetcacheanalytics_css', t3lib_extMgm::extRelPath(tx_enetcacheanalytics_module1::extKey) . 'res/mod1.css');
+		$this->doc->addStyleSheet(self::extKey . '_css', t3lib_extMgm::extRelPath(self::extKey) . 'res/mod1.css');
 
-			// Default dotType
+			// Default docType
 		$this->doc->docType='xhtml_trans';
 
 			// Default form tag
-		$this->doc->form = '<form action="" method="post" name="' . tx_enetcacheanalytics_module1::extKey . '" enctype="multipart/form-data">';
+		$this->doc->form = '<form action="" method="post" name="' . self::extKey . '" enctype="multipart/form-data">';
 
-			// JavaScript for main function seletor
+			// JavaScript for main function selector
 		$this->doc->JScodeArray[] = '
 			script_ended = 0;
 			function jumpToUrl(URL)	{
@@ -182,15 +182,15 @@ class tx_enetcacheanalytics_module1 extends t3lib_SCbase {
 			}
 			function setFieldValue(name, value) {
 					// Check for existing element, enable it and set value. else add new element as hidden input element
-				if ( document.forms["enetcacheanalytics"].elements["DATA[tx_enetcacheanalytics_"+name+"]"] ) {
-					document.forms["enetcacheanalytics"].elements["DATA[tx_enetcacheanalytics_"+name+"]"].disabled = false;
-					document.forms["enetcacheanalytics"].elements["DATA[tx_enetcacheanalytics_"+name+"]"].value = value;
+				if ( document.forms["' . self::extKey . '"].elements["DATA[tx_' . self::extKey . '_"+name+"]"] ) {
+					document.forms["' . self::extKey . '"].elements["DATA[tx_' . self::extKey . '_"+name+"]"].disabled = false;
+					document.forms["' . self::extKey . '"].elements["DATA[tx_' . self::extKey . '_"+name+"]"].value = value;
 				} else {
 					var newElement = document.createElement("input");
-					newElement.setAttribute("name", "DATA[tx_enetcacheanalytics_"+name+"]");
+					newElement.setAttribute("name", "DATA[tx_' . self::extKey . '_"+name+"]");
 					newElement.setAttribute("type", "hidden");
 					newElement.setAttribute("value", value);
-					document.forms["enetcacheanalytics"].appendChild(newElement);
+					document.forms["' . self::extKey . '"].appendChild(newElement);
 				}
 			}
 		';
@@ -202,7 +202,7 @@ class tx_enetcacheanalytics_module1 extends t3lib_SCbase {
 	 * @return string Extension key
 	 */
 	public function getExtKey() {
-		return tx_enetcacheanalytics_module1::extKey;
+		return self::extKey;
 	}
 
 	/**
@@ -251,6 +251,54 @@ class tx_enetcacheanalytics_module1 extends t3lib_SCbase {
 	 */
 	public function setContentMarker($html) {
 		$this->contentMarker = $html;
+	}
+
+	/**
+	 * Get divider HTML
+	 *
+	 * @param integer Height of divider
+	 * @return HTML of divider
+	 */
+	public function getDivider($height = 5) {
+		return $this->doc->divider($height);
+	}
+
+	/**
+	 * Get section HTML
+	 *
+	 * @param string Title of section
+	 * @param string HTML of section content
+	 * @return string HTML section
+	 */
+	public function getSection($title, $sectionHTML) {
+		return $this->doc->section($title, $sectionHTML, 0, 1);
+	}
+
+	/**
+	 * Get header HTML
+	 *
+	 * @param string Header title
+	 * @return string HTML of doc title
+	 */
+	public function getHeader($title) {
+		return $this->doc->header($title);
+	}
+
+	/**
+	 * This method is used to add a message to the internal flash message queue
+	 *
+	 * @param string The message itself
+	 * @param integer integer message level (-1 = success (default), 0 = info, 1 = notice, 2 = warning, 3 = error)
+	 * @return void
+	 */
+	public function addMessage($message, $severity = t3lib_FlashMessage::OK) {
+		$message = t3lib_div::makeInstance(
+			't3lib_FlashMessage',
+			$message,
+			'',
+			$severity
+		);
+		t3lib_FlashMessageQueue::addMessage($message);
 	}
 } // End of class
 
