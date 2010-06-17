@@ -84,6 +84,9 @@ class tx_enetcacheanalytics_bemodule_performance implements tx_enetcacheanalytic
 		}
 		switch ($this->GPvars['tx_enetcacheanalytics_action']) {
 			case 'performTests':
+				$testRunner = t3lib_div::makeInstance('tx_enetcacheanalytics_performance_TestRunner');
+				$testRunner->run();
+				$this->testStatistics = $testRunner->getTestResults();
 			break;
 		}
 	}
