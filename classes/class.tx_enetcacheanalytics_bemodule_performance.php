@@ -45,6 +45,11 @@ class tx_enetcacheanalytics_bemodule_performance implements tx_enetcacheanalytic
 	protected $testStatistics = array();
 
 	/**
+	 * @var integer Helper value to render HTML table view of statistics
+	 */
+	protected $statisticsTdCount = 0;
+
+	/**
 	 * Default init method, required by interface
 	 *
 	 * @return void
@@ -108,19 +113,103 @@ class tx_enetcacheanalytics_bemodule_performance implements tx_enetcacheanalytic
 	 */
 	protected function renderDocHeaderOptions() {
 		$content = array();
+		$content[] = '<input type="submit" onClick="setAction(\'performTests\');" value="Run performance tests" />';
 		return (implode(chr(10), $content));
 	}
 
 	/**
-	 * @return string
+	 * @return string HTML of main module
 	 */
 	protected function renderMainModuleContent() {
-		if (count($this->testStatistics)) {
-			debug($this->testStatistics);
-		}
 		$content = array();
-		$content[] = '<input type="submit" onClick="setAction(\'performTests\');" value="Run performance tests" />';
+		if (count($this->testStatistics)) {
+			$content[] = $this->renderStatisticsTable();
+		}
 		return(implode(chr(10), $content));
+	}
+
+	/**
+	 * @return string HTML of statistic table
+	 */
+	protected function renderStatisticsTable() {
+		$content = array();
+		$content[] = '<table>';
+		$content[] = $this->renderStatisticsTableHeader();
+		$content[] = $this->renderStatisticsTableRows();
+		$content[] = '</table>';
+		return implode(chr(10), $content);
+	}
+
+	/**
+	 * @return string HTML of statistics table header
+	 */
+	protected function renderStatisticsTableHeader() {
+		$headerTH = array();
+		$headerTH[] = '<th style="width: 20px;"></th>';
+		$headerTH[] = '<th>Type</th>';
+		$this->statisticsTdCount = 2;
+		$aStatEntry = next($this->testStatistics);
+		foreach ($aStatEntry as $backendName => $value) {
+			$headerTH[] = '<th>' . $backendName . '</th>';
+			$this->statisticsTdCount ++;
+		}
+
+		$content = array();
+		$content[] = '<tr class="head">';
+		$content[] = implode(chr(10), $headerTH);
+		$content[] = '</tr>';
+
+		return implode(chr(10), $content);
+	}
+
+	/**
+	 * @return string HTML of statistics table rows
+	 */
+	protected function renderStatisticsTableRows() {
+		$content = array();
+
+		foreach ($this->testStatistics as $testName => $testStats) {
+			$content[] = $this->renderStatisticsTableTestNameRow($testName);
+			$backendNames = array_keys($testStats);
+			$numberOfStatisticsDetails = count($testStats[$backendNames[0]]);
+			for ($i = 0; $i < $numberOfStatisticsDetails; $i ++) {
+				$type = $testStats[$backendNames[0]][$i]['type'];
+				if ($type == 0) {
+					$class = 'success';
+				} else {
+					$class = 'set';
+				}
+				$content[] = '<tr class="' . $class . '">';
+				$content[] = '<td style="visibility: hidden;"></td>';
+				$content[] = '<td>' . $testStats[$backendNames[0]][$i]['message'] . '</td>';
+				foreach ($backendNames as $backendName) {
+					$content[] = $this->renderStatisticsTableDetail($testStats[$backendName][$i]);
+				}
+				$content[] = '</tr>';
+			}
+		}
+
+		return implode(chr(10), $content);
+	}
+
+	/**
+	 * @return string HTML statistics table row with test name
+	 */
+	protected function renderStatisticsTableTestNameRow($testName) {
+		$content = array();
+		$content[] = '<tr class="user">';
+		$content[] = '<td colspan="' . $this->statisticsTdCount . '">Test: ' . $testName . '</td>';
+		$content[] = '</tr>';
+		return implode(chr(10), $content);
+	}
+
+	/**
+	 * @return string HTML detail part
+	 */
+	protected function renderStatisticsTableDetail($detailInformation) {
+		$content = array();
+		$content[] = '<td>' . $detailInformation['value'] . '</td>';
+		return implode(chr(10), $content);
 	}
 } // end of class
 ?>
