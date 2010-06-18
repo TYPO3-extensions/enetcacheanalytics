@@ -37,6 +37,7 @@ class tx_enetcacheanalytics_performance_TestSuite {
 	protected static $configuredBackends = array(
 		'DbBackend',
 		'MemcachedBackend',
+		'FileBackend',
 	);
 
 	public function run() {

@@ -14,6 +14,7 @@ return array(
 	'tx_enetcacheanalytics_performance_backend_backend' => $extensionPath . 'interfaces/interface.tx_enetcacheanalytics_performance_backend_backend.php',
 	'tx_enetcacheanalytics_performance_backend_abstractbackend' => $extensionPath . 'classes/class.tx_enetcacheanalytics_performance_backend_abstractbackend.php',
 	'tx_enetcacheanalytics_performance_backend_dbbackend' => $extensionPath . 'classes/class.tx_enetcacheanalytics_performance_backend_dbbackend.php',
+	'tx_enetcacheanalytics_performance_backend_filebackend' => $extensionPath . 'classes/class.tx_enetcacheanalytics_performance_backend_filebackend.php',
 	'tx_enetcacheanalytics_performance_backend_memcachedbackend' => $extensionPath . 'classes/class.tx_enetcacheanalytics_performance_backend_memcachedbackend.php',
 	'tx_enetcacheanalytics_performance_utility_mockfrontend' => $extensionPath . 'classes/class.tx_enetcacheanalytics_performance_utility_mockfrontend.php',
 );
