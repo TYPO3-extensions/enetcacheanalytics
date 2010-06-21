@@ -34,15 +34,35 @@ class tx_enetcacheanalytics_performance_TestSuite {
 	 */
 	protected $testResults = array();
 
-	protected static $configuredBackends = array(
+	/**
+	 * @var array All available backends
+	 */
+	protected static $backends = array(
 		'DbBackend',
 		'MemcachedBackend',
 		'MemcachedBackendCompressed',
 		'FileBackend',
 	);
 
+	/**
+	 * @var array Selected backends to run tests on
+	 */
+	protected $selectedBackends = array();
+
+	/**
+	 * Default constructor
+	 */
+	public function __construct() {
+		$this->selectedBackends = self::$backends;
+	}
+
+	/**
+	 * Execute test suite
+	 *
+	 * @return void
+	 */
 	public function run() {
-		foreach (self::$configuredBackends as $backendName) {
+		foreach ($this->selectedBackends as $backendName) {
 			$backend = t3lib_div::makeInstance('tx_enetcacheanalytics_performance_backend_' . $backendName);
 
 			try {
@@ -58,6 +78,13 @@ class tx_enetcacheanalytics_performance_TestSuite {
 		}
 	}
 
+	/**
+	 * Test definitions and test order
+	 *
+	 * @param string Backend name
+	 * @param tx_enetcacheanalytics_performance_backend_AbstractBackend Backend instance
+	 * @return void
+	 */
 	protected function runTests($backendName, tx_enetcacheanalytics_performance_backend_AbstractBackend $backend) {
 		$this->testResults['setWithSingleTag_100_1'][$backendName] = $backend->setCacheEntriesWithSingleTag(100);
 		$this->testResults['setWithSingleTag_100_2'][$backendName] = $backend->setCacheEntriesWithSingleTag(100);
@@ -80,6 +107,30 @@ class tx_enetcacheanalytics_performance_TestSuite {
 		$this->testResults['setWithKiloBytesOfData_1600'][$backendName] = $backend->setWithKiloBytesOfData(1600);
 	}
 
+	/**
+	 * Return available backends
+	 *
+	 * @return array backend names
+	 */
+	public function getBackends() {
+		return self::$backends;
+	}
+
+	/**
+	 * Set available backends
+	 *
+	 * @param array Backends
+	 * @return void
+	 */
+	public function setSelectedBackends(array $backends = array()) {
+		$this->selectedBackends = $backends;
+	}
+
+	/**
+	 * Get accumulated test results
+	 *
+	 * @return array Test messages
+	 */
 	public function getTestResults() {
 		return $this->testResults;
 	}
