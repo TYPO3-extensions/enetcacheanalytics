@@ -44,7 +44,7 @@ class tx_enetcacheanalytics_performance_backend_DbBackendCompressed extends tx_e
 			// isLoaded in 4.4 can throw exception if extension is not loaded,
 			// but in 4.3 it die()'s
 		if (!t3lib_extMgm::isLoaded('enetcache')) {
-			throw new Exception ('Extension enetcache not loaded');
+			throw new Exception ('Extension enetcache not loaded', 1277127766);
 		}
 
 		$this->createTables();
