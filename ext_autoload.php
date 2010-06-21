@@ -13,6 +13,7 @@ return array(
 	'tx_enetcacheanalytics_performance_testsuite' => $extensionPath . 'classes/class.tx_enetcacheanalytics_performance_testsuite.php',
 	'tx_enetcacheanalytics_performance_backend_backend' => $extensionPath . 'interfaces/interface.tx_enetcacheanalytics_performance_backend_backend.php',
 	'tx_enetcacheanalytics_performance_backend_abstractbackend' => $extensionPath . 'classes/class.tx_enetcacheanalytics_performance_backend_abstractbackend.php',
+	'tx_enetcacheanalytics_performance_backend_apcbackend' => $extensionPath . 'classes/class.tx_enetcacheanalytics_performance_backend_apcbackend.php',
 	'tx_enetcacheanalytics_performance_backend_dbbackend' => $extensionPath . 'classes/class.tx_enetcacheanalytics_performance_backend_dbbackend.php',
 	'tx_enetcacheanalytics_performance_backend_dbbackendcompressed' => $extensionPath . 'classes/class.tx_enetcacheanalytics_performance_backend_dbbackendcompressed.php',
 	'tx_enetcacheanalytics_performance_backend_filebackend' => $extensionPath . 'classes/class.tx_enetcacheanalytics_performance_backend_filebackend.php',

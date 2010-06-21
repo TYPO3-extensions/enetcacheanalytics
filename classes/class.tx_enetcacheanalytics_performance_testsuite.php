@@ -38,12 +38,13 @@ class tx_enetcacheanalytics_performance_TestSuite {
 	 * @var array All available backends
 	 */
 	protected static $backends = array(
+		'ApcBackend',
 		'DbBackend',
 		'DbBackendCompressed',
-		'PdoBackendSqlite',
+		'FileBackend',
 		'MemcachedBackend',
 		'MemcachedBackendCompressed',
-		'FileBackend',
+		'PdoBackendSqlite',
 	);
 
 	/**
