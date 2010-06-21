@@ -45,6 +45,8 @@ class tx_enetcacheanalytics_performance_backend_MemcachedBackend extends tx_enet
 	 * Set up this backend
 	 */
 	public function setUp() {
+		$this->testMemcacheAvailable();
+
 		$this->backend = t3lib_div::makeInstance(
 			't3lib_cache_backend_MemcachedBackend',
 			array(
@@ -53,6 +55,19 @@ class tx_enetcacheanalytics_performance_backend_MemcachedBackend extends tx_enet
 		);
 
 		$this->backend->setCache($this->getMockFrontend());
+	}
+
+	protected function testMemcacheAvailable() {
+		if (!extension_loaded('memcache')) {
+			throw new Exception('memcache extension was not available');
+		}
+		try {
+			if (!@fsockopen(self::memcachedHost, self::memcachedPort)) {
+				throw new Exception('memcache server not available');
+			}
+		} catch (Exception $e) {
+			throw new Exception('memcache server not available');
+		}
 	}
 
 	public function tearDown() {

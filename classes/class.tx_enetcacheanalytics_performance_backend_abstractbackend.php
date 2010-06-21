@@ -95,6 +95,22 @@ abstract class tx_enetcacheanalytics_performance_backend_AbstractBackend impleme
 		return $message;
 	}
 
+	public function setWithKiloBytesOfData($dataSizeInKB = 100) {
+		$prefix = 'dataSizeTest_' . $dataSizeInKB . '_';
+
+			// Each entry has 10kB of data
+		$data = str_repeat('1', $dataSizeInKB * 1024);
+
+		$this->timeTrackStart();
+			// Set data 40 times to get high enough runtime
+		for ($i = 0; $i < 40; $i ++) {
+			$this->backend->set($prefix . $i, $data, array($prefix . $i), 10000);
+		}
+		$message = array();
+		$message[] = $this->getTimeTakenMessage();
+		return $message;
+	}
+
 	/**
 	 * Get an instance of a mockend cache frontend class that returns an identifier
 	 *
