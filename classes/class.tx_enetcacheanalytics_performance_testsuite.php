@@ -39,6 +39,7 @@ class tx_enetcacheanalytics_performance_TestSuite {
 	 */
 	protected static $backends = array(
 		'DbBackend',
+		'DbBackendCompressed',
 		'MemcachedBackend',
 		'MemcachedBackendCompressed',
 		'FileBackend',
@@ -66,7 +67,7 @@ class tx_enetcacheanalytics_performance_TestSuite {
 			$backend = t3lib_div::makeInstance('tx_enetcacheanalytics_performance_backend_' . $backendName);
 
 			try {
-					// setUp should throw if backend is not avail. for some reason
+					// setUp should throw if backend is not available for some reason
 				$backend->setUp();
 				$this->runTests($backendName, $backend);
 				$backend->tearDown();

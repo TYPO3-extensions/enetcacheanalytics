@@ -32,8 +32,8 @@ class tx_enetcacheanalytics_performance_backend_DbBackend extends tx_enetcachean
 	/**
 	 * Used table names
 	 */
-	const cacheTable = 'tx_enetcacheanalytics_performance';
-	const tagsTable = 'tx_enetcacheanalytics_performance_tags';
+	protected static $cacheTable = 'tx_enetcacheanalytics_performance';
+	protected static $tagsTable = 'tx_enetcacheanalytics_performance_tags';
 
 	/**
 	 * Query counter when test starts
@@ -44,7 +44,21 @@ class tx_enetcacheanalytics_performance_backend_DbBackend extends tx_enetcachean
 	 * Set up this backend
 	 */
 	public function setUp() {
-		$GLOBALS['TYPO3_DB']->sql_query('CREATE TABLE ' . self::cacheTable . ' (
+		$this->createTables();
+
+		$this->backend = t3lib_div::makeInstance(
+			't3lib_cache_backend_DbBackend',
+			array(
+				'cacheTable' => self::$cacheTable,
+				'tagsTable' => self::$tagsTable,
+			)
+		);
+
+		$this->backend->setCache($this->getMockFrontend());
+	}
+
+	protected function createTables() {
+		$GLOBALS['TYPO3_DB']->sql_query('CREATE TABLE ' . self::$cacheTable . ' (
 			id int(11) unsigned NOT NULL auto_increment,
 			identifier varchar(128) DEFAULT \'\' NOT NULL,
 			crdate int(11) unsigned DEFAULT \'0\' NOT NULL,
@@ -55,7 +69,7 @@ class tx_enetcacheanalytics_performance_backend_DbBackend extends tx_enetcachean
 		) ENGINE=InnoDB;
 		');
 
-		$GLOBALS['TYPO3_DB']->sql_query('CREATE TABLE ' . self::tagsTable. ' (
+		$GLOBALS['TYPO3_DB']->sql_query('CREATE TABLE ' . self::$tagsTable. ' (
 			id int(11) unsigned NOT NULL auto_increment,
 			identifier varchar(128) DEFAULT \'\' NOT NULL,
 			tag varchar(128) DEFAULT \'\' NOT NULL,
@@ -64,24 +78,14 @@ class tx_enetcacheanalytics_performance_backend_DbBackend extends tx_enetcachean
 			KEY cache_tag (tag)
 		) ENGINE=InnoDB;
 		');
-
-		$this->backend = t3lib_div::makeInstance(
-			't3lib_cache_backend_DbBackend',
-			array(
-				'cacheTable' => self::cacheTable,
-				'tagsTable' => self::tagsTable,
-			)
-		);
-
-		$this->backend->setCache($this->getMockFrontend());
 	}
 
 	public function tearDown() {
 		$GLOBALS['TYPO3_DB']->sql_query(
-			'DROP TABLE ' . self::cacheTable . ';'
+			'DROP TABLE ' . self::$cacheTable . ';'
 		);
 		$GLOBALS['TYPO3_DB']->sql_query(
-			'DROP TABLE ' . self::tagsTable . ';'
+			'DROP TABLE ' . self::$tagsTable . ';'
 		);
 	}
 
