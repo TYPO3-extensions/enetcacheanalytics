@@ -50,11 +50,6 @@ class tx_enetcacheanalytics_bemodule_performance implements tx_enetcacheanalytic
 	protected $testStatistics = array();
 
 	/**
-	 * @var integer Helper value to render HTML table view of statistics
-	 */
-	protected $statisticsTdCount = 0;
-
-	/**
 	 * Default init method, required by interface
 	 *
 	 * @return void
@@ -194,12 +189,9 @@ class tx_enetcacheanalytics_bemodule_performance implements tx_enetcacheanalytic
 	protected function renderStatisticsTableHeader() {
 		$headerTH = array();
 		$headerTH[] = '<th style="width: 20px;"></th>';
-		$headerTH[] = '<th>Type</th>';
-		$this->statisticsTdCount = 2;
-		$aStatEntry = next($this->testStatistics);
-		foreach ($aStatEntry as $backendName => $value) {
+		$headerTH[] = '<th>Run</th>';
+		foreach ($this->testStatistics as $backendName => $value) {
 			$headerTH[] = '<th>' . $backendName . '</th>';
-			$this->statisticsTdCount ++;
 		}
 
 		$content = array();
@@ -216,22 +208,19 @@ class tx_enetcacheanalytics_bemodule_performance implements tx_enetcacheanalytic
 	protected function renderStatisticsTableRows() {
 		$content = array();
 
-		foreach ($this->testStatistics as $testName => $testStats) {
+		$backendNames = array_keys($this->testStatistics);
+		$aBackendName = next($backendNames);
+		$testNames = array_keys(next($this->testStatistics));
+
+		foreach ($testNames as $testName) {
 			$content[] = $this->renderStatisticsTableTestNameRow($testName);
-			$backendNames = array_keys($testStats);
-			$numberOfStatisticsDetails = count($testStats[$backendNames[0]]);
-			for ($i = 0; $i < $numberOfStatisticsDetails; $i ++) {
-				$type = $testStats[$backendNames[0]][$i]['type'];
-				if ($type == 0) {
-					$class = 'success';
-				} else {
-					$class = 'set';
-				}
-				$content[] = '<tr class="' . $class . '">';
+			$testcaseRunIdentifiers = array_keys($this->testStatistics[$aBackendName][$testName]);
+			foreach ($testcaseRunIdentifiers as $testcaseRunIdentifier) {
+				$content[] = '<tr class="success">';
 				$content[] = '<td style="visibility: hidden;"></td>';
-				$content[] = '<td>' . $testStats[$backendNames[0]][$i]['message'] . '</td>';
+				$content[] = '<td>' . $testcaseRunIdentifier . '</td>';
 				foreach ($backendNames as $backendName) {
-					$content[] = $this->renderStatisticsTableDetail($testStats[$backendName][$i]);
+					$content[] = $this->renderStatisticsTableDetail($this->testStatistics[$backendName][$testName][$testcaseRunIdentifier]);
 				}
 				$content[] = '</tr>';
 			}
@@ -246,7 +235,8 @@ class tx_enetcacheanalytics_bemodule_performance implements tx_enetcacheanalytic
 	protected function renderStatisticsTableTestNameRow($testName) {
 		$content = array();
 		$content[] = '<tr class="user">';
-		$content[] = '<td colspan="' . $this->statisticsTdCount . '">Test: ' . $testName . '</td>';
+		$colSpanCount = count($this->testStatistics) + 2;
+		$content[] = '<td colspan="' . $colSpanCount . '">Test: ' . $testName . '</td>';
 		$content[] = '</tr>';
 		return implode(chr(10), $content);
 	}
@@ -254,9 +244,15 @@ class tx_enetcacheanalytics_bemodule_performance implements tx_enetcacheanalytic
 	/**
 	 * @return string HTML detail part
 	 */
-	protected function renderStatisticsTableDetail($detailInformation) {
+	protected function renderStatisticsTableDetail($detailInformations) {
 		$content = array();
-		$content[] = '<td>' . $detailInformation['value'] . '</td>';
+		$content[] = '<td>';
+		$row = array();
+		foreach ($detailInformations as $detailInformation) {
+			$row[] = $detailInformation['message'] . ': ' . $detailInformation['value'];
+		}
+		$content[] = implode('<br />', $row);
+		$content[] = '</td>';
 		return implode(chr(10), $content);
 	}
 
