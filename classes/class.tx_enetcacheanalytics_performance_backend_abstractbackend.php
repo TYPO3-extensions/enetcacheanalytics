@@ -22,18 +22,23 @@
 *  This copyright notice MUST APPEAR in all copies of the script!
 ***************************************************************/
 /**
- * Abstract test implementation class
+ * Abstract test backend implementation class
  *
  * @package TYPO3
  * @subpackage tx_enetcacheanalytics
  * @author Christian Kuhn <lolli@schwarzbu.ch>
  */
-abstract class tx_enetcacheanalytics_performance_backend_AbstractBackend implements tx_enetcacheanalytics_performance_backend_backend {
+abstract class tx_enetcacheanalytics_performance_backend_AbstractBackend implements tx_enetcacheanalytics_performance_backend_Backend {
 	/**
 	 * Message types
 	 */
 	const INFO = -1;
 	const TIME = 0;
+
+	/**
+	 * @var string Backend name / identifier, set in __construct() of backends
+	 */
+	protected $name = '';
 
 	/**
 	 * @var t3lib_cache_backend_Backend Instance of the cache backend
@@ -45,10 +50,17 @@ abstract class tx_enetcacheanalytics_performance_backend_AbstractBackend impleme
 	 */
 	protected $timeStart;
 
+	/**
+	 * Default constructor sets backend name
+	 */
+	public function __construct() {
+		$this->name = str_replace('tx_enetcacheanalytics_performance_backend_', '', get_class($this));
+	}
+
 	public function setCacheEntriesWithSingleTag($numberOfEntries = 100) {
 		$prefix = 'singleTag_' . $numberOfEntries . '_';
 
-			// Each entry has 10kB of data
+			// Each entry has ~10kB of data
 		$data = str_repeat('0123456789', 1000);
 
 		$this->timeTrackStart();
@@ -109,6 +121,15 @@ abstract class tx_enetcacheanalytics_performance_backend_AbstractBackend impleme
 		$message = array();
 		$message[] = $this->getTimeTakenMessage();
 		return $message;
+	}
+
+	/**
+	 * Get backend name
+	 *
+	 * @return string Backend name
+	 */
+	public function getName() {
+		return $this->name;
 	}
 
 	/**

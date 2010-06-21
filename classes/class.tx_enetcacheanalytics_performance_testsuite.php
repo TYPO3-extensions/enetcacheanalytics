@@ -53,7 +53,7 @@ class tx_enetcacheanalytics_performance_TestSuite {
 	protected $selectedBackends = array();
 
 	/**
-	 * Default constructor
+	 * Default constructor sets selected backends to all available backends
 	 */
 	public function __construct() {
 		$this->selectedBackends = self::$backends;
@@ -71,7 +71,7 @@ class tx_enetcacheanalytics_performance_TestSuite {
 			try {
 					// setUp should throw if backend is not available for some reason
 				$backend->setUp();
-				$this->runTests($backendName, $backend);
+				$this->runTests($backend);
 				$backend->tearDown();
 			} catch (Exception $e) {
 			}
@@ -85,10 +85,11 @@ class tx_enetcacheanalytics_performance_TestSuite {
 	 * Test definitions and test order
 	 *
 	 * @param string Backend name
-	 * @param tx_enetcacheanalytics_performance_backend_AbstractBackend Backend instance
+	 * @param tx_enetcacheanalytics_performance_backend_Backend Backend instance
 	 * @return void
 	 */
-	protected function runTests($backendName, tx_enetcacheanalytics_performance_backend_AbstractBackend $backend) {
+	protected function runTests(tx_enetcacheanalytics_performance_backend_Backend $backend) {
+		$backendName = $backend->getName();
 		$this->testResults['setWithSingleTag_100_1'][$backendName] = $backend->setCacheEntriesWithSingleTag(100);
 		$this->testResults['setWithSingleTag_100_2'][$backendName] = $backend->setCacheEntriesWithSingleTag(100);
 		$this->testResults['setWithSingleTag_100_3'][$backendName] = $backend->setCacheEntriesWithSingleTag(100);

@@ -39,6 +39,7 @@ class tx_enetcacheanalytics_performance_backend_PdoBackendSqlite extends tx_enet
 	 * Default constructor: Initialize path and filename
 	 */
 	public function __construct() {
+		parent::__construct();
 		self::$dbFolder = PATH_site . 'typo3temp/tx_enetcacheanalytics_pdobackendtest/';
 		self::$dbName = 'sqlite.db';
 	}

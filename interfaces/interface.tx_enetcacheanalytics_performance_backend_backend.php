@@ -40,6 +40,11 @@ interface tx_enetcacheanalytics_performance_backend_Backend {
 	public function tearDown();
 
 	/**
+	 * Get backend name
+	 */
+	public function getName();
+
+	/**
 	 * Set number of cache entries
 	 */
 	public function setCacheEntriesWithSingleTag($numberOfEntries = 100);

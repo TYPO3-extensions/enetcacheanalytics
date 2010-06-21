@@ -33,6 +33,7 @@ class tx_enetcacheanalytics_performance_backend_DbBackendCompressed extends tx_e
 	 * Constructor sets db tables of parent class
 	 */
 	public function __construct() {
+		parent::__construct();
 		self::$cacheTable = 'tx_enetcacheanalytics_performance_compressed';
 		self::$tagsTable = 'tx_enetcacheanalytics_performance_compressed_tags';
 	}
