@@ -209,8 +209,8 @@ class tx_enetcacheanalytics_bemodule_performance implements tx_enetcacheanalytic
 		$content = array();
 
 		$backendNames = array_keys($this->testStatistics);
-		$aBackendName = next($backendNames);
-		$testNames = array_keys(next($this->testStatistics));
+		$aBackendName = current($backendNames);
+		$testNames = array_keys(current($this->testStatistics));
 
 		foreach ($testNames as $testName) {
 			$content[] = $this->renderStatisticsTableTestNameRow($testName);
