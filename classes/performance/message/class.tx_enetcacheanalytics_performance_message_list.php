@@ -30,6 +30,15 @@
  */
 class tx_enetcacheanalytics_performance_message_List extends tx_enetcacheanalytics_utility_List {
 	/**
+	 * Possible message types
+	 */
+	protected static $messageTypes = array(
+		'TimeMessage',
+		'OperationCountMessage',
+		'CacheMissMessage',
+	);
+
+	/**
 	 * Add item to the list
 	 *
 	 * @param object item
@@ -37,6 +46,15 @@ class tx_enetcacheanalytics_performance_message_List extends tx_enetcacheanalyti
 	 */
 	public function add(tx_enetcacheanalytics_performance_message_Message $message) {
 		parent::add($message);
+	}
+
+	/**
+	 * Return list of possible message type objects
+	 *
+	 * @return array List of short class names
+	 */
+	public static function getPossibleMessageTypes() {
+		return self::$messageTypes;
 	}
 }
 ?>

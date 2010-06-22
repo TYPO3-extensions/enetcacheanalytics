@@ -30,8 +30,7 @@
  */
 class tx_enetcacheanalytics_performance_message_TimeMessage extends tx_enetcacheanalytics_performance_message_AbstractMessage {
 	public function __construct() {
-		$this['type'] = 0;
-		$this['message'] = 'Seconds taken';
+		$this['message'] = 'Time in seconds taken for test';
 	}
 }
 ?>

@@ -30,8 +30,7 @@
  */
 class tx_enetcacheanalytics_performance_message_CacheMissMessage extends tx_enetcacheanalytics_performance_message_AbstractMessage {
 	public function __construct() {
-		$this['type'] = -1;
-		$this['message'] = 'Cache misses';
+		$this['message'] = 'Cache misses during get, shown values are not meaningfull!';
 	}
 }
 ?>

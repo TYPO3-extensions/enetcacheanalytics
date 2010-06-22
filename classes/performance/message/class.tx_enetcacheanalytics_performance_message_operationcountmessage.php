@@ -30,8 +30,7 @@
  */
 class tx_enetcacheanalytics_performance_message_OperationCountMessage extends tx_enetcacheanalytics_performance_message_AbstractMessage {
 	public function __construct() {
-		$this['type'] = -1;
-		$this['message'] = 'Operations done';
+		$this['message'] = 'Number of operations issued to cache backend';
 	}
 }
 ?>

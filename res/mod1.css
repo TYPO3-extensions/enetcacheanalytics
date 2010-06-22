@@ -37,3 +37,15 @@ body {
 td, th {
 	padding: 3px !important;
 }
+
+.TimeMessage {
+	background-color: #CDEACA;
+}
+
+.OperationCountMessage {
+	background-color: #DDEEF9;
+}
+
+.CacheMissMessage {
+	background-color: #FBB19B;
+}

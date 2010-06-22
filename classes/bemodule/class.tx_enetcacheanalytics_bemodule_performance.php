@@ -126,6 +126,7 @@ class tx_enetcacheanalytics_bemodule_performance implements tx_enetcacheanalytic
 		$content = array();
 		$content[] = $this->renderBackendSelectionSection();
 		$content[] = $this->renderTestcaseSelectionSection();
+		$content[] = $this->renderMessageTypeSelectionSection();
 		if (count($this->testStatistics)) {
 			$content[] = $this->renderStatisticsTable();
 		}
@@ -214,6 +215,28 @@ class tx_enetcacheanalytics_bemodule_performance implements tx_enetcacheanalytic
 	}
 
 	/**
+	 * Fetch available message types and render checkboxes to choose.
+	 * Used as a legend for the table display, too
+	 *
+	 * @return string HTML of message type selection
+	 */
+	protected function renderMessageTypeSelectionSection() {
+		$content = array();
+		$possibleMessageTypes = tx_enetcacheanalytics_performance_message_List::getPossibleMessageTypes();
+		foreach ($possibleMessageTypes as $messageType) {
+			$selected = TRUE;
+			if (isset($this->GPvars['tx_enetcacheanalytics_messageTypeSelectionDone'])) {
+				$selected = $this->GPvars['tx_enetcacheanalytics_messageTypeSelection'][$messageType] ? TRUE : FALSE;
+			}
+			$content[] = tx_enetcacheanalytics_utility_formhelper::makeCheckbox('messageTypeSelection', 1, $selected, $messageType);
+			$message = t3lib_div::makeInstance('tx_enetcacheanalytics_performance_message_' . $messageType);
+			$content[] = '<span class="' . $messageType . '">' . $message['message'] . '</span><br />';
+		}
+		$content[] = tx_enetcacheanalytics_utility_formhelper::makeHiddenField('messageTypeSelectionDone', 1);
+		return $this->finalizeSection($content, 'Select different message types to show');
+	}
+
+	/**
 	 * @return string HTML of statistic table
 	 */
 	protected function renderStatisticsTable() {
@@ -284,16 +307,30 @@ class tx_enetcacheanalytics_bemodule_performance implements tx_enetcacheanalytic
 	}
 
 	/**
+	 * Gets list of messages for one test (one table cell),
+	 * check if it should be rendered and build HTML foo if so
+	 *
 	 * @return string HTML detail part
 	 */
-	protected function renderStatisticsTableDetail($detailInformations) {
+	protected function renderStatisticsTableDetail($messageList) {
 		$content = array();
 		$content[] = '<td>';
 		$row = array();
-		foreach ($detailInformations as $detailInformation) {
-			$row[] = $detailInformation['message'] . ': ' . $detailInformation['value'];
+		$enabledMessageTypes = array_keys($this->GPvars['tx_enetcacheanalytics_messageTypeSelection']);
+		foreach ($messageList as $message) {
+			$messageType = str_replace('tx_enetcacheanalytics_performance_message_', '', get_class($message));
+			$showMessage = in_array($messageType, $enabledMessageTypes) ? TRUE : FALSE;
+			if ($showMessage) {
+					// Special hack for TimeMessage to crop data at some position after decimal point
+				if ($messageType === 'TimeMessage') {
+					$value = sprintf("%.4f", $message['value']);
+				} else {
+					$value = $message['value'];
+				}
+				$row[] = '<p class="' . $messageType . '">' . $value . '</p>';
+			}
 		}
-		$content[] = implode('<br />', $row);
+		$content[] = implode(chr(10), $row);
 		$content[] = '</td>';
 		return implode(chr(10), $content);
 	}

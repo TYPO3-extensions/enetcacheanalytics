@@ -34,7 +34,6 @@ abstract class tx_enetcacheanalytics_performance_message_AbstractMessage extends
 	 * @var array Data array
 	 */
 	protected $data = array(
-		'type' => integer,
 		'value' => integer,
 		'message' => string,
 	);
