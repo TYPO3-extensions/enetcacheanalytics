@@ -22,46 +22,56 @@
 *  This copyright notice MUST APPEAR in all copies of the script!
 ***************************************************************/
 /**
- * Class test implementation for file backend
+ * Abstract test implementation class
  *
  * @package TYPO3
  * @subpackage tx_enetcacheanalytics
  * @author Christian Kuhn <lolli@schwarzbu.ch>
  */
-class tx_enetcacheanalytics_performance_backend_FileBackend extends tx_enetcacheanalytics_performance_backend_AbstractBackend {
+abstract class tx_enetcacheanalytics_performance_testcase_AbstractTestcase implements tx_enetcacheanalytics_performance_testcase_Testcase {
 	/**
-	 * Directory for testing data, relative to PATH_site
+	 * @var string Testcase name
 	 */
-	const cacheDirectory = 'typo3temp/enetcacheanalytics-performance/';
+	protected $name = '';
 
 	/**
-	 * Set up this backend
+	 * @var t3lib_cache_backend_Backend Instance of the cache backend
 	 */
-	public function setUp() {
-		$this->backend = t3lib_div::makeInstance(
-			't3lib_cache_backend_FileBackend',
-			array(
-				'cacheDirectory' => self::cacheDirectory,
-			)
-		);
+	protected $backend;
 
-		$this->backend->setCache($this->getMockFrontend());
+	/**
+	 * Default constructor initializes test case name
+	 */
+	public function __construct() {
+		$this->name = str_replace('tx_enetcacheanalytics_performance_testcase_', '', get_class($this));
 	}
 
 	/**
-	 * File backend flush() completly removes the cache directory
-	 * but we need it for further runs, so we create it again after flush
+	 * Set up this test case
+	 *
+	 * @var tx_enetcacheanalytics_performance_backend_Backend Backend instance to run test on
+	 * @return void
 	 */
-	public function flush() {
-		$this->backend->flush();
-		t3lib_div::mkdir_deep(
-			PATH_site,
-			self::cacheDirectory
-		);
+	public function setUp(tx_enetcacheanalytics_performance_backend_Backend $backend) {
+		$this->backend = $backend;
 	}
 
+	/**
+	 * Tear down / clean up test data
+	 *
+	 * @return void
+	 */
 	public function tearDown() {
 		$this->backend->flush();
 	}
-}
+
+	/**
+	 * Get testcase name
+	 *
+	 * @return string Name
+	 */
+	public function getName() {
+		return $this->name;
+	}
+} // end of class
 ?>

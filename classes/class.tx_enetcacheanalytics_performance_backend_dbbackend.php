@@ -89,23 +89,58 @@ class tx_enetcacheanalytics_performance_backend_DbBackend extends tx_enetcachean
 		);
 	}
 
-	public function setCacheEntriesWithSingleTag($numberOfEntries = 100) {
+	public function set($numberOfEntries = 100) {
 		$this->queryCountStart();
-		$message = parent::setCacheEntriesWithSingleTag($numberOfEntries);
+		$message = parent::set($numberOfEntries);
 		$message[] = $this->getQueryCountMessage();
 		return $message;
 	}
 
-	public function getCacheEntriesWithSingleTagByIdentifier($numberOfEntries = 100) {
+	public function setSingleTag($numberOfEntries = 100) {
 		$this->queryCountStart();
-		$message = parent::getCacheEntriesWithSingleTagByIdentifier($numberOfEntries);
+		$message = parent::setSingleTag($numberOfEntries);
 		$message[] = $this->getQueryCountMessage();
 		return $message;
 	}
 
-	public function dropCacheEntriesBySingleTag($numberOfEntries = 100) {
+	public function setKiloBytesOfData($dataSizeInKB = 100) {
 		$this->queryCountStart();
-		$message = parent::dropCacheEntriesBySingleTag($numberOfEntries);
+		$message = parent::setKiloBytesOfData($dataSizeInKB);
+		$message[] = $this->getQueryCountMessage();
+		return $message;
+	}
+
+	public function setMultipleTags($numberOfTags = 100) {
+		$this->queryCountStart();
+		$message = parent::setMultipleTags($numberOfTags);
+		$message[] = $this->getQueryCountMessage();
+		return $message;
+	}
+
+	public function dropMultipleTags($numberOfTags = 100) {
+		$this->queryCountStart();
+		$message = parent::dropMultipleTags($numberOfTags);
+		$message[] = $this->getQueryCountMessage();
+		return $message;
+	}
+
+	public function get($numberOfEntries = 100) {
+		$this->queryCountStart();
+		$message = parent::get($numberOfEntries);
+		$message[] = $this->getQueryCountMessage();
+		return $message;
+	}
+
+	public function dropBySingleTag($numberOfEntries = 100) {
+		$this->queryCountStart();
+		$message = parent::dropBySingleTag($numberOfEntries);
+		$message[] = $this->getQueryCountMessage();
+		return $message;
+	}
+
+	public function flush() {
+		$this->queryCountStart();
+		$message = parent::flush();
 		$message[] = $this->getQueryCountMessage();
 		return $message;
 	}

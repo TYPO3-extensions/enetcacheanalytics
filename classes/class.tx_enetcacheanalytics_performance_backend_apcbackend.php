@@ -47,32 +47,5 @@ class tx_enetcacheanalytics_performance_backend_ApcBackend extends tx_enetcachea
 	public function tearDown() {
 		$this->backend->flush();
 	}
-
-	public function setCacheEntriesWithSingleTag($numberOfEntries = 100) {
-		$message = parent::setCacheEntriesWithSingleTag($numberOfEntries);
-		$message[] = $this->getQueryCountMessage();
-		return $message;
-	}
-
-	public function getCacheEntriesWithSingleTagByIdentifier($numberOfEntries = 100) {
-		$message = parent::getCacheEntriesWithSingleTagByIdentifier($numberOfEntries);
-		$message[] = $this->getQueryCountMessage();
-		return $message;
-	}
-
-	public function dropCacheEntriesBySingleTag($numberOfEntries = 100) {
-		$message = parent::dropCacheEntriesBySingleTag($numberOfEntries);
-		$message[] = $this->getQueryCountMessage();
-		return $message;
-	}
-
-	protected function getQueryCountMessage() {
-		$message = array(
-			'type' => self::INFO,
-			'value' => 'unknown',
-			'message' => 'Queries performed',
-		);
-		return $message;
-	}
 }
 ?>

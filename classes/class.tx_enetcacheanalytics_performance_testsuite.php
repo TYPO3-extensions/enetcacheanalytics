@@ -48,6 +48,23 @@ class tx_enetcacheanalytics_performance_TestSuite {
 	);
 
 	/**
+	 * @var array All available test cases
+	 */
+	protected $testcases = array(
+		'SetMultipleTimes',
+		'GetMultipleTimes',
+		'SetSingleTag',
+		'GetByIdentifier',
+		'DropBySingleTag',
+		'SetKiloBytesOfData',
+		'GetKiloBytesOfData',
+		'SetMultipleTags',
+		'DropMultipleTags',
+		'FlushSingleTag',
+		'FlushMultipleTags',
+	);
+
+	/**
 	 * @var array Selected backends to run tests on
 	 */
 	protected $selectedBackends = array();
@@ -74,6 +91,8 @@ class tx_enetcacheanalytics_performance_TestSuite {
 				$this->runTests($backend);
 				$backend->tearDown();
 			} catch (Exception $e) {
+					// @TODO: Implement better exception handling (must not catch cache backend exceptions!)
+//				throw $e;
 			}
 
 			unset($backend);
@@ -91,35 +110,14 @@ class tx_enetcacheanalytics_performance_TestSuite {
 	protected function runTests(tx_enetcacheanalytics_performance_backend_Backend $backend) {
 		$backendName = $backend->getName();
 		$this->testResults[$backendName] = array();
-		$this->testResults[$backendName]['setEntriesMultipleTimes'] = array();
-		$this->testResults[$backendName]['setEntriesMultipleTimes']['1'] = $backend->setCacheEntriesWithSingleTag(100);
-		$this->testResults[$backendName]['setEntriesMultipleTimes']['2'] = $backend->setCacheEntriesWithSingleTag(100);
-		$this->testResults[$backendName]['setEntriesMultipleTimes']['3'] = $backend->setCacheEntriesWithSingleTag(100);
 
-		$this->testResults[$backendName]['setWithSingleTag'] = array();
-		$this->testResults[$backendName]['setWithSingleTag']['100'] = $backend->setCacheEntriesWithSingleTag(100);
-		$this->testResults[$backendName]['setWithSingleTag']['400'] = $backend->setCacheEntriesWithSingleTag(400);
-		$this->testResults[$backendName]['setWithSingleTag']['1600'] = $backend->setCacheEntriesWithSingleTag(1600);
-
-		$this->testResults[$backendName]['getPeviouslySetEntriesMultipleTimes'] = array();
-		$this->testResults[$backendName]['getPeviouslySetEntriesMultipleTimes']['1'] = $backend->getCacheEntriesWithSingleTagByIdentifier(100);
-		$this->testResults[$backendName]['getPeviouslySetEntriesMultipleTimes']['2'] = $backend->getCacheEntriesWithSingleTagByIdentifier(100);
-		$this->testResults[$backendName]['getPeviouslySetEntriesMultipleTimes']['3'] = $backend->getCacheEntriesWithSingleTagByIdentifier(100);
-
-		$this->testResults[$backendName]['getPeviouslySetEntriesWithSingleTag'] = array();
-		$this->testResults[$backendName]['getPeviouslySetEntriesWithSingleTag']['100'] = $backend->getCacheEntriesWithSingleTagByIdentifier(100);
-		$this->testResults[$backendName]['getPeviouslySetEntriesWithSingleTag']['400'] = $backend->getCacheEntriesWithSingleTagByIdentifier(400);
-		$this->testResults[$backendName]['getPeviouslySetEntriesWithSingleTag']['1600'] = $backend->getCacheEntriesWithSingleTagByIdentifier(1600);
-
-		$this->testResults[$backendName]['dropPeviouslySetEntriesWithSingleTag'] = array();
-		$this->testResults[$backendName]['dropPeviouslySetEntriesWithSingleTag']['100'] = $backend->dropCacheEntriesBySingleTag(100);
-		$this->testResults[$backendName]['dropPeviouslySetEntriesWithSingleTag']['400'] = $backend->dropCacheEntriesBySingleTag(400);
-		$this->testResults[$backendName]['dropPeviouslySetEntriesWithSingleTag']['1600'] = $backend->dropCacheEntriesBySingleTag(1600);
-
-		$this->testResults[$backendName]['setWithKiloBytesOfData'] = array();
-		$this->testResults[$backendName]['setWithKiloBytesOfData']['100'] = $backend->setWithKiloBytesOfData(100);
-		$this->testResults[$backendName]['setWithKiloBytesOfData']['400'] = $backend->setWithKiloBytesOfData(400);
-		$this->testResults[$backendName]['setWithKiloBytesOfData']['1600'] = $backend->setWithKiloBytesOfData(1600);
+		foreach ($this->testcases as $testcase) {
+			$testcaseInstance = t3lib_div::makeInstance('tx_enetcacheanalytics_performance_testcase_' . $testcase);
+			$testcaseInstance->setUp($backend);
+			$testcaseName = $testcaseInstance->getName();
+			$this->testResults[$backendName][$testcaseName] = $testcaseInstance->run();
+			$testcaseInstance->tearDown();
+		}
 	}
 
 	/**

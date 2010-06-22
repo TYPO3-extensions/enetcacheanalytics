@@ -45,23 +45,45 @@ interface tx_enetcacheanalytics_performance_backend_Backend {
 	public function getName();
 
 	/**
+	 * Flush previously set data from backend
+	 */
+	public function flush();
+
+	/**
+	 * Set a series of cache entries to backend without any tags
+	 */
+	public function set($numberOfEntries = 100);
+
+	/**
 	 * Set number of cache entries
 	 */
-	public function setCacheEntriesWithSingleTag($numberOfEntries = 100);
-
-	/**
-	 * Get number of cache entries by identifier
-	 */
-	public function getCacheEntriesWithSingleTagByIdentifier($numberOfEntries = 100);
-
-	/**
-	 * Drop cache entries by single tag
-	 */
-	public function dropCacheEntriesBySingleTag($numberOfEntries = 100);
+	public function setSingleTag($numberOfEntries = 100);
 
 	/**
 	 * Set cache entries with variable data size
 	 */
-	public function setWithKiloBytesOfData($dataSizeInKB = 100);
+	public function setKiloBytesOfData($dataSizeInKB = 100);
+
+	/**
+	 * Set cache entries with variable number of tags
+	 */
+	public function setMultipleTags($numberOfTags = 100);
+
+	/**
+	 * Get number of cache entries by identifier
+	 * Calculates same identifier as set() if feeded with same parameter
+	 */
+	public function get($numberOfEntries = 100);
+
+	/**
+	 * Drop cache entries by single tag
+	 */
+	public function dropBySingleTag($numberOfEntries = 100);
+
+	/**
+	 * Drop cache entries with multiple tags by single drop tag action
+	 * Should be combined with setMultipleTags to set up required data
+	 */
+	public function dropMultipleTags($numberOfTags = 100);
 }
 ?>

@@ -22,46 +22,25 @@
 *  This copyright notice MUST APPEAR in all copies of the script!
 ***************************************************************/
 /**
- * Class test implementation for file backend
+ * Measures how a backend scales with a rising number of get's
  *
  * @package TYPO3
  * @subpackage tx_enetcacheanalytics
  * @author Christian Kuhn <lolli@schwarzbu.ch>
  */
-class tx_enetcacheanalytics_performance_backend_FileBackend extends tx_enetcacheanalytics_performance_backend_AbstractBackend {
+class tx_enetcacheanalytics_performance_testcase_GetByIdentifier extends tx_enetcacheanalytics_performance_testcase_AbstractTestcase {
 	/**
-	 * Directory for testing data, relative to PATH_site
+	 * Initialize by setting a number of entries, then measure time to get them
 	 */
-	const cacheDirectory = 'typo3temp/enetcacheanalytics-performance/';
-
-	/**
-	 * Set up this backend
-	 */
-	public function setUp() {
-		$this->backend = t3lib_div::makeInstance(
-			't3lib_cache_backend_FileBackend',
-			array(
-				'cacheDirectory' => self::cacheDirectory,
-			)
-		);
-
-		$this->backend->setCache($this->getMockFrontend());
+	public function run() {
+		$stats = array();
+		$numberOfEntries = array(100, 400, 1600);
+		foreach ($numberOfEntries as $number) {
+			$this->backend->set($number);
+			$stats[$number] = $this->backend->get($number);
+			$this->backend->flush();
+		}
+		return $stats;
 	}
-
-	/**
-	 * File backend flush() completly removes the cache directory
-	 * but we need it for further runs, so we create it again after flush
-	 */
-	public function flush() {
-		$this->backend->flush();
-		t3lib_div::mkdir_deep(
-			PATH_site,
-			self::cacheDirectory
-		);
-	}
-
-	public function tearDown() {
-		$this->backend->flush();
-	}
-}
+} // end of class
 ?>

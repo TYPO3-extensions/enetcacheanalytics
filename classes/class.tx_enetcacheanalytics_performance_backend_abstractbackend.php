@@ -57,8 +57,26 @@ abstract class tx_enetcacheanalytics_performance_backend_AbstractBackend impleme
 		$this->name = str_replace('tx_enetcacheanalytics_performance_backend_', '', get_class($this));
 	}
 
-	public function setCacheEntriesWithSingleTag($numberOfEntries = 100) {
-		$prefix = 'singleTag_' . $numberOfEntries . '_';
+	/**
+	 * Set number of cache entries to backend without tag
+	 */
+	public function set($numberOfEntries = 100) {
+		$prefix = 'entry_' . $numberOfEntries . '_';
+
+			// Each entry has ~10kB of data
+		$data = str_repeat('0123456789', 1000);
+
+		$this->timeTrackStart();
+		for ($i = 0; $i < $numberOfEntries; $i ++) {
+			$this->backend->set($prefix . $i, $data, array(), 10000);
+		}
+		$message = array();
+		$message[] = $this->getTimeTakenMessage();
+		return $message;
+	}
+
+	public function setSingleTag($numberOfEntries = 100) {
+		$prefix = 'entry_' . $numberOfEntries . '_';
 
 			// Each entry has ~10kB of data
 		$data = str_repeat('0123456789', 1000);
@@ -72,8 +90,70 @@ abstract class tx_enetcacheanalytics_performance_backend_AbstractBackend impleme
 		return $message;
 	}
 
-	public function getCacheEntriesWithSingleTagByIdentifier($numberOfEntries = 100) {
-		$prefix = 'singleTag_' . $numberOfEntries . '_';
+	public function setKiloBytesOfData($dataSizeInKB = 100) {
+		$numberOfEntries = 40;
+		$prefix = 'entry_' . $numberOfEntries . '_';
+
+			// Each entry has 10kB of data
+		$data = str_repeat('1', $dataSizeInKB * 1024);
+
+		$this->timeTrackStart();
+			// Set data 40 times to get high enough runtime
+		for ($i = 0; $i < $numberOfEntries; $i ++) {
+			$this->backend->set($prefix . $i, $data, array(), 10000);
+		}
+		$message = array();
+		$message[] = $this->getTimeTakenMessage();
+		return $message;
+	}
+
+	/**
+	 * Set 100 entries with different number of tags to backend
+	 * The tags are shifted for each entry:
+	 *  entry 0 gets tags 0 to $numberOfTags
+	 *  entry 1 gets tags 1 to $numberOfTags + 1
+	 *  entry 2 gets tags 2 to $numberOfTags + 2
+	 *  ...
+	 */
+	public function setMultipleTags($numberOfTags = 100) {
+		$numberOfEntries = 100;
+		$prefix = 'entry_' . $numberOfTags . '_';
+
+			// Use 1 kb of data
+		$data = str_repeat('1', 1024);
+
+		$this->timeTrackStart();
+		for ($i = 0; $i < $numberOfEntries; $i ++) {
+			$tags = array();
+				// @TODO: Use array_shift & array_pop here to scale O(1) for this calculation
+			for ($j = $i; $j < ($i + $numberOfTags); $j ++) {
+				$tags[] = 'multiple' . $j;
+			}
+			$this->backend->set($prefix . $i, $data, $tags, 10000);
+		}
+		$message = array();
+		$message[] = $this->getTimeTakenMessage();
+		return $message;
+	}
+
+	/**
+	 * Drop previously set cache entries with multiple tags
+	 */
+	public function dropMultipleTags($numberOfTags = 100) {
+			// @TODO: Refactor as class constant and combine with setMultipleTags()
+		$numberOfEntries = 100;
+
+		$this->timeTrackStart();
+		for ($i = 0; $i < ($numberOfEntries + $numberOfTags); $i ++) {
+			$this->backend->flushByTag('multiple' . $i);
+		}
+		$message = array();
+		$message[] = $this->getTimeTakenMessage();
+		return $message;
+	}
+
+	public function get($numberOfEntries = 100) {
+		$prefix = 'entry_' . $numberOfEntries . '_';
 
 		$numberOfCacheMisses = 0;
 		$this->timeTrackStart();
@@ -94,30 +174,14 @@ abstract class tx_enetcacheanalytics_performance_backend_AbstractBackend impleme
 		return $message;
 	}
 
-	public function dropCacheEntriesBySingleTag($numberOfEntries = 100) {
-		$prefix = 'singleTag_' . $numberOfEntries . '_';
+	public function dropBySingleTag($numberOfEntries = 100) {
+		$prefix = 'entry_' . $numberOfEntries . '_';
 
 		$this->timeTrackStart();
 		for ($i = 0; $i < $numberOfEntries; $i ++) {
 			$this->backend->flushByTag($prefix . $i);
 		}
 
-		$message = array();
-		$message[] = $this->getTimeTakenMessage();
-		return $message;
-	}
-
-	public function setWithKiloBytesOfData($dataSizeInKB = 100) {
-		$prefix = 'dataSizeTest_' . $dataSizeInKB . '_';
-
-			// Each entry has 10kB of data
-		$data = str_repeat('1', $dataSizeInKB * 1024);
-
-		$this->timeTrackStart();
-			// Set data 40 times to get high enough runtime
-		for ($i = 0; $i < 40; $i ++) {
-			$this->backend->set($prefix . $i, $data, array($prefix . $i), 10000);
-		}
 		$message = array();
 		$message[] = $this->getTimeTakenMessage();
 		return $message;
@@ -130,6 +194,19 @@ abstract class tx_enetcacheanalytics_performance_backend_AbstractBackend impleme
 	 */
 	public function getName() {
 		return $this->name;
+	}
+
+	/**
+	 * Flush previously set data from backend
+	 *
+	 * @return void
+	 */
+	public function flush() {
+		$this->timeTrackStart();
+		$this->backend->flush();
+		$message = array();
+		$message[] = $this->getTimeTakenMessage();
+		return $message;
 	}
 
 	/**

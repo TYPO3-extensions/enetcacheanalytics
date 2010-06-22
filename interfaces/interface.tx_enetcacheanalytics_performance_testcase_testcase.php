@@ -2,7 +2,7 @@
 /***************************************************************
 *  Copyright notice
 *
-*  (c) 2010  Christian Kuhn <lolli@schwarzbu.ch>
+*  (c) 2009 Christian Kuhn <lolli@schwarzbu.ch>
 *  All rights reserved
 *
 *  This script is part of the TYPO3 project. The TYPO3 project is
@@ -22,46 +22,34 @@
 *  This copyright notice MUST APPEAR in all copies of the script!
 ***************************************************************/
 /**
- * Class test implementation for file backend
+ * Interface for performance test cases
  *
  * @package TYPO3
  * @subpackage tx_enetcacheanalytics
  * @author Christian Kuhn <lolli@schwarzbu.ch>
  */
-class tx_enetcacheanalytics_performance_backend_FileBackend extends tx_enetcacheanalytics_performance_backend_AbstractBackend {
+interface tx_enetcacheanalytics_performance_testcase_Testcase {
 	/**
-	 * Directory for testing data, relative to PATH_site
+	 * Instantiate and set up testcase
+	 *
+	 * @var tx_enetcacheanalytics_performance_backend_abstractbackend Backend instance to run test on
+	 * @return void
 	 */
-	const cacheDirectory = 'typo3temp/enetcacheanalytics-performance/';
-
-	/**
-	 * Set up this backend
-	 */
-	public function setUp() {
-		$this->backend = t3lib_div::makeInstance(
-			't3lib_cache_backend_FileBackend',
-			array(
-				'cacheDirectory' => self::cacheDirectory,
-			)
-		);
-
-		$this->backend->setCache($this->getMockFrontend());
-	}
+	public function setUp(tx_enetcacheanalytics_performance_backend_Backend $backend);
 
 	/**
-	 * File backend flush() completly removes the cache directory
-	 * but we need it for further runs, so we create it again after flush
+	 * Run test case
 	 */
-	public function flush() {
-		$this->backend->flush();
-		t3lib_div::mkdir_deep(
-			PATH_site,
-			self::cacheDirectory
-		);
-	}
+	public function run();
 
-	public function tearDown() {
-		$this->backend->flush();
-	}
+	/**
+	 * Cleanup backend
+	 */
+	public function tearDown();
+
+	/**
+	 * Get testcase name
+	 */
+	public function getName();
 }
 ?>
