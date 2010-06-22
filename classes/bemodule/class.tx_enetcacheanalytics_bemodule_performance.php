@@ -294,9 +294,11 @@ class tx_enetcacheanalytics_bemodule_performance implements tx_enetcacheanalytic
 		$content = array();
 		$content[] = '<table>';
 		$content[] = $this->renderStatisticsTableHeader();
+		$content[] = $this->renderStatisticsTimeTakenForTestsHeaderRow();
 		$content[] = $this->renderStatisticsTableRows();
 		$content[] = '</table>';
-		return implode(chr(10), $content);
+		$testsuiteRuntime = $this->testSuite->getRuntime();
+		return $this->finalizeSection($content, 'Testsuite runtime: ' . $this->formatTimeMessage($testsuiteRuntime['value']));
 	}
 
 	/**
@@ -315,6 +317,32 @@ class tx_enetcacheanalytics_bemodule_performance implements tx_enetcacheanalytic
 		$content[] = implode(chr(10), $headerTH);
 		$content[] = '</tr>';
 
+		return implode(chr(10), $content);
+	}
+
+	/**
+	 * @return string HTML of header row of accumulated time taken for each backend
+	 */
+	protected function renderStatisticsTimeTakenForTestsHeaderRow() {
+		$headerTR = array();
+		$headerTR[] = '<td colspan="2">Test time</td>';
+		foreach ($this->testStatistics as $testRun) {
+			$accumulatedTestTime = 0;
+			foreach ($testRun as $testStats) {
+				foreach ($testStats as $messageList) {
+					foreach ($messageList as $message) {
+						if ($message instanceof tx_enetcacheanalytics_performance_message_TimeMessage) {
+							$accumulatedTestTime = $accumulatedTestTime + $message['value'];
+						}
+					}
+				}
+			}
+			$headerTR[] = '<td><p class="TimeMessage">' . $this->formatTimeMessage($accumulatedTestTime) . '</p></td>';
+		}
+		$content = array();
+		$content[] = '<tr class="user">';
+		$content[] = implode(chr(10), $headerTR);
+		$content[] = '</tr>';
 		return implode(chr(10), $content);
 	}
 
@@ -374,7 +402,7 @@ class tx_enetcacheanalytics_bemodule_performance implements tx_enetcacheanalytic
 			if ($showMessage) {
 					// Special hack for TimeMessage to crop data at some position after decimal point
 				if ($messageType === 'TimeMessage') {
-					$value = sprintf("%.4f", $message['value']);
+					$value = $this->formatTimeMessage($message['value']);
 				} else {
 					$value = $message['value'];
 				}
@@ -384,6 +412,15 @@ class tx_enetcacheanalytics_bemodule_performance implements tx_enetcacheanalytic
 		$content[] = implode(chr(10), $row);
 		$content[] = '</td>';
 		return implode(chr(10), $content);
+	}
+
+	/**
+	 * Format time statistics
+	 *
+	 * @return string Formatted time
+	 */
+	protected function formatTimeMessage($value) {
+		return sprintf("%.4f", $value);
 	}
 
 	/**

@@ -80,12 +80,18 @@ class tx_enetcacheanalytics_performance_TestSuite {
 	protected $unavailableBackends;
 
 	/**
+	 * @var tx_enetcacheanalytics_performance_message_TimeMessage Message for runtime of whole testsuite
+	 */
+	protected $runtime;
+
+	/**
 	 * Default constructor sets selected backends to all available backends
 	 */
 	public function __construct() {
 		$this->selectedBackends = self::$backends;
 		$this->selectedTestcases = self::$testcases;
 		$this->unavailableBackends = t3lib_div::makeInstance('tx_enetcacheanalytics_performance_message_list');
+		$this->testsuiteRuntime = t3lib_div::makeInstance('tx_enetcacheanalytics_performance_message_TimeMessage');
 	}
 
 	/**
@@ -94,6 +100,7 @@ class tx_enetcacheanalytics_performance_TestSuite {
 	 * @return void
 	 */
 	public function run() {
+		$timeStart = microtime(1);
 		foreach ($this->selectedBackends as $backendName) {
 			$backend = t3lib_div::makeInstance('tx_enetcacheanalytics_performance_backend_' . $backendName);
 
@@ -112,6 +119,7 @@ class tx_enetcacheanalytics_performance_TestSuite {
 			unset($backend);
 			sleep(1);
 		}
+		$this->runtime['value'] = (microtime(1) - $timeStart);
 	}
 
 	/**
@@ -179,6 +187,15 @@ class tx_enetcacheanalytics_performance_TestSuite {
 	 */
 	public function getUnavailableBackends() {
 		return $this->unavailableBackends;
+	}
+
+	/**
+	 * Get message of testsuite runtime
+	 *
+	 * @return tx_enetcacheanalytics_performance_message_TimeMessage
+	 */
+	public function getRuntime() {
+		return $this->runtime;
 	}
 
 	/**
