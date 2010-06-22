@@ -55,6 +55,11 @@ class tx_enetcacheanalytics_bemodule_performance implements tx_enetcacheanalytic
 	protected $unavailableBackends;
 
 	/**
+	 * @var tx_enetcacheanalytics_utility_UserData Object to get and store be_user module data uc
+	 */
+	protected $userData;
+
+	/**
 	 * Default init method, required by interface
 	 *
 	 * @return void
@@ -63,6 +68,7 @@ class tx_enetcacheanalytics_bemodule_performance implements tx_enetcacheanalytic
 		$this->pObj = $pObj;
 		$this->GPvars = $pObj->getGPvars();
 		$this->testSuite = t3lib_div::makeInstance('tx_enetcacheanalytics_performance_TestSuite');
+		$this->userData = t3lib_div::makeInstance('tx_enetcacheanalytics_utility_UserData');
 	}
 
 	/**
@@ -82,6 +88,11 @@ class tx_enetcacheanalytics_bemodule_performance implements tx_enetcacheanalytic
 
 			// Additinal functions in doc header
 		$this->pObj->setAdditionalDocHeaderMarker($this->renderDocHeaderOptions());
+
+			// Store changed user data in be_user module data
+			// @TODO: Move class instance and handling to mod1/index.php class, make use in analytics module as well
+			// @TODO: restructure weird array value handling
+		$this->userData->persist();
 	}
 
 	/**
@@ -181,7 +192,8 @@ class tx_enetcacheanalytics_bemodule_performance implements tx_enetcacheanalytic
 	}
 
 	/**
-	 * Fetch availabel testcases and render checkboxes to choose a subset
+	 * Fetch available testcases and render checkboxes to choose a subset,
+	 * store selection changen in be_user uc
 	 *
 	 * @return string HTML of testcase selector
 	 */
@@ -190,9 +202,14 @@ class tx_enetcacheanalytics_bemodule_performance implements tx_enetcacheanalytic
 		$availableTestcases = $this->testSuite->getTestcases();
 		foreach ($availableTestcases as $backend) {
 			$selected = TRUE;
+			$userUc = $this->userData['performance_selectedTestcases'];
 			if (isset($this->GPvars['tx_enetcacheanalytics_testcaseSelectionDone'])) {
 				$selected = $this->GPvars['tx_enetcacheanalytics_testcaseSelection'][$backend] ? TRUE : FALSE;
+				$userUc[$backend] = $selected;
+			} elseif (isset($userUc[$backend])) {
+				$selected = $userUc[$backend];
 			}
+			$this->userData['performance_selectedTestcases'] = $userUc;
 			$content[] = tx_enetcacheanalytics_utility_formhelper::makeCheckbox('testcaseSelection', 1, $selected, $backend);
 			$content[] = $backend . '<br />';
 		}
@@ -202,7 +219,7 @@ class tx_enetcacheanalytics_bemodule_performance implements tx_enetcacheanalytic
 
 	/**
 	 * Fetch available backends and render checkboxes to choose
-	 * backends to run test suite on
+	 * backends to run test suite on, store selection changes in be_user uc
 	 *
 	 * @return string HTML of backend selector
 	 */
@@ -211,9 +228,14 @@ class tx_enetcacheanalytics_bemodule_performance implements tx_enetcacheanalytic
 		$availableBackends = $this->testSuite->getBackends();
 		foreach ($availableBackends as $backend) {
 			$selected = TRUE;
+			$userUc = $this->userData['performance_selectedBackends'];
 			if (isset($this->GPvars['tx_enetcacheanalytics_backendSelectionDone'])) {
 				$selected = $this->GPvars['tx_enetcacheanalytics_backendSelection'][$backend] ? TRUE : FALSE;
+				$userUc[$backend] = $selected;
+			} elseif (isset($userUc[$backend])) {
+				$selected = $userUc[$backend];
 			}
+			$this->userData['performance_selectedBackends'] = $userUc;
 			$content[] = tx_enetcacheanalytics_utility_formhelper::makeCheckbox('backendSelection', 1, $selected, $backend);
 			$content[] = $backend . '<br />';
 		}
@@ -224,6 +246,7 @@ class tx_enetcacheanalytics_bemodule_performance implements tx_enetcacheanalytic
 	/**
 	 * Fetch available message types and render checkboxes to choose.
 	 * Used as a legend for the table display, too
+	 * Store selection in be_user module data
 	 *
 	 * @return string HTML of message type selection
 	 */
@@ -232,9 +255,14 @@ class tx_enetcacheanalytics_bemodule_performance implements tx_enetcacheanalytic
 		$possibleMessageTypes = tx_enetcacheanalytics_performance_message_List::getPossibleMessageTypes();
 		foreach ($possibleMessageTypes as $messageType) {
 			$selected = TRUE;
+			$userUc = $this->userData['performance_selectedMessages'];
 			if (isset($this->GPvars['tx_enetcacheanalytics_messageTypeSelectionDone'])) {
 				$selected = $this->GPvars['tx_enetcacheanalytics_messageTypeSelection'][$messageType] ? TRUE : FALSE;
+				$userUc[$messageType] = $selected;
+			} elseif (isset($userUc[$messageType])) {
+				$selected = $userUc[$messageType];
 			}
+			$this->userData['performance_selectedMessages'] = $userUc;
 			$content[] = tx_enetcacheanalytics_utility_formhelper::makeCheckbox('messageTypeSelection', 1, $selected, $messageType);
 			$message = t3lib_div::makeInstance('tx_enetcacheanalytics_performance_message_' . $messageType);
 			$content[] = '<span class="' . $messageType . '">' . $message['message'] . '</span><br />';
@@ -245,6 +273,8 @@ class tx_enetcacheanalytics_bemodule_performance implements tx_enetcacheanalytic
 
 	/**
 	 * Render unavailable backend flash messages after test run
+	 *
+	 * @return void
 	 */
 	protected function renderUnavailableBackendsFlashMessages() {
 		if (is_object($this->unavailableBackends)) {
