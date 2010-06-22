@@ -91,6 +91,7 @@ class tx_enetcacheanalytics_bemodule_performance implements tx_enetcacheanalytic
 		switch ($this->GPvars['tx_enetcacheanalytics_action']) {
 			case 'performTests':
 				$this->setSelectedBackends();
+				$this->setSelectedTestcases();
 				$this->testSuite->run();
 				$this->testStatistics = $this->testSuite->getTestResults();
 			break;
@@ -124,6 +125,7 @@ class tx_enetcacheanalytics_bemodule_performance implements tx_enetcacheanalytic
 	protected function renderMainModuleContent() {
 		$content = array();
 		$content[] = $this->renderBackendSelectionSection();
+		$content[] = $this->renderTestcaseSelectionSection();
 		if (count($this->testStatistics)) {
 			$content[] = $this->renderStatisticsTable();
 		}
@@ -151,7 +153,47 @@ class tx_enetcacheanalytics_bemodule_performance implements tx_enetcacheanalytic
 	}
 
 	/**
-	 * Fetch available backends and render checkboxe to choose
+	 * Set testcases to run by given GPvars
+	 *
+	 * @return void
+	 */
+	protected function setSelectedTestcases() {
+		$availableTestcases = $this->testSuite->getTestcases();
+		$selectedTestcases = array();
+		if (isset($this->GPvars['tx_enetcacheanalytics_testcaseSelectionDone'])) {
+			if (is_array($this->GPvars['tx_enetcacheanalytics_testcaseSelection'])) {
+				foreach($this->GPvars['tx_enetcacheanalytics_testcaseSelection'] as $backendName => $enabled) {
+					if (in_array($backendName, $availableTestcases)) {
+						$selectedTestcases[] = $backendName;
+					}
+				}
+			}
+			$this->testSuite->setSelectedTestcases($selectedTestcases);
+		}
+	}
+
+	/**
+	 * Fetch availabel testcases and render checkboxes to choose a subset
+	 *
+	 * @return string HTML of testcase selector
+	 */
+	protected function renderTestcaseSelectionSection() {
+		$content = array();
+		$availableTestcases = $this->testSuite->getTestcases();
+		foreach ($availableTestcases as $backend) {
+			$selected = TRUE;
+			if (isset($this->GPvars['tx_enetcacheanalytics_testcaseSelectionDone'])) {
+				$selected = $this->GPvars['tx_enetcacheanalytics_testcaseSelection'][$backend] ? TRUE : FALSE;
+			}
+			$content[] = tx_enetcacheanalytics_utility_formhelper::makeCheckbox('testcaseSelection', 1, $selected, $backend);
+			$content[] = $backend . '<br />';
+		}
+		$content[] = tx_enetcacheanalytics_utility_formhelper::makeHiddenField('testcaseSelectionDone', 1);
+		return $this->finalizeSection($content, 'Select testcases to run');
+	}
+
+	/**
+	 * Fetch available backends and render checkboxes to choose
 	 * backends to run test suite on
 	 *
 	 * @return string HTML of backend selector

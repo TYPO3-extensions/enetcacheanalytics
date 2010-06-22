@@ -50,7 +50,7 @@ class tx_enetcacheanalytics_performance_TestSuite {
 	/**
 	 * @var array All available test cases
 	 */
-	protected $testcases = array(
+	protected static $testcases = array(
 		'SetMultipleTimes',
 		'GetMultipleTimes',
 		'SetSingleTag',
@@ -70,10 +70,16 @@ class tx_enetcacheanalytics_performance_TestSuite {
 	protected $selectedBackends = array();
 
 	/**
+	 * @var array Selected testcases to run
+	 */
+	protected $selectedTestcases = array();
+
+	/**
 	 * Default constructor sets selected backends to all available backends
 	 */
 	public function __construct() {
 		$this->selectedBackends = self::$backends;
+		$this->selectedTestcases = self::$testcases;
 	}
 
 	/**
@@ -111,7 +117,7 @@ class tx_enetcacheanalytics_performance_TestSuite {
 		$backendName = $backend->getName();
 		$this->testResults[$backendName] = array();
 
-		foreach ($this->testcases as $testcase) {
+		foreach ($this->selectedTestcases as $testcase) {
 			$testcaseInstance = t3lib_div::makeInstance('tx_enetcacheanalytics_performance_testcase_' . $testcase);
 			$testcaseInstance->setUp($backend);
 			$testcaseName = $testcaseInstance->getName();
@@ -130,13 +136,32 @@ class tx_enetcacheanalytics_performance_TestSuite {
 	}
 
 	/**
-	 * Set available backends
+	 * Return available testcases
+	 *
+	 * @return array testcase names
+	 */
+	public function getTestcases() {
+		return self::$testcases;
+	}
+
+	/**
+	 * Set backends to run tests on
 	 *
 	 * @param array Backends
 	 * @return void
 	 */
 	public function setSelectedBackends(array $backends = array()) {
 		$this->selectedBackends = $backends;
+	}
+
+	/**
+	 * Set testcases to run
+	 *
+	 * @param array Testcases
+	 * @return void
+	 */
+	public function setSelectedTestcases(array $testcases = array()) {
+		$this->selectedTestcases = $testcases;
 	}
 
 	/**
