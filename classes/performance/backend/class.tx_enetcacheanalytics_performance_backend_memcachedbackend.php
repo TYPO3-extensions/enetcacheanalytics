@@ -59,14 +59,23 @@ class tx_enetcacheanalytics_performance_backend_MemcachedBackend extends tx_enet
 
 	protected function testMemcacheAvailable() {
 		if (!extension_loaded('memcache')) {
-			throw new Exception('memcache extension was not available', 1277127700);
+			throw t3lib_div::makeInstance('tx_enetcacheanalytics_exception_UnavailableBackend',
+				'memcache extension was not available',
+				1277127700
+			);
 		}
 		try {
 			if (!@fsockopen(self::memcachedHost, self::memcachedPort)) {
-				throw new Exception('memcache server not available', 1277127722);
+				throw t3lib_div::makeInstance('tx_enetcacheanalytics_exception_UnavailableBackend',
+					'memcache sever not available',
+					1277127722
+				);
 			}
 		} catch (Exception $e) {
-			throw new Exception('memcache server not available', 1277127734);
+			throw t3lib_div::makeInstance('tx_enetcacheanalytics_exception_UnavailableBackend',
+				'memcache sever not available',
+				1277127734
+			);
 		}
 	}
 

@@ -75,11 +75,17 @@ class tx_enetcacheanalytics_performance_TestSuite {
 	protected $selectedTestcases = array();
 
 	/**
+	 * @var tx_enetcacheanalytics_performance_message_list List of unavailable backend messages
+	 */
+	protected $unavailableBackends;
+
+	/**
 	 * Default constructor sets selected backends to all available backends
 	 */
 	public function __construct() {
 		$this->selectedBackends = self::$backends;
 		$this->selectedTestcases = self::$testcases;
+		$this->unavailableBackends = t3lib_div::makeInstance('tx_enetcacheanalytics_performance_message_list');
 	}
 
 	/**
@@ -96,9 +102,11 @@ class tx_enetcacheanalytics_performance_TestSuite {
 				$backend->setUp();
 				$this->runTests($backend);
 				$backend->tearDown();
-			} catch (Exception $e) {
-					// @TODO: Implement better exception handling (must not catch cache backend exceptions!)
-//				throw $e;
+			} catch (tx_enetcacheanalytics_exception_UnavailableBackend $e) {
+				$message = t3lib_div::makeInstance('tx_enetcacheanalytics_performance_message_unavailablebackendmessage');
+				$message['value'] = FALSE;
+				$message['message'] = 'Backend ' . $backendName . ' unavailable: ' . $e->getMessage();
+				$this->unavailableBackends->add($message);
 			}
 
 			unset($backend);
@@ -162,6 +170,15 @@ class tx_enetcacheanalytics_performance_TestSuite {
 	 */
 	public function setSelectedTestcases(array $testcases = array()) {
 		$this->selectedTestcases = $testcases;
+	}
+
+	/**
+	 * Get list of unavailable backends
+	 *
+	 * @return array Backend names
+	 */
+	public function getUnavailableBackends() {
+		return $this->unavailableBackends;
 	}
 
 	/**

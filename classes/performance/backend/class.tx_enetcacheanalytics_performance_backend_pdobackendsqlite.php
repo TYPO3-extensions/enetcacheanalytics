@@ -51,11 +51,17 @@ class tx_enetcacheanalytics_performance_backend_PdoBackendSqlite extends tx_enet
 			// pdo backend is only available since 4.4
 			// Check for file existance to see if we can run this backend
 		if (!is_file(PATH_t3lib . 'cache/backend/class.t3lib_cache_backend_pdobackend.php')) {
-			throw new Exception ('Pdo backend not available', 1277127650);
+			throw t3lib_div::makeInstance('tx_enetcacheanalytics_exception_UnavailableBackend',
+				'Pdo backend not available',
+				1277127650
+			);
 		}
 
 		if (!extension_loaded('pdo_sqlite')) {
-			throw new Exception ('Pdo backend not available', 1277127970);
+			throw t3lib_div::makeInstance('tx_enetcacheanalytics_exception_UnavailableBackend',
+				'Pdo backend not available',
+				1277127970
+			);
 		}
 
 			// Clean up from previous run if it still exists for some reason

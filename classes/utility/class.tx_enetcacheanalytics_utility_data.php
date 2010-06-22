@@ -44,14 +44,17 @@ abstract class tx_enetcacheanalytics_utility_Data implements ArrayAccess, Iterat
 	 *
 	 * @param mixed key (string or integer)
 	 * @param mixed value
-	 * @throws Exception if key is not declared
+	 * @throws tx_enetcacheanalytics_exception_invaliddata if key is not declared
 	 * @return void
 	 */
 	public function offsetSet($key, $value) {
 		if (array_key_exists($key, $this->data)) {
 			$this->data[$key] = $value;
 		} else {
-			throw new Exception('Access to not defined array key. class / key: ' . $get_class($this) . ' ' . $key);
+			throw t3lib_div::makeInstance('tx_enetcacheanalytics_exception_invaliddata',
+				'Access to not defined array key. class / key: ' . $get_class($this) . ' ' . $key,
+				1277236182
+			);
 		}
 	}
 
@@ -60,12 +63,15 @@ abstract class tx_enetcacheanalytics_utility_Data implements ArrayAccess, Iterat
 	 * Return a value given it's key
 	 *
 	 * @param mixed key (string or integer)
-	 * @throws Exception if key is not declared
+	 * @throws tx_enetcacheanalytics_exception_invaliddata if key is not declared
 	 * @return mixed value
 	 */
 	public function offsetGet($key) {
 		if (!array_key_exists($key, $this->data)) {
-			throw new Exception('Access to not defined array key. class / key: ' . $get_class($this) . ' ' . $key);
+			throw t3lib_div::makeInstance('tx_enetcacheanalytics_exception_invaliddata',
+				'Access to not defined array key. class / key: ' . $get_class($this) . ' ' . $key,
+				1277236216
+			);
 		}
 		return($this->data[$key]);
 	}
@@ -75,14 +81,17 @@ abstract class tx_enetcacheanalytics_utility_Data implements ArrayAccess, Iterat
 	 * Unset a value by it's key
 	 *
 	 * @param mixed key (string or integer)
-	 * @throws Exception if key is not declared
+	 * @throws tx_enetcacheanalytics_exception_invaliddata if key is not declared
 	 * @return void
 	 */
 	public function offsetUnset($key) {
 		if (array_key_exists($key, $this->data)) {
 			unset($this->data[$key]);
 		} else {
-			throw new Exception('Access to not defined array key. class / key: ' . $get_class($this) . ' ' . $key);
+			throw t3lib_div::makeInstance('tx_enetcacheanalytics_exception_invaliddata',
+				'Access to not defined array key. class / key: ' . $get_class($this) . ' ' . $key,
+				1277236253
+			);
 		}
 	}
 
@@ -91,14 +100,17 @@ abstract class tx_enetcacheanalytics_utility_Data implements ArrayAccess, Iterat
 	 * Check if key exists
 	 *
 	 * @param mixed key (string or integer)
-	 * @throws Exception if key is not declared
+	 * @throws tx_enetcacheanalytics_exception_invaliddata if key is not declared
 	 * @return boolean
 	 */
 	public function offsetExists($key) {
 		if (array_key_exists($key, $this->data)) {
 			return(TRUE);
 		} else {
-			throw new Exception('Access to not defined array key. class / key: ' . $get_class($this) . ' ' . $key);
+			throw t3lib_div::makeInstance('tx_enetcacheanalytics_exception_invaliddata',
+				'Access to not defined array key. class / key: ' . $get_class($this) . ' ' . $key,
+				1277236274
+			);
 		}
 	}
 

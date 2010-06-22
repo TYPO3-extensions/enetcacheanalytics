@@ -50,6 +50,11 @@ class tx_enetcacheanalytics_bemodule_performance implements tx_enetcacheanalytic
 	protected $testStatistics = array();
 
 	/**
+	 * @var tx_enetcacheanalytics_performance_message_list List of unavailable backends
+	 */
+	protected $unavailableBackends;
+
+	/**
 	 * Default init method, required by interface
 	 *
 	 * @return void
@@ -94,6 +99,7 @@ class tx_enetcacheanalytics_bemodule_performance implements tx_enetcacheanalytic
 				$this->setSelectedTestcases();
 				$this->testSuite->run();
 				$this->testStatistics = $this->testSuite->getTestResults();
+				$this->unavailableBackends = $this->testSuite->getUnavailableBackends();
 			break;
 		}
 	}
@@ -127,6 +133,7 @@ class tx_enetcacheanalytics_bemodule_performance implements tx_enetcacheanalytic
 		$content[] = $this->renderBackendSelectionSection();
 		$content[] = $this->renderTestcaseSelectionSection();
 		$content[] = $this->renderMessageTypeSelectionSection();
+		$this->renderUnavailableBackendsFlashMessages();
 		if (count($this->testStatistics)) {
 			$content[] = $this->renderStatisticsTable();
 		}
@@ -234,6 +241,20 @@ class tx_enetcacheanalytics_bemodule_performance implements tx_enetcacheanalytic
 		}
 		$content[] = tx_enetcacheanalytics_utility_formhelper::makeHiddenField('messageTypeSelectionDone', 1);
 		return $this->finalizeSection($content, 'Select different message types to show');
+	}
+
+	/**
+	 * Render unavailable backend flash messages after test run
+	 */
+	protected function renderUnavailableBackendsFlashMessages() {
+		if (is_object($this->unavailableBackends)) {
+			foreach ($this->unavailableBackends as $backend) {
+				$this->pObj->addMessage(
+					$backend['message'],
+					t3lib_FlashMessage::WARNING
+				);
+			}
+		}
 	}
 
 	/**

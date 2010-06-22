@@ -2,7 +2,7 @@
 /***************************************************************
 *  Copyright notice
 *
-*  (c) 2010  Christian Kuhn <lolli@schwarzbu.ch>
+*  (c) 2008-2010 Christian Kuhn <lolli@schwarzbu.ch>
 *  All rights reserved
 *
 *  This script is part of the TYPO3 project. The TYPO3 project is
@@ -22,33 +22,15 @@
 *  This copyright notice MUST APPEAR in all copies of the script!
 ***************************************************************/
 /**
- * Class test implementation for memcache backend
+ * Class 'UnavailableBackendMessage' for the 'enetcacheanalytics' extension.
  *
+ * @author Christian Kuhn <lolli@schwarzbu.ch>
  * @package TYPO3
  * @subpackage tx_enetcacheanalytics
- * @author Christian Kuhn <lolli@schwarzbu.ch>
  */
-class tx_enetcacheanalytics_performance_backend_ApcBackend extends tx_enetcacheanalytics_performance_backend_AbstractBackend {
-	/**
-	 * Set up this backend
-	 */
-	public function setUp() {
-		if (!extension_loaded('apc')) {
-			throw t3lib_div::makeInstance('tx_enetcacheanalytics_exception_UnavailableBackend',
-				'APC extension was not loaded',
-				1277145165
-			);
-		}
-
-		$this->backend = t3lib_div::makeInstance(
-			't3lib_cache_backend_ApcBackend'
-		);
-
-		$this->backend->setCache($this->getMockFrontend());
-	}
-
-	public function tearDown() {
-		$this->backend->flush();
+class tx_enetcacheanalytics_performance_message_UnavailableBackendMessage extends tx_enetcacheanalytics_performance_message_AbstractMessage {
+	public function __construct() {
+		$this['message'] = 'Backend unavailable';
 	}
 }
 ?>
