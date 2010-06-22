@@ -30,12 +30,6 @@
  */
 abstract class tx_enetcacheanalytics_performance_backend_AbstractBackend implements tx_enetcacheanalytics_performance_backend_Backend {
 	/**
-	 * Message types
-	 */
-	const INFO = -1;
-	const TIME = 0;
-
-	/**
 	 * @var string Backend name / identifier, set in __construct() of backends
 	 */
 	protected $name = '';
@@ -70,9 +64,9 @@ abstract class tx_enetcacheanalytics_performance_backend_AbstractBackend impleme
 		for ($i = 0; $i < $numberOfEntries; $i ++) {
 			$this->backend->set($prefix . $i, $data, array(), 10000);
 		}
-		$message = array();
-		$message[] = $this->getTimeTakenMessage();
-		return $message;
+		$messageList = t3lib_div::makeInstance('tx_enetcacheanalytics_performance_message_List');
+		$messageList->add($this->getTimeTakenMessage());
+		return $messageList;
 	}
 
 	public function setSingleTag($numberOfEntries = 100) {
@@ -85,9 +79,9 @@ abstract class tx_enetcacheanalytics_performance_backend_AbstractBackend impleme
 		for ($i = 0; $i < $numberOfEntries; $i ++) {
 			$this->backend->set($prefix . $i, $data, array($prefix . $i), 10000);
 		}
-		$message = array();
-		$message[] = $this->getTimeTakenMessage();
-		return $message;
+		$messageList = t3lib_div::makeInstance('tx_enetcacheanalytics_performance_message_List');
+		$messageList->add($this->getTimeTakenMessage());
+		return $messageList;
 	}
 
 	public function setKiloBytesOfData($dataSizeInKB = 100) {
@@ -102,9 +96,9 @@ abstract class tx_enetcacheanalytics_performance_backend_AbstractBackend impleme
 		for ($i = 0; $i < $numberOfEntries; $i ++) {
 			$this->backend->set($prefix . $i, $data, array(), 10000);
 		}
-		$message = array();
-		$message[] = $this->getTimeTakenMessage();
-		return $message;
+		$messageList = t3lib_div::makeInstance('tx_enetcacheanalytics_performance_message_List');
+		$messageList->add($this->getTimeTakenMessage());
+		return $messageList;
 	}
 
 	/**
@@ -131,9 +125,9 @@ abstract class tx_enetcacheanalytics_performance_backend_AbstractBackend impleme
 			}
 			$this->backend->set($prefix . $i, $data, $tags, 10000);
 		}
-		$message = array();
-		$message[] = $this->getTimeTakenMessage();
-		return $message;
+		$messageList = t3lib_div::makeInstance('tx_enetcacheanalytics_performance_message_List');
+		$messageList->add($this->getTimeTakenMessage());
+		return $messageList;
 	}
 
 	/**
@@ -147,9 +141,9 @@ abstract class tx_enetcacheanalytics_performance_backend_AbstractBackend impleme
 		for ($i = 0; $i < ($numberOfEntries + $numberOfTags); $i ++) {
 			$this->backend->flushByTag('multiple' . $i);
 		}
-		$message = array();
-		$message[] = $this->getTimeTakenMessage();
-		return $message;
+		$messageList = t3lib_div::makeInstance('tx_enetcacheanalytics_performance_message_List');
+		$messageList->add($this->getTimeTakenMessage());
+		return $messageList;
 	}
 
 	public function get($numberOfEntries = 100) {
@@ -163,15 +157,12 @@ abstract class tx_enetcacheanalytics_performance_backend_AbstractBackend impleme
 				$numberOfCacheMisses ++;
 			}
 		}
-
-		$message = array();
-		$message[] = $this->getTimeTakenMessage();
-		$message[] = array(
-			'type' => self::INFO,
-			'value' => $numberOfCacheMisses,
-			'message' => 'Cache misses',
-		);
-		return $message;
+		$messageList = t3lib_div::makeInstance('tx_enetcacheanalytics_performance_message_List');
+		$messageList->add($this->getTimeTakenMessage());
+		$message = t3lib_div::makeInstance('tx_enetcacheanalytics_performance_message_CacheMissMessage');
+		$message['value'] = $numberOfCacheMisses;
+		$messageList->add($message);
+		return $messageList;
 	}
 
 	public function dropBySingleTag($numberOfEntries = 100) {
@@ -181,10 +172,22 @@ abstract class tx_enetcacheanalytics_performance_backend_AbstractBackend impleme
 		for ($i = 0; $i < $numberOfEntries; $i ++) {
 			$this->backend->flushByTag($prefix . $i);
 		}
+		$messageList = t3lib_div::makeInstance('tx_enetcacheanalytics_performance_message_List');
+		$messageList->add($this->getTimeTakenMessage());
+		return $messageList;
+	}
 
-		$message = array();
-		$message[] = $this->getTimeTakenMessage();
-		return $message;
+	/**
+	 * Flush previously set data from backend
+	 *
+	 * @return void
+	 */
+	public function flush() {
+		$this->timeTrackStart();
+		$this->backend->flush();
+		$messageList = t3lib_div::makeInstance('tx_enetcacheanalytics_performance_message_List');
+		$messageList->add($this->getTimeTakenMessage());
+		return $messageList;
 	}
 
 	/**
@@ -197,19 +200,6 @@ abstract class tx_enetcacheanalytics_performance_backend_AbstractBackend impleme
 	}
 
 	/**
-	 * Flush previously set data from backend
-	 *
-	 * @return void
-	 */
-	public function flush() {
-		$this->timeTrackStart();
-		$this->backend->flush();
-		$message = array();
-		$message[] = $this->getTimeTakenMessage();
-		return $message;
-	}
-
-	/**
 	 * Get an instance of a mockend cache frontend class that returns an identifier
 	 *
 	 * @return tx_enetcacheanalytics_performance_utility_MockFrontend
@@ -219,11 +209,8 @@ abstract class tx_enetcacheanalytics_performance_backend_AbstractBackend impleme
 	}
 
 	protected function getTimeTakenMessage() {
-		$message = array(
-			'type' => self::TIME,
-			'value' => $this->getTimeTaken(),
-			'message' => 'Seconds taken',
-		);
+		$message = t3lib_div::makeInstance('tx_enetcacheanalytics_performance_message_TimeMessage');
+		$message['value'] = $this->getTimeTaken();
 		return $message;
 	}
 	protected function timeTrackStart() {

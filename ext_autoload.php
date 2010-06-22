@@ -19,6 +19,12 @@ return array(
 	'tx_enetcacheanalytics_performance_backend_memcachedbackend' => $extensionPath . 'classes/performance/backend/class.tx_enetcacheanalytics_performance_backend_memcachedbackend.php',
 	'tx_enetcacheanalytics_performance_backend_memcachedbackendcompressed' => $extensionPath . 'classes/performance/backend/class.tx_enetcacheanalytics_performance_backend_memcachedbackendcompressed.php',
 	'tx_enetcacheanalytics_performance_backend_pdobackendsqlite' => $extensionPath . 'classes/performance/backend/class.tx_enetcacheanalytics_performance_backend_pdobackendsqlite.php',
+	'tx_enetcacheanalytics_performance_message_message' => $extensionPath . 'classes/performance/message/interfaces/interface.tx_enetcacheanalytics_performance_message_message.php',
+	'tx_enetcacheanalytics_performance_message_abstractmessage' => $extensionPath . 'classes/performance/message/class.tx_enetcacheanalytics_performance_message_abstractmessage.php',
+	'tx_enetcacheanalytics_performance_message_cachemissmessage' => $extensionPath . 'classes/performance/message/class.tx_enetcacheanalytics_performance_message_cachemissmessage.php',
+	'tx_enetcacheanalytics_performance_message_list' => $extensionPath . 'classes/performance/message/class.tx_enetcacheanalytics_performance_message_list.php',
+	'tx_enetcacheanalytics_performance_message_operationcountmessage' => $extensionPath . 'classes/performance/message/class.tx_enetcacheanalytics_performance_message_operationcountmessage.php',
+	'tx_enetcacheanalytics_performance_message_timemessage' => $extensionPath . 'classes/performance/message/class.tx_enetcacheanalytics_performance_message_timemessage.php',
 	'tx_enetcacheanalytics_performance_testcase_testcase' => $extensionPath . 'classes/performance/testcase/interfaces/interface.tx_enetcacheanalytics_performance_testcase_testcase.php',
 	'tx_enetcacheanalytics_performance_testcase_abstracttestcase' => $extensionPath . 'classes/performance/testcase/class.tx_enetcacheanalytics_performance_testcase_abstracttestcase.php',
 	'tx_enetcacheanalytics_performance_testcase_dropbysingletag' => $extensionPath . 'classes/performance/testcase/class.tx_enetcacheanalytics_performance_testcase_dropbysingletag.php',
@@ -34,6 +40,8 @@ return array(
 	'tx_enetcacheanalytics_performance_testcase_setsingletag' => $extensionPath . 'classes/performance/testcase/class.tx_enetcacheanalytics_performance_testcase_setsingletag.php',
 	'tx_enetcacheanalytics_performance_testsuite' => $extensionPath . 'classes/performance/class.tx_enetcacheanalytics_performance_testsuite.php',
 	'tx_enetcacheanalytics_performance_utility_mockfrontend' => $extensionPath . 'classes/performance/utility/class.tx_enetcacheanalytics_performance_utility_mockfrontend.php',
+	'tx_enetcacheanalytics_utility_data' => $extensionPath . 'classes/utility/class.tx_enetcacheanalytics_utility_data.php',
 	'tx_enetcacheanalytics_utility_formhelper' => $extensionPath . 'classes/utility/class.tx_enetcacheanalytics_utility_formhelper.php',
+	'tx_enetcacheanalytics_utility_list' => $extensionPath . 'classes/utility/class.tx_enetcacheanalytics_utility_list.php',
 );
 ?>

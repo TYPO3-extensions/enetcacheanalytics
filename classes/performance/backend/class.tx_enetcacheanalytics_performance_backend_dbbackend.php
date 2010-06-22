@@ -91,66 +91,63 @@ class tx_enetcacheanalytics_performance_backend_DbBackend extends tx_enetcachean
 
 	public function set($numberOfEntries = 100) {
 		$this->queryCountStart();
-		$message = parent::set($numberOfEntries);
-		$message[] = $this->getQueryCountMessage();
-		return $message;
+		$messageList = parent::set($numberOfEntries);
+		$messageList->add($this->getQueryCountMessage());
+		return $messageList;
 	}
 
 	public function setSingleTag($numberOfEntries = 100) {
 		$this->queryCountStart();
-		$message = parent::setSingleTag($numberOfEntries);
-		$message[] = $this->getQueryCountMessage();
-		return $message;
+		$messageList = parent::setSingleTag($numberOfEntries);
+		$messageList->add($this->getQueryCountMessage());
+		return $messageList;
 	}
 
 	public function setKiloBytesOfData($dataSizeInKB = 100) {
 		$this->queryCountStart();
-		$message = parent::setKiloBytesOfData($dataSizeInKB);
-		$message[] = $this->getQueryCountMessage();
-		return $message;
+		$messageList = parent::setKiloBytesOfData($dataSizeInKB);
+		$messageList->add($this->getQueryCountMessage());
+		return $messageList;
 	}
 
 	public function setMultipleTags($numberOfTags = 100) {
 		$this->queryCountStart();
-		$message = parent::setMultipleTags($numberOfTags);
-		$message[] = $this->getQueryCountMessage();
-		return $message;
+		$messageList = parent::setMultipleTags($numberOfTags);
+		$messageList->add($this->getQueryCountMessage());
+		return $messageList;
 	}
 
 	public function dropMultipleTags($numberOfTags = 100) {
 		$this->queryCountStart();
-		$message = parent::dropMultipleTags($numberOfTags);
-		$message[] = $this->getQueryCountMessage();
-		return $message;
+		$messageList = parent::dropMultipleTags($numberOfTags);
+		$messageList->add($this->getQueryCountMessage());
+		return $messageList;
 	}
 
 	public function get($numberOfEntries = 100) {
 		$this->queryCountStart();
-		$message = parent::get($numberOfEntries);
-		$message[] = $this->getQueryCountMessage();
-		return $message;
+		$messageList = parent::get($numberOfEntries);
+		$messageList->add($this->getQueryCountMessage());
+		return $messageList;
 	}
 
 	public function dropBySingleTag($numberOfEntries = 100) {
 		$this->queryCountStart();
-		$message = parent::dropBySingleTag($numberOfEntries);
-		$message[] = $this->getQueryCountMessage();
-		return $message;
+		$messageList = parent::dropBySingleTag($numberOfEntries);
+		$messageList->add($this->getQueryCountMessage());
+		return $messageList;
 	}
 
 	public function flush() {
 		$this->queryCountStart();
-		$message = parent::flush();
-		$message[] = $this->getQueryCountMessage();
-		return $message;
+		$messageList = parent::flush();
+		$messageList->add($this->getQueryCountMessage());
+		return $messageList;
 	}
 
 	protected function getQueryCountMessage() {
-		$message = array(
-			'type' => self::INFO,
-			'value' => $this->getNumberOfQueriesPerformed(),
-			'message' => 'Queries performed',
-		);
+		$message = t3lib_div::makeInstance('tx_enetcacheanalytics_performance_message_OperationCountMessage');
+		$message['value'] = $this->getNumberOfQueriesPerformed();
 		return $message;
 	}
 	protected function queryCountStart() {
