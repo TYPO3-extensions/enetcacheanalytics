@@ -30,7 +30,7 @@
  * @package TYPO3
  * @subpackage tx_enetcacheanalytics
  */
-class tx_enetcacheanalytics_utility_UserData extends tx_enetcacheanalytics_utility_Data {
+class tx_enetcacheanalytics_utility_UserData extends tx_enetcacheanalytics_utility_Data implements t3lib_Singleton {
 	/**
 	 * @var array List of user data latest form selections
 	 */
@@ -61,6 +61,22 @@ class tx_enetcacheanalytics_utility_UserData extends tx_enetcacheanalytics_utili
 		if (is_string($moduleUc['performance_selectedMessages'])) {
 			$this['performance_selectedMessages'] = unserialize($moduleUc['performance_selectedMessages']);
 		}
+	}
+
+	/**
+	 * Return array with performance_selectedMessages set to 1
+	 *
+	 * @return array Enabled messages
+	 */
+	public function getEnabledMessages() {
+		$enabledMessages = array();
+		$messages = $this['performance_selectedMessages'];
+		foreach ($messages as $messageType => $enabled) {
+			if ($enabled) {
+				$enabledMessages[] = $messageType;
+			}
+		}
+		return $enabledMessages;
 	}
 
 	/**

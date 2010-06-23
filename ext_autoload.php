@@ -10,6 +10,7 @@ return array(
 	'tx_enetcacheanalytics_bemodule' => $extensionPath . 'classes/bemodule/interfaces/interface.tx_enetcacheanalytics_bemodule.php',
 	'tx_enetcacheanalytics_bemodule_cacheanalyzer' => $extensionPath . 'classes/bemodule/class.tx_enetcacheanalytics_bemodule_cacheanalyzer.php',
 	'tx_enetcacheanalytics_bemodule_performance' => $extensionPath . 'classes/bemodule/class.tx_enetcacheanalytics_bemodule_performance.php',
+	'tx_enetcacheanalytics_bemodule_performance_view_resulttable' => $extensionPath . 'classes/bemodule/class.tx_enetcacheanalytics_bemodule_performance_view_resulttable.php',
 	'tx_enetcacheanalytics_exception_invaliddata' => $extensionPath . 'classes/exception/class.tx_enetcacheanalytics_exception_invaliddata.php',
 	'tx_enetcacheanalytics_exception_unavailablebackend' => $extensionPath . 'classes/exception/class.tx_enetcacheanalytics_exception_unavailablebackend.php',
 	'tx_enetcacheanalytics_performance_backend_backend' => $extensionPath . 'classes/performance/backend/interfaces/interface.tx_enetcacheanalytics_performance_backend_backend.php',

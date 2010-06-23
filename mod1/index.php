@@ -108,6 +108,10 @@ class tx_enetcacheanalytics_module1 extends t3lib_SCbase {
 			'CONTENT' => $this->contentMarker,
 		);
 
+			// Persist user data be_module data
+			// @TODO: restructure weird array value handling
+		t3lib_div::makeInstance('tx_enetcacheanalytics_utility_UserData')->persist();
+
 			// Render full page content
 		$content = $this->doc->startPage('enet content cache analytics tool');
 		$content .= $this->doc->moduleBody(array(), array('csh' => ''), $markers);
@@ -235,6 +239,20 @@ class tx_enetcacheanalytics_module1 extends t3lib_SCbase {
 	 */
 	public function setAdditionalJavascript($javascript) {
 		$this->doc->JScodeArray[] = $javascript;
+	}
+
+	/**
+	 * Load additional javascript files
+	 *
+	 * @param array Javascript files to include, relative to extension base path
+	 * @return void
+	 */
+	public function setAdditionalJavascriptFiles(array $files = array()) {
+		foreach ($files as $file) {
+			if (strlen($file)) {
+				$this->doc->getPageRenderer()->addJsFile(t3lib_extMgm::extRelPath(self::extKey) . $file);
+			}
+		}
 	}
 
 	/**
