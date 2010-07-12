@@ -109,6 +109,9 @@ class tx_enetcacheanalytics_bemodule_performance implements tx_enetcacheanalytic
 			return;
 		}
 		switch ($this->GPvars['tx_enetcacheanalytics_action']) {
+			case 'fold':
+				$this->setSectionCollapsedStatus();
+			break;
 			case 'performTests':
 				$this->setSelectedBackends();
 				$this->setSelectedTestcases();
@@ -164,6 +167,15 @@ class tx_enetcacheanalytics_bemodule_performance implements tx_enetcacheanalytic
 			$content[] = $this->renderStatistics();
 		}
 		return(implode(chr(10), $content));
+	}
+
+	/**
+	 * Set userdata options of collapsed section based on given form input
+	 *
+	 * @return void
+	 */
+	protected function setSectionCollapsedStatus() {
+		$this->userData['performance_collapsed' . $this->GPvars['tx_enetcacheanalytics_foldType']] = $this->GPvars['tx_enetcacheanalytics_foldState'] == '1' ? 1 : 0;
 	}
 
 	/**
@@ -229,7 +241,7 @@ class tx_enetcacheanalytics_bemodule_performance implements tx_enetcacheanalytic
 			$content[] = $backend . '<br />';
 		}
 		$content[] = tx_enetcacheanalytics_utility_formhelper::makeHiddenField('testcaseSelectionDone', 1);
-		return $this->finalizeSection($content, 'Select testcases to run');
+		return $this->finalizeCollapsableSection($content, 'Select testcases to run', 'Testcases');
 	}
 
 	/**
@@ -255,7 +267,7 @@ class tx_enetcacheanalytics_bemodule_performance implements tx_enetcacheanalytic
 			$content[] = $backend . '<br />';
 		}
 		$content[] = tx_enetcacheanalytics_utility_formhelper::makeHiddenField('backendSelectionDone', 1);
-		return $this->finalizeSection($content, 'Select backends to run tests on');
+		return $this->finalizeCollapsableSection($content, 'Select backends to run tests on', 'Backends');
 	}
 
 	/**
@@ -283,7 +295,7 @@ class tx_enetcacheanalytics_bemodule_performance implements tx_enetcacheanalytic
 			$content[] = '<span class="' . $messageType . '">' . $message['message'] . '</span><br />';
 		}
 		$content[] = tx_enetcacheanalytics_utility_formhelper::makeHiddenField('messageTypeSelectionDone', 1);
-		return $this->finalizeSection($content, 'Select different message types to show');
+		return $this->finalizeCollapsableSection($content, 'Select different message types to show', 'Messages');
 	}
 
 	/**
@@ -308,7 +320,7 @@ class tx_enetcacheanalytics_bemodule_performance implements tx_enetcacheanalytic
 			$content[] = $renderer . '<br />';
 		}
 		$content[] = tx_enetcacheanalytics_utility_formhelper::makeHiddenField('rendererSelectionDone', 1);
-		return $this->finalizeSection($content, 'Show gathered data as');
+		return $this->finalizeCollapsableSection($content, 'Show gathered data as', 'Renderer');
 	}
 
 	/**
@@ -383,6 +395,22 @@ class tx_enetcacheanalytics_bemodule_performance implements tx_enetcacheanalytic
 	protected function finalizeSection($contentArray, $sectionName = '') {
 		$content = $this->pObj->getSection($sectionName, implode(chr(10), $contentArray), 0, 1);
 		$content .= $this->pObj->doc->divider(5);
+		return $content;
+	}
+
+	/**
+	 * Wrap content in collapsable section
+	 */
+	protected function finalizeCollapsableSection($contentArray, $sectionName, $sectionIdentifier) {
+		$collapsed = $this->userData['performance_collapsed' . $sectionIdentifier] == 1 ? TRUE : FALSE;
+		$sectionName = '<img title="Expand" alt="Expand" onclick="setAction(\'fold\'); setFieldValue(\'foldType\', \'' . $sectionIdentifier . '\'); setFieldValue(\'foldState\', \'' . ($collapsed ? 0 : 1) . '\'); document.enetcacheanalytics.submit();" src="../../../../typo3/gfx/select' . ($collapsed ? 'all' : 'none') . '.gif" style="cursor: pointer;" />&nbsp;' . $sectionName;
+		if ($collapsed) {
+			array_unshift($contentArray, '<div style="visibility:hidden; height:0px;">');
+			$contentArray[] = '</div>';
+			$content = $this->pObj->getSection($sectionName, implode(chr(10), $contentArray), 0, 1);
+		} else {
+			$content = $this->pObj->getSection($sectionName, implode(chr(10), $contentArray), 0, 1);
+		}
 		return $content;
 	}
 } // end of class

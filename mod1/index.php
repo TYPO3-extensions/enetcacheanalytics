@@ -293,7 +293,7 @@ class tx_enetcacheanalytics_module1 extends t3lib_SCbase {
 	 * @return string HTML section
 	 */
 	public function getSection($title, $sectionHTML) {
-		return $this->doc->section($title, $sectionHTML, 0, 1);
+		return $this->doc->section($title, $sectionHTML, FALSE, TRUE, 0, TRUE);
 	}
 
 	/**
