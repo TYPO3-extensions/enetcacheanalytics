@@ -130,6 +130,16 @@ class tx_enetcacheanalytics_bemodule_performance implements tx_enetcacheanalytic
 	}
 
 	/**
+	 * Load additional javascript files
+	 *
+	 * @param array Javascript files to include, relative to extension base path
+	 * @return void
+	 */
+	public function setAdditionalJavascriptFiles(array $files = array()) {
+		$this->pObj->setAdditionalJavascriptFiles($files);
+	}
+
+	/**
 	 * Render additional drop downs and actions in document header
 	 *
 	 * @return string select box HTML
@@ -150,6 +160,7 @@ class tx_enetcacheanalytics_bemodule_performance implements tx_enetcacheanalytic
 		$content[] = $this->renderMessageTypeSelectionSection();
 		$this->renderUnavailableBackendsFlashMessages();
 		if (count($this->testStatistics)) {
+			$content[] = $this->renderStatisticsGraph();
 			$content[] = $this->renderStatisticsTable();
 		}
 		return(implode(chr(10), $content));
@@ -297,6 +308,16 @@ class tx_enetcacheanalytics_bemodule_performance implements tx_enetcacheanalytic
 	protected function renderStatisticsTable() {
 		$tableRenderer = t3lib_div::makeInstance('tx_enetcacheanalytics_bemodule_performance_view_ResultTable', $this);
 		$content = $tableRenderer->render();
+		$testsuiteRuntime = $this->testSuite->getRuntime();
+		return $this->finalizeSection(array($content), 'Testsuite runtime: ' . $this->formatTimeMessage($testsuiteRuntime['value']));
+	}
+
+	/**
+	 * @return string HTML of statistic graphs
+	 */
+	protected function renderStatisticsGraph() {
+		$graphRenderer = t3lib_div::makeInstance('tx_enetcacheanalytics_bemodule_performance_view_ResultGraph', $this);
+		$content = $graphRenderer->render();
 		$testsuiteRuntime = $this->testSuite->getRuntime();
 		return $this->finalizeSection(array($content), 'Testsuite runtime: ' . $this->formatTimeMessage($testsuiteRuntime['value']));
 	}
