@@ -158,10 +158,10 @@ class tx_enetcacheanalytics_bemodule_performance implements tx_enetcacheanalytic
 		$content[] = $this->renderBackendSelectionSection();
 		$content[] = $this->renderTestcaseSelectionSection();
 		$content[] = $this->renderMessageTypeSelectionSection();
+		$content[] = $this->renderStatisticsRendererSelectionSection();
 		$this->renderUnavailableBackendsFlashMessages();
 		if (count($this->testStatistics)) {
-			$content[] = $this->renderStatisticsGraph();
-			$content[] = $this->renderStatisticsTable();
+			$content[] = $this->renderStatistics();
 		}
 		return(implode(chr(10), $content));
 	}
@@ -287,6 +287,31 @@ class tx_enetcacheanalytics_bemodule_performance implements tx_enetcacheanalytic
 	}
 
 	/**
+	 * Show checkboxes to select graph and/or table output
+	 *
+	 * @returnt string HTML of selection
+	 */
+	protected function renderStatisticsRendererSelectionSection() {
+		$content = array();
+		$possibleRenderer = array('Graph', 'Table');
+		foreach ($possibleRenderer as $renderer) {
+			$selected = TRUE;
+			$userUc = $this->userData['performance_selectedRenderer'];
+			if (isset($this->GPvars['tx_enetcacheanalytics_rendererSelectionDone'])) {
+				$selected = $this->GPvars['tx_enetcacheanalytics_rendererSelection'][$renderer] ? TRUE : FALSE;
+				$userUc[$renderer] = $selected;
+			} elseif (isset($userUc[$renderer])) {
+				$selected = $userUc[$renderer];
+			}
+			$this->userData['performance_selectedRenderer'] = $userUc;
+			$content[] = tx_enetcacheanalytics_utility_formhelper::makeCheckbox('rendererSelection', 1, $selected, $renderer);
+			$content[] = $renderer . '<br />';
+		}
+		$content[] = tx_enetcacheanalytics_utility_formhelper::makeHiddenField('rendererSelectionDone', 1);
+		return $this->finalizeSection($content, 'Show gathered data as');
+	}
+
+	/**
 	 * Render unavailable backend flash messages after test run
 	 *
 	 * @return void
@@ -300,6 +325,23 @@ class tx_enetcacheanalytics_bemodule_performance implements tx_enetcacheanalytic
 				);
 			}
 		}
+	}
+
+	/**
+	 * Render statistics output with selected renderers
+	 *
+	 * @return string HTML
+	 */
+	protected function renderStatistics() {
+		$userUc = $this->userData['performance_selectedRenderer'];
+		$content = array();
+		if ($userUc['Graph']) {
+			$content[] = $this->renderStatisticsGraph();
+		}
+		if ($userUc['Table']) {
+			$content[] = $this->renderStatisticsTable();
+		}
+		return implode(chr(10), $content);
 	}
 
 	/**

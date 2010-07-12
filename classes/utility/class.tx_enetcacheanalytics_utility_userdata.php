@@ -39,6 +39,7 @@ class tx_enetcacheanalytics_utility_UserData extends tx_enetcacheanalytics_utili
 		'performance_selectedBackends' => array(), // Selected backend of performance module
 		'performance_selectedTestcases' => array(), // Selected testcases in performance module
 		'performance_selectedMessages' => array(), // Selected messages to view in performance module
+		'performance_selectedRenderer' => array(), // Selected messages to view in performance module
 	);
 
 	/**
@@ -60,6 +61,9 @@ class tx_enetcacheanalytics_utility_UserData extends tx_enetcacheanalytics_utili
 		}
 		if (is_string($moduleUc['performance_selectedMessages'])) {
 			$this['performance_selectedMessages'] = unserialize($moduleUc['performance_selectedMessages']);
+		}
+		if (is_string($moduleUc['performance_selectedRenderer'])) {
+			$this['performance_selectedRenderer'] = unserialize($moduleUc['performance_selectedRenderer']);
 		}
 	}
 
@@ -90,6 +94,7 @@ class tx_enetcacheanalytics_utility_UserData extends tx_enetcacheanalytics_utili
 		$moduleUc['performance_selectedBackends'] = serialize($this['performance_selectedBackends']);
 		$moduleUc['performance_selectedTestcases'] = serialize($this['performance_selectedTestcases']);
 		$moduleUc['performance_selectedMessages'] = serialize($this['performance_selectedMessages']);
+		$moduleUc['performance_selectedRenderer'] = serialize($this['performance_selectedRenderer']);
 		$GLOBALS['BE_USER']->pushModuleData('tools_txenetcacheanalyticsM1', $moduleUc);
 	}
 }
