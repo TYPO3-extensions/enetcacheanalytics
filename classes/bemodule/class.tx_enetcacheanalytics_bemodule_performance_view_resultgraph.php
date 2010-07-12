@@ -41,11 +41,21 @@ class tx_enetcacheanalytics_bemodule_performance_view_ResultGraph {
 	protected $testStatistics = array();
 
 	/**
+	 * Graph parameters
+	 */
+	protected static $graphWidth = 1000;
+	protected static $graphHeight = 350;
+
+	/**
 	 * Default constructor
 	 */
 	public function __construct($pObj) {
 		$this->pObj = $pObj;
 		$this->testStatistics = $pObj->getTestResults();
+
+			// Add ezcomponents autoloader
+		require_once(t3lib_extMgm::extPath('enetcacheanalytics') . 'res/ezcomponents/Base/src/base.php');
+		spl_autoload_register(array('ezcBase', 'autoload'));
 	}
 
 	/**
@@ -56,17 +66,79 @@ class tx_enetcacheanalytics_bemodule_performance_view_ResultGraph {
 	public function render() {
 		$content = array();
 		$content[] = $this->renderGraphs();
-		return(implode(chr(10), $content));
+		return implode(chr(10), $content);
 	}
 
 	protected function renderGraphs() {
-		$chartsDataArray = $this->getChartsDataArray();
-		return $content;
+		$chartsDataArray = $this->convertChartsDataArray();
+		$content = array();
+		foreach ($chartsDataArray as $number => $chartsData) {
+			$content[] = $this->renderChart($chartsData);
+		}
+		return implode(chr(10), $content);
 	}
 
-	protected function getChartsDataArray() {
-		$backendNames = array_keys($this->testStatistics);
-		$aBackendName = current($backendNames);
+	/**
+	 * Render a chart with ezComponents Graph Component
+	 *
+	 * @param array Test values and title
+	 * @return string HTML of a chart
+	 */
+	protected function renderChart($data) {
+		$graph = new ezcGraphLineChart();
+		$graph->palette = new ezcGraphPaletteBlack();
+
+		$graph->title->font->maxFontSize = 16;
+		$graph->title->font->name = 'sans-serif';
+		$graph->title->background = '#000000';
+		$graph->title = $data['title'];
+		$graph->title->borderWidth = 0;
+		$graph->title->padding = 2;
+		$graph->title->margin = 0;
+
+		$graph->legend->position = ezcGraph::LEFT;
+		$graph->legend->background = '#000000';
+		$graph->legend->font->name = 'sans-serif';
+		$graph->legend->borderWidth = 0;
+		$graph->legend->padding = 2;
+		$graph->legend->margin = 0;
+		$graph->legend->symbolSize = 10;
+
+		$graph->options->font->maxFontSize = 12;
+		$graph->options->font->name =  'serif';
+		$graph->options->highlightSize = 9;
+
+		$graph->yAxis = new ezcGraphChartElementNumericAxis();
+		$graph->yAxis->min = 0;
+		$graph->yAxis->label = 'Seconds';
+
+		$graph->xAxis = new ezcGraphChartElementNumericAxis();
+		$graph->xAxis->min = 0;
+
+		foreach ($data['xy'] as $backendName => $backendValues) {
+			$graph->data[$backendName] = new ezcGraphArrayDataSet($backendValues);
+			$graph->data[$backendName]->displayType = ezcGraph::LINE;
+			$graph->data[$backendName]->highlight = TRUE;
+		}
+
+			// Render graph content to buffer and fill to local variable
+		ob_start();
+		$graph->renderToOutput(self::$graphWidth, self::$graphHeight);
+		$chartContent = ob_get_contents();
+		ob_end_clean();
+
+			// Stuff content to local tempfile and create HTML foo
+		$filename = t3lib_div::shortMD5($chartContent) . '.svg';
+		t3lib_div::writeFileToTypo3tempDir(PATH_site . 'typo3temp/' . 'tx_enetcacheanalytics/' . $filename, $chartContent);
+		return '<div style="margin-bottom: 3px;"><object data="../typo3temp/tx_enetcacheanalytics/' . $filename .'" width="' . self::$graphWidth . '" height="' . self::$graphHeight . '" /></div>';
+	}
+
+	/**
+	 * Convert test array with data to usable charts data
+	 *
+	 * @return array Testcase array with Title, backendName and TestValues
+	 */
+	protected function convertChartsDataArray() {
 		$testNames = array_keys(current($this->testStatistics));
 
 			// Initialize data array
@@ -74,22 +146,22 @@ class tx_enetcacheanalytics_bemodule_performance_view_ResultGraph {
 		foreach ($testNames as $testName) {
 			$chartsDataArray[] = array(
 				'title' => $testName,
-				'x' => array_keys($this->testStatistics[$aBackendName][$testName]),
-				'y' => $backendNames,
-				'labels' => $backendNames
+				'xy' => array(),
 			);
 		}
 
 			// Now calculate prime numbers :)
 		$backendCounter = 0;
-		foreach ($this->testStatistics as $backendTests) {
+		foreach ($this->testStatistics as $backendName => $backendTests) {
 			$testcaseCounter = 0;
 			foreach ($backendTests as $testcase) {
-				$chartsDataArray[$testcaseCounter]['y'][$backendCounter] = array();
-				foreach ($testcase as $testrunMessageList) {
+				$chartsDataArray[$testcaseCounter]['xy'][$backendName] = array();
+					// Add a dummy 0 / 0 value
+				$chartsDataArray[$testcaseCounter]['xy'][$backendName][0] = 0;
+				foreach ($testcase as $testrunVariable => $testrunMessageList) {
 					foreach ($testrunMessageList as $message) {
 						if ($message instanceof tx_enetcacheanalytics_performance_message_TimeMessage) {
-							$chartsDataArray[$testcaseCounter]['y'][$backendCounter][] = $this->pObj->formatTimeMessage($message['value']);
+							$chartsDataArray[$testcaseCounter]['xy'][$backendName][$testrunVariable] = $this->pObj->formatTimeMessage($message['value']);
 						}
 					}
 				}
