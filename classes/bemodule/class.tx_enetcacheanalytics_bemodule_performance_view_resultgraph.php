@@ -41,17 +41,6 @@ class tx_enetcacheanalytics_bemodule_performance_view_ResultGraph {
 	protected $testStatistics = array();
 
 	/**
-	 * @var array Raphael Javascript files
-	 */
-	protected static $javascriptFiles = array(
-		'res/js/raphael/raphael.js',
-		'res/js/raphael/g.raphael.js',
-		'res/js/raphael/g.pie.js',
-		'res/js/raphael/g.dot.js',
-		'res/js/raphael/g.line.js',
-	);
-
-	/**
 	 * Default constructor
 	 */
 	public function __construct($pObj) {
@@ -71,82 +60,7 @@ class tx_enetcacheanalytics_bemodule_performance_view_ResultGraph {
 	}
 
 	protected function renderGraphs() {
-		$this->pObj->setAdditionalJavascriptFiles(self::$javascriptFiles);
 		$chartsDataArray = $this->getChartsDataArray();
-//		debug($chartsDataArray);
-
-		$chartJS = array();
-		$chartCounter = 0;
-		foreach ($chartsDataArray as $chartNumber => $chartData) {
-			$chartJS[] = $this->getLineChartJS($chartNumber, $chartData);
-			$chartCounter ++;
-		}
-
-		$chartMethodCallJS = '';
-		$chartHTML = '';
-		for ($i = 0; $i < $chartCounter; $i ++) {
-			$chartMethodCallJS .= 'tx_enetcacheanalytics_chart' . $i . '();';
-			$chartHTML .= '<div id="chart' . $i . '"></div>';
-		}
-		$content = '
-			<script type="text/javascript" charset="utf-8">
-				window.onload = function () {
-					' . $chartMethodCallJS . '
-				}
-				' . implode(chr(10), $chartJS) . '
-			</script>
-			' . $chartHTML . '
-		';
-		return $content;
-	}
-
-	protected function getLineChartJS($chartNumber, $chartData) {
-		$lines = array();
-		foreach ($chartData['y'] as $lineNumber => $lineValues) {
-			$lines[] = '[' . implode(',', $lineValues) . ']';
-		}
-		$y = '[' . implode(',', $lines) . ']';
-		$content = '
-			tx_enetcacheanalytics_chart' . $chartNumber . ' = function() {
-				var r = Raphael("chart' . $chartNumber . '", 300, 300);
-
-				r.g.txtattr.font = "12px \'Fontin Sans\', Fontin-Sans, sans-serif";
-				r.g.text(110, 10, "' . $chartData['title'] . '");
-				r.g.txtattr.font = "10px \'Fontin Sans\', Fontin-Sans, sans-serif";
-
-				var x = [], y = [];
-				x = [' . implode(',', $chartData['x']) . '];
-				y = ' . $y . ';
-
-				chart = r.g.linechart(20, 10, 200, 200, x, y, {
-					nostroke: false,
-					axis: "0 0 1 1",
-					symbol: "o",
-					axisxstep: 5,
-				});
-				chart.hoverColumn(function() {
-					this.tags = r.set();
-					for (var i = 0, ii = this.y.length; i < ii; i++) {
-						this.tags.push(
-							r.g.tag(this.x, this.y[i], this.values[i], 0, 8)
-								.insertBefore(this).attr([{fill: "#fff"}, {fill: this.symbols[i].attr("fill")}]));
-					}
-				}, function () {
-					this.tags && this.tags.remove();
-				});
-
-/*
-				var i = 0;
-				var labels = [\'' . implode(',', $chartData['labels']) . '\'];
-				for each (var lab in chart.axis[0].text.items) {
-					if (labels[i-1]) {
-						lab.attr({"text": labels[i-1]})
-					}
-					i ++;
-				}
-*/
-			}
-		';
 		return $content;
 	}
 

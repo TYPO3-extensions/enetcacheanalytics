@@ -160,7 +160,7 @@ class tx_enetcacheanalytics_bemodule_performance implements tx_enetcacheanalytic
 		$content[] = $this->renderMessageTypeSelectionSection();
 		$this->renderUnavailableBackendsFlashMessages();
 		if (count($this->testStatistics)) {
-			$content[] = $this->renderStatisticsGraph();
+//			$content[] = $this->renderStatisticsGraph();
 			$content[] = $this->renderStatisticsTable();
 		}
 		return(implode(chr(10), $content));
