@@ -32,7 +32,7 @@
 class tx_enetcacheanalytics_performance_testcase_SetMultipleTimes extends tx_enetcacheanalytics_performance_testcase_AbstractTestcase {
 	public function run() {
 		$stats = array();
-		for ($i = 1; $i <= 3; $i ++) {
+		for ($i = 1; $i <= $this->numberOfDataPoints; $i ++) {
 			$stats[$i] = $this->backend->set(100);
 		}
 		return $stats;

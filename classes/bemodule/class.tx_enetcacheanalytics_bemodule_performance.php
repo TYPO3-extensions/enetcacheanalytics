@@ -115,6 +115,7 @@ class tx_enetcacheanalytics_bemodule_performance implements tx_enetcacheanalytic
 			case 'performTests':
 				$this->setSelectedBackends();
 				$this->setSelectedTestcases();
+				$this->intitializeTestSuiteOptions();
 				$this->testSuite->run();
 				$this->testStatistics = $this->testSuite->getTestResults();
 				$this->unavailableBackends = $this->testSuite->getUnavailableBackends();
@@ -158,6 +159,7 @@ class tx_enetcacheanalytics_bemodule_performance implements tx_enetcacheanalytic
 	 */
 	protected function renderMainModuleContent() {
 		$content = array();
+		$content[] = $this->renderTestSuiteOptionsSelectionSection();
 		$content[] = $this->renderBackendSelectionSection();
 		$content[] = $this->renderTestcaseSelectionSection();
 		$content[] = $this->renderMessageTypeSelectionSection();
@@ -216,6 +218,45 @@ class tx_enetcacheanalytics_bemodule_performance implements tx_enetcacheanalytic
 			}
 			$this->testSuite->setSelectedTestcases($selectedTestcases);
 		}
+	}
+
+	/**
+	 * Set chosen number of data points and scale factor to testsuite object
+	 *
+	 * @return void
+	 */
+	protected function intitializeTestSuiteOptions() {
+		if (isset($this->GPvars['tx_enetcacheanalytics_testSuiteOptionsSelectionDone'])) {
+			$this->userData['performance_numberOfDataPoints'] = (int)$this->GPvars['tx_enetcacheanalytics_testSuiteOptionsSelection_numberOfDataPoints'];
+			$this->userData['performance_scaleFactor'] = (int)$this->GPvars['tx_enetcacheanalytics_testSuiteOptionsSelection_scaleFactor'];
+		}
+		if ((int)$this->userData['performance_numberOfDataPoints'] < 3) {
+			$this->userData['performance_numberOfDataPoints'] = 3;
+		}
+		if ((int)$this->userData['performance_scaleFactor'] <= 100) {
+			$this->userData['performance_scaleFactor'] = 200;
+		}
+
+		$this->testSuite->setNumberOfDataPoints($this->userData['performance_numberOfDataPoints']);
+		$this->testSuite->setScaleFactor($this->userData['performance_scaleFactor']);
+	}
+
+	/**
+	 * Chose number of data points and scale factor
+	 *
+	 * @return void
+	 */
+	protected function renderTestSuiteOptionsSelectionSection() {
+		$content = array();
+
+		$content[] = tx_enetcacheanalytics_utility_formhelper::makeTextInput('testSuiteOptionsSelection_numberOfDataPoints', 5, $this->userData['performance_numberOfDataPoints']);
+		$content[] = 'Number of data points to calculate for a test<br />';
+
+		$content[] = tx_enetcacheanalytics_utility_formhelper::makeTextInput('testSuiteOptionsSelection_scaleFactor', 5, $this->userData['performance_scaleFactor']);
+		$content[] = 'Scale factor: Increment every test point by this value (in percent, 100 = no scale up, 200 = double value)<br />';
+
+		$content[] = tx_enetcacheanalytics_utility_formhelper::makeHiddenField('testSuiteOptionsSelectionDone', 1);
+		return $this->finalizeCollapsableSection($content, 'Test suite options', 'TestSuiteOptions');
 	}
 
 	/**

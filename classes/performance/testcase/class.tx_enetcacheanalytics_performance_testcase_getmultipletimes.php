@@ -42,7 +42,7 @@ class tx_enetcacheanalytics_performance_testcase_GetMultipleTimes extends tx_ene
 	 */
 	public function run() {
 		$stats = array();
-		for ($i = 1; $i <= 3; $i ++) {
+		for ($i = 1; $i <= $this->numberOfDataPoints; $i ++) {
 			$stats[$i] = $this->backend->get(100);
 		}
 		return $stats;

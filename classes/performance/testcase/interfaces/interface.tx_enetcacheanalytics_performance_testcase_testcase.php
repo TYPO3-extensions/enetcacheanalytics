@@ -51,5 +51,21 @@ interface tx_enetcacheanalytics_performance_testcase_Testcase {
 	 * Get testcase name
 	 */
 	public function getName();
+
+	/**
+	 * Initialize the scale factor
+	 *
+	 * @param integer scale factor in percent
+	 * @return void
+	 */
+	public function setScaleFactor($factor = 400);
+
+	/**
+	 * Set number of data points to retrieve
+	 *
+	 * @param integer Number of points
+	 * @return void
+	 */
+	public function setNumberOfDataPoints($points = 3);
 }
 ?>

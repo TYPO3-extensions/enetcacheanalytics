@@ -29,14 +29,13 @@
  * @author Christian Kuhn <lolli@schwarzbu.ch>
  */
 class tx_enetcacheanalytics_performance_testcase_SetMultipleTags extends tx_enetcacheanalytics_performance_testcase_AbstractTestcase {
-	/**
-	 * Set 100 cache entries with different number of attached tags to backend
-	 */
+	protected $startValue = 20;
+
 	public function run() {
 		$stats = array();
-		$numberOfTags = array(20, 80, 320);
-		foreach ($numberOfTags as $number) {
-			$stats[$number] = $this->backend->setMultipleTags($number);
+		for ($i = 1; $i <= $this->numberOfDataPoints; $i ++) {
+			$currentValue = $currentValue ? $this->getNextDataValue($currentValue) : $this->startValue;
+			$stats[$currentValue] = $this->backend->setMultipleTags($currentValue);
 			$this->backend->flush();
 		}
 		return $stats;

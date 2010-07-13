@@ -29,11 +29,16 @@
  * @author Christian Kuhn <lolli@schwarzbu.ch>
  */
 class tx_enetcacheanalytics_performance_testcase_SetSingleTag extends tx_enetcacheanalytics_performance_testcase_AbstractTestcase {
+	/**
+	 * Start with 100 cache entries to set
+	 */
+	protected $startValue = 100;
+
 	public function run() {
 		$stats = array();
-		$numberOfEntries = array(100, 400, 1600);
-		foreach ($numberOfEntries as $number) {
-			$stats[$number] = $this->backend->setSingleTag($number);
+		for ($i = 1; $i <= $this->numberOfDataPoints; $i ++) {
+			$currentValue = $currentValue ? $this->getNextDataValue($currentValue) : $this->startValue;
+			$stats[$currentValue] = $this->backend->setSingleTag($currentValue);
 			$this->backend->flush();
 		}
 		return $stats;

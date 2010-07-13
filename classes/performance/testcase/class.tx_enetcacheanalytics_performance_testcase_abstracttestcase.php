@@ -40,6 +40,21 @@ abstract class tx_enetcacheanalytics_performance_testcase_AbstractTestcase imple
 	protected $backend;
 
 	/**
+	 * @var integer First value to begin with
+	 */
+	protected $startValue = 1;
+
+	/**
+	 * @var integer Scale factor in percent: If start value is 40, with scale 400 -> next value will be 160
+	 */
+	protected $scaleFactor = 400;
+
+	/**
+	 * @var integer Number of data points to calculate
+	 */
+	protected $numberOfDataPoints = 3;
+
+	/**
 	 * Default constructor initializes test case name
 	 */
 	public function __construct() {
@@ -72,6 +87,36 @@ abstract class tx_enetcacheanalytics_performance_testcase_AbstractTestcase imple
 	 */
 	public function getName() {
 		return $this->name;
+	}
+
+	/**
+	 * Initialize the scale factor
+	 *
+	 * @param integer scale factor in percent
+	 * @return void
+	 */
+	public function setScaleFactor($factor = 400) {
+		$this->scaleFactor = $factor;
+	}
+
+	/**
+	 * Set number of data points to retrieve
+	 *
+	 * @param integer Number of points
+	 * @return void
+	 */
+	public function setNumberOfDataPoints($points = 3) {
+		$this->numberOfDataPoints = $points;
+	}
+
+	/**
+	 * Calculate next data value based on scaleFactor
+	 *
+	 * @param integer Current value
+	 * @return integer Next value
+	 */
+	protected function getNextDataValue($currentValue = 1) {
+		return floor(($currentValue * ($this->scaleFactor / 100)));
 	}
 } // end of class
 ?>

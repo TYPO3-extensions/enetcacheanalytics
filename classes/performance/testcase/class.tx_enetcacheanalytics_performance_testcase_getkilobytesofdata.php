@@ -29,15 +29,17 @@
  * @author Christian Kuhn <lolli@schwarzbu.ch>
  */
 class tx_enetcacheanalytics_performance_testcase_GetKiloBytesOfData extends tx_enetcacheanalytics_performance_testcase_AbstractTestcase {
+	protected $startValue = 100;
+
 	/**
 	 * Initialize by setting entries with different data sizes, then measure time to get them
 	 */
 	public function run() {
 		$stats = array();
-		$dataSizes = array(100, 400, 1600);
-		foreach ($dataSizes as $dataSize) {
-			$this->backend->setKiloBytesOfData($dataSize);
-			$stats[$dataSize] = $this->backend->get(40);
+		for ($i = 1; $i <= $this->numberOfDataPoints; $i ++) {
+			$currentValue = $currentValue ? $this->getNextDataValue($currentValue) : $this->startValue;
+			$this->backend->setKiloBytesOfData($currentValue);
+			$stats[$currentValue] = $this->backend->get(40);
 			$this->backend->flush();
 		}
 		return $stats;

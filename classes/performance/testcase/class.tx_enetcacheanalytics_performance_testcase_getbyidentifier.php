@@ -29,15 +29,17 @@
  * @author Christian Kuhn <lolli@schwarzbu.ch>
  */
 class tx_enetcacheanalytics_performance_testcase_GetByIdentifier extends tx_enetcacheanalytics_performance_testcase_AbstractTestcase {
+	protected $startValue = 100;
+
 	/**
 	 * Initialize by setting a number of entries, then measure time to get them
 	 */
 	public function run() {
 		$stats = array();
-		$numberOfEntries = array(100, 400, 1600);
-		foreach ($numberOfEntries as $number) {
-			$this->backend->set($number);
-			$stats[$number] = $this->backend->get($number);
+		for ($i = 1; $i <= $this->numberOfDataPoints; $i ++) {
+			$currentValue = $currentValue ? $this->getNextDataValue($currentValue) : $this->startValue;
+			$this->backend->set($currentValue);
+			$stats[$currentValue] = $this->backend->get($currentValue);
 			$this->backend->flush();
 		}
 		return $stats;

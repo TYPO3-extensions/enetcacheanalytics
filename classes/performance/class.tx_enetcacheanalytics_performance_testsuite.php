@@ -85,6 +85,16 @@ class tx_enetcacheanalytics_performance_TestSuite {
 	protected $runtime;
 
 	/**
+	 * @var integer Scale factor in percent: If start value is 40, with scale 400 -> next value will be 160
+	 */
+	protected $scaleFactor = 400;
+
+	/**
+	 * @var integer Number of data points to calculate
+	 */
+	protected $numberOfDataPoints = 3;
+
+	/**
 	 * Default constructor sets selected backends to all available backends
 	 */
 	public function __construct() {
@@ -136,6 +146,8 @@ class tx_enetcacheanalytics_performance_TestSuite {
 		foreach ($this->selectedTestcases as $testcase) {
 			$testcaseInstance = t3lib_div::makeInstance('tx_enetcacheanalytics_performance_testcase_' . $testcase);
 			$testcaseInstance->setUp($backend);
+			$testcaseInstance->setNumberOfDataPoints($this->numberOfDataPoints);
+			$testcaseInstance->setScaleFactor($this->scaleFactor);
 			$testcaseName = $testcaseInstance->getName();
 			$this->testResults[$backendName][$testcaseName] = $testcaseInstance->run();
 			$testcaseInstance->tearDown();
@@ -178,6 +190,26 @@ class tx_enetcacheanalytics_performance_TestSuite {
 	 */
 	public function setSelectedTestcases(array $testcases = array()) {
 		$this->selectedTestcases = $testcases;
+	}
+
+	/**
+	 * Set number of datapoints to calculate for each test
+	 *
+	 * @param integer Number of data points
+	 * @return void
+	 */
+	public function setNumberOfDataPoints($number = 3) {
+		$this->numberOfDataPoints = $number;
+	}
+
+	/**
+	 * Set scale factor
+	 *
+	 * @param integer scale factor in percent
+	 * @return void
+	 */
+	public function setScaleFactor($factor = 200) {
+		$this->scaleFactor = $factor;
 	}
 
 	/**

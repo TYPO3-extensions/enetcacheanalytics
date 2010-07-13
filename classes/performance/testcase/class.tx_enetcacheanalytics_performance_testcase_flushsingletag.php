@@ -29,12 +29,14 @@
  * @author Christian Kuhn <lolli@schwarzbu.ch>
  */
 class tx_enetcacheanalytics_performance_testcase_FlushSingleTag extends tx_enetcacheanalytics_performance_testcase_AbstractTestcase {
+	protected $startValue = 100;
+
 	public function run() {
 		$stats = array();
-		$numberOfEntries = array(100, 400, 1600);
-		foreach ($numberOfEntries as $number) {
-			$this->backend->setSingleTag($number);
-			$stats[$number] = $this->backend->flush();
+		for ($i = 1; $i <= $this->numberOfDataPoints; $i ++) {
+			$currentValue = $currentValue ? $this->getNextDataValue($currentValue) : $this->startValue;
+			$this->backend->setSingleTag($currentValue);
+			$stats[$currentValue] = $this->backend->flush();
 		}
 		return $stats;
 	}

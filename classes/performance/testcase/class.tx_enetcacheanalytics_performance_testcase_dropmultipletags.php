@@ -29,15 +29,17 @@
  * @author Christian Kuhn <lolli@schwarzbu.ch>
  */
 class tx_enetcacheanalytics_performance_testcase_DropMultipleTags extends tx_enetcacheanalytics_performance_testcase_AbstractTestcase {
+	protected $startValue = 20;
+
 	/**
 	 * Drop entries with multiple tags by single tag from backend
 	 */
 	public function run() {
 		$stats = array();
-		$numberOfTags = array(20, 80, 320);
-		foreach ($numberOfTags as $number) {
-			$this->backend->setMultipleTags($number);
-			$stats[$number] = $this->backend->dropMultipleTags($number);
+		for ($i = 1; $i <= $this->numberOfDataPoints; $i ++) {
+			$currentValue = $currentValue ? $this->getNextDataValue($currentValue) : $this->startValue;
+			$this->backend->setMultipleTags($currentValue);
+			$stats[$currentValue] = $this->backend->dropMultipleTags($currentValue);
 			$this->backend->flush();
 		}
 		return $stats;

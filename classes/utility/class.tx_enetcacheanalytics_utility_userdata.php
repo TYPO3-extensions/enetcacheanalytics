@@ -40,10 +40,13 @@ class tx_enetcacheanalytics_utility_UserData extends tx_enetcacheanalytics_utili
 		'performance_selectedTestcases' => array(), // Selected testcases in performance module
 		'performance_selectedMessages' => array(), // Selected messages to view in performance module
 		'performance_selectedRenderer' => array(), // Selected messages to view in performance module
+		'performance_collapsedTestSuiteOptions' => integer, // Wether or not test suite option selection is collapsed
 		'performance_collapsedBackends' => integer, // Wether or not backends selection is collapsed
 		'performance_collapsedTestcases' => integer, // Wether or not testcases selection is collapsed
 		'performance_collapsedMessages' => integer, // Wether or not messages selection is collapsed
 		'performance_collapsedRenderer' => integer, // Wether or not renderer selection is collapsed
+		'performance_numberOfDataPoints' => integer, // Number of data points to calculate for each testcase
+		'performance_scaleFactor' => integer, // Factor in percent on how much every data point should be incremented
 	);
 
 	/**
@@ -69,10 +72,13 @@ class tx_enetcacheanalytics_utility_UserData extends tx_enetcacheanalytics_utili
 		if (is_string($moduleUc['performance_selectedRenderer'])) {
 			$this['performance_selectedRenderer'] = unserialize($moduleUc['performance_selectedRenderer']);
 		}
+		$this['performance_collapsedTestSuiteOptions'] = $moduleUc['performance_collapsedTestSuiteOptions'];
 		$this['performance_collapsedBackends'] = $moduleUc['performance_collapsedBackends'];
 		$this['performance_collapsedTestcases'] = $moduleUc['performance_collapsedTestcases'];
 		$this['performance_collapsedMessages'] = $moduleUc['performance_collapsedMessages'];
 		$this['performance_collapsedRenderer'] = $moduleUc['performance_collapsedRenderer'];
+		$this['performance_numberOfDataPoints'] = $moduleUc['performance_numberOfDataPoints'];
+		$this['performance_scaleFactor'] = $moduleUc['performance_scaleFactor'];
 	}
 
 	/**
@@ -103,10 +109,13 @@ class tx_enetcacheanalytics_utility_UserData extends tx_enetcacheanalytics_utili
 		$moduleUc['performance_selectedTestcases'] = serialize($this['performance_selectedTestcases']);
 		$moduleUc['performance_selectedMessages'] = serialize($this['performance_selectedMessages']);
 		$moduleUc['performance_selectedRenderer'] = serialize($this['performance_selectedRenderer']);
+		$moduleUc['performance_collapsedTestSuiteOptions'] = $this['performance_collapsedTestSuiteOptions'];
 		$moduleUc['performance_collapsedBackends'] = $this['performance_collapsedBackends'];
 		$moduleUc['performance_collapsedTestcases'] = $this['performance_collapsedTestcases'];
 		$moduleUc['performance_collapsedMessages'] = $this['performance_collapsedMessages'];
 		$moduleUc['performance_collapsedRenderer'] = $this['performance_collapsedRenderer'];
+		$moduleUc['performance_numberOfDataPoints'] = $this['performance_numberOfDataPoints'];
+		$moduleUc['performance_scaleFactor'] = $this['performance_scaleFactor'];
 		$GLOBALS['BE_USER']->pushModuleData('tools_txenetcacheanalyticsM1', $moduleUc);
 	}
 }

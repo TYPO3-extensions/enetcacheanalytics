@@ -29,11 +29,13 @@
  * @author Christian Kuhn <lolli@schwarzbu.ch>
  */
 class tx_enetcacheanalytics_performance_testcase_SetKiloBytesOfData extends tx_enetcacheanalytics_performance_testcase_AbstractTestcase {
+	protected $startValue = 100;
+
 	public function run() {
 		$stats = array();
-		$dataSizes = array(100, 400, 1600);
-		foreach ($dataSizes as $dataSize) {
-			$stats[$dataSize] = $this->backend->setKiloBytesOfData($dataSize);
+		for ($i = 1; $i <= $this->numberOfDataPoints; $i ++) {
+			$currentValue = $currentValue ? $this->getNextDataValue($currentValue) : $this->startValue;
+			$stats[$currentValue] = $this->backend->setKiloBytesOfData($currentValue);
 			$this->backend->flush();
 		}
 		return $stats;
