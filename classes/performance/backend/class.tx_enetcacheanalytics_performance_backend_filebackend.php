@@ -53,11 +53,12 @@ class tx_enetcacheanalytics_performance_backend_FileBackend extends tx_enetcache
 	 * but we need it for further runs, so we create it again after flush
 	 */
 	public function flush() {
-		$this->backend->flush();
+		$messageList = parent::flush();
 		t3lib_div::mkdir_deep(
 			PATH_site,
 			self::cacheDirectory
 		);
+		return $messageList;
 	}
 
 	public function tearDown() {
