@@ -105,6 +105,7 @@ class tx_enetcacheanalytics_bemodule_performance implements tx_enetcacheanalytic
 	 * @return void
 	 */
 	protected function handleAction() {
+		$this->intitializeTestSuiteOptions();
 		if (!isset($this->GPvars['tx_enetcacheanalytics_action'])) {
 			return;
 		}
@@ -115,7 +116,6 @@ class tx_enetcacheanalytics_bemodule_performance implements tx_enetcacheanalytic
 			case 'performTests':
 				$this->setSelectedBackends();
 				$this->setSelectedTestcases();
-				$this->intitializeTestSuiteOptions();
 				$this->testSuite->run();
 				$this->testStatistics = $this->testSuite->getTestResults();
 				$this->unavailableBackends = $this->testSuite->getUnavailableBackends();
