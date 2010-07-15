@@ -40,7 +40,7 @@ class tx_enetcacheanalytics_performance_TestSuite {
 	protected static $backends = array(
 		'ApcBackend',
 		'DbBackend',
-		'DbBackendCompressed',
+		'DbBackendCompressedEnetcache',
 		'FileBackend',
 		'MemcachedBackend',
 		'MemcachedBackendCompressed',

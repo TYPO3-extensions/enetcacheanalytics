@@ -22,20 +22,20 @@
 *  This copyright notice MUST APPEAR in all copies of the script!
 ***************************************************************/
 /**
- * Class test implementation for db backend
+ * Class test implementation for compressed db backend delivered with enetcache
  *
  * @package TYPO3
  * @subpackage tx_enetcacheanalytics
  * @author Christian Kuhn <lolli@schwarzbu.ch>
  */
-class tx_enetcacheanalytics_performance_backend_DbBackendCompressed extends tx_enetcacheanalytics_performance_backend_DbBackend {
+class tx_enetcacheanalytics_performance_backend_DbBackendCompressedEnetcache extends tx_enetcacheanalytics_performance_backend_DbBackend {
 	/**
 	 * Constructor sets db tables of parent class
 	 */
 	public function __construct() {
 		parent::__construct();
-		self::$cacheTable = 'tx_enetcacheanalytics_performance_compressed';
-		self::$tagsTable = 'tx_enetcacheanalytics_performance_compressed_tags';
+		self::$cacheTable = 'tx_enetcacheanalytics_performance_compressedenetcache';
+		self::$tagsTable = 'tx_enetcacheanalytics_performance_compressedenetcache_tags';
 	}
 
 	/**
