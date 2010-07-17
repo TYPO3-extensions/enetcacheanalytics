@@ -24,6 +24,7 @@ return array(
 	'tx_enetcacheanalytics_performance_backend_memcachedbackend' => $extensionPath . 'classes/performance/backend/class.tx_enetcacheanalytics_performance_backend_memcachedbackend.php',
 	'tx_enetcacheanalytics_performance_backend_memcachedbackendcompressed' => $extensionPath . 'classes/performance/backend/class.tx_enetcacheanalytics_performance_backend_memcachedbackendcompressed.php',
 	'tx_enetcacheanalytics_performance_backend_pdobackendsqlite' => $extensionPath . 'classes/performance/backend/class.tx_enetcacheanalytics_performance_backend_pdobackendsqlite.php',
+	'tx_enetcacheanalytics_performance_backend_redisbackendrediscache' => $extensionPath . 'classes/performance/backend/class.tx_enetcacheanalytics_performance_backend_redisbackendrediscache.php',
 	'tx_enetcacheanalytics_performance_message_message' => $extensionPath . 'classes/performance/message/interfaces/interface.tx_enetcacheanalytics_performance_message_message.php',
 	'tx_enetcacheanalytics_performance_message_abstractmessage' => $extensionPath . 'classes/performance/message/class.tx_enetcacheanalytics_performance_message_abstractmessage.php',
 	'tx_enetcacheanalytics_performance_message_cachemissmessage' => $extensionPath . 'classes/performance/message/class.tx_enetcacheanalytics_performance_message_cachemissmessage.php',
