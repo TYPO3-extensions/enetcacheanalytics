@@ -123,7 +123,7 @@ class tx_enetcacheanalytics_bemodule_performance_view_ResultGraph {
 
 			// Render graph content to buffer and fill to local variable
 		ob_start();
-		$graph->renderToOutput(self::$graphWidth, self::$graphHeight);
+		$graph->render(self::$graphWidth, self::$graphHeight, 'php://output');
 		$chartContent = ob_get_contents();
 		ob_end_clean();
 
