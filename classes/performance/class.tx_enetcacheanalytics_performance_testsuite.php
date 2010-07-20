@@ -46,6 +46,7 @@ class tx_enetcacheanalytics_performance_TestSuite {
 		'MemcachedBackend',
 		'MemcachedBackendCompressed',
 		'PdoBackendSqlite',
+		'PhpredisRedisBackend',
 		'RedisBackendRediscache',
 	);
 
