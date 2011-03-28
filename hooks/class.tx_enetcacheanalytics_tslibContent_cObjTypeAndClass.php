@@ -27,39 +27,47 @@
  * Hook class for tslibContent USER objects
  */
 class tx_enetcacheanalytics_tslibContent_cObjTypeAndClass {
-	public function cObjGetSingleExt($name, $conf, $TSkey, $pObj) {
-		$time_before = round(microtime(true) * 1000);
 
-		$logId = t3lib_div::makeInstance('tx_enetcacheanalytics_log')->getLogId();
+	/**
+	 * Wrapper hook around cObj Type USER to log plugin runtime
+	 *
+	 * @param  $name
+	 * @param  $conf
+	 * @param  $TSkey
+	 * @param  $pObj
+	 * @return HTML content of called method
+	 */
+	public function cObjGetSingleExt($name, $conf, $TSkey, $pObj) {
 		$funcRef = explode('->', $conf['userFunc']);
 
+			// Insert log row before calling the object
 		$insertData = array(
 			'fe_user' => $GLOBALS['TSFE']->fe_user->user['uid'],
 			'be_user' => $GLOBALS['BE_USER']->user['uid'],
 			'caller' => serialize(array('class' => $funcRef[0], 'function' => $funcRef[1])),
 			'content_uid' =>  $pObj->data['uid'],
-			'page_uid' =>  $pObj->data['pid'],
-			'unique_id' => $logId,
+			'page_uid' =>  $GLOBALS['TSFE']->id,
+			'unique_id' => t3lib_div::makeInstance('tx_enetcacheanalytics_log')->getLogId(),
 			'tstamp' => $GLOBALS['EXEC_TIME'],
-			'microtime' => $time_before,
+			'microtime' => round(microtime(true) * 1000),
 			'request_type' => 'USER',
 		);
 		$GLOBALS['TYPO3_DB']->exec_INSERTquery(
 			'tx_enetcache_log',
 			$insertData
 		);
-		$uid = $GLOBALS['TYPO3_DB']->sql_insert_id();
 
-		$content .= $pObj->USER($conf);
+			// Call USER method
+		$content = $pObj->USER($conf);
 
-		$time_after = round(microtime(true) * 1000);
-		$parseTime = $time_after - $time_before;
-
-		$GLOBALS['TYPO3_DB']->exec_UPDATEquery(
+			// Insert a second log row after calling the object
+		$insertData['microtime'] = round(microtime(true) * 1000);
+		$GLOBALS['TYPO3_DB']->exec_INSERTquery(
 			'tx_enetcache_log',
-			'uid=' . $uid,
-			array('data' => $parseTime)
+			$insertData
 		);
+
+			// Return calculated content by user method
 		return $content;
 	}
 }

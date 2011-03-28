@@ -143,10 +143,12 @@ class tx_enetcacheanalytics_log extends tx_enetcache_hook implements t3lib_Singl
 	protected function buildInsertDataArray($requestType = 'UNKNOWN') {
 		$fe_user = 0;
 		$page_uid = 0;
+
 		if ($GLOBALS['TSFE']) {
 			$fe_user = $GLOBALS['TSFE']->fe_user->user['uid'];
-			$page_uid = $GLOBALS['TSFE']->cObj->data['uid'];
+			$page_uid = $GLOBALS['TSFE']->id;
 		}
+
 		$be_user = 0;
 		if ($GLOBALS['BE_USER']) {
 			$be_user =  $GLOBALS['BE_USER']->user['uid'];
