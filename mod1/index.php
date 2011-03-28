@@ -83,6 +83,7 @@ class tx_enetcacheanalytics_module1 extends t3lib_SCbase {
 			'function' => Array (
 				'cacheanalyzer' => 'Cache analyzer',
 				'performance' => 'Backend performance tests',
+				'cacheanalyzer extjs' => 'Cache analyzer extJS',
 			)
 		);
 		parent::menuConfig();
@@ -140,6 +141,9 @@ class tx_enetcacheanalytics_module1 extends t3lib_SCbase {
 		switch ($module) {
 			case 'performance':
 				$moduleObject = t3lib_div::makeInstance('tx_enetcacheanalytics_bemodule_performance');
+				break;
+			case 'cacheanalyzer extjs':
+				$moduleObject = t3lib_div::makeInstance('tx_enetcacheanalytics_bemodule_cacheanalyzer_extjs');
 				break;
 			default:
 				$moduleObject = t3lib_div::makeInstance('tx_enetcacheanalytics_bemodule_cacheanalyzer');
