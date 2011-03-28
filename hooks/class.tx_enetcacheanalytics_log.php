@@ -69,8 +69,9 @@ class tx_enetcacheanalytics_log extends tx_enetcache_hook implements t3lib_Singl
 		$insertDataArray = $this->buildInsertDataArray('GET');
 		$insertDataArray['identifier_source'] = serialize($params['identifiers']);
 		$insertDataArray['identifier'] = md5($insertDataArray['identifier_source']);
-		$insertDataArray['data'] = ($cachedContent === FALSE) ? 'FALSE' : serialize($cachedContent);
-		$insertDataArray['tags'] = serialize($params['cacheData']);
+		if ($cachedContent !== FALSE) {
+			$insertDataArray['data'] = serialize($cachedContent);
+		}
 		$GLOBALS['TYPO3_DB']->exec_INSERTquery(
 			'tx_enetcache_log',
 			$insertDataArray

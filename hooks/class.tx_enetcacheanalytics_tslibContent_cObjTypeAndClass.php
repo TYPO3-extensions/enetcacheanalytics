@@ -50,7 +50,8 @@ class tx_enetcacheanalytics_tslibContent_cObjTypeAndClass {
 			'unique_id' => t3lib_div::makeInstance('tx_enetcacheanalytics_log')->getLogId(),
 			'tstamp' => $GLOBALS['EXEC_TIME'],
 			'microtime' => round(microtime(true) * 1000),
-			'request_type' => 'USER',
+			'identifier' => '',
+			'request_type' => 'COBJ START',
 		);
 		$GLOBALS['TYPO3_DB']->exec_INSERTquery(
 			'tx_enetcache_log',
@@ -62,6 +63,7 @@ class tx_enetcacheanalytics_tslibContent_cObjTypeAndClass {
 
 			// Insert a second log row after calling the object
 		$insertData['microtime'] = round(microtime(true) * 1000);
+		$insertData['request_type'] = 'COBJ END';
 		$GLOBALS['TYPO3_DB']->exec_INSERTquery(
 			'tx_enetcache_log',
 			$insertData

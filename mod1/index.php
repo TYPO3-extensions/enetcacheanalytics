@@ -172,6 +172,7 @@ class tx_enetcacheanalytics_module1 extends t3lib_SCbase {
 
 			// Additional styles
 		$this->doc->addStyleSheet(self::extKey . '_css', t3lib_extMgm::extRelPath(self::extKey) . 'res/mod1.css');
+		$this->doc->addStyleSheet(self::extKey . '_css', t3lib_extMgm::extRelPath(self::extKey) . 'res/css/analyzer.css');
 
 			// Default docType
 		$this->doc->docType='xhtml_trans';

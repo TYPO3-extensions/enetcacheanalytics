@@ -57,6 +57,7 @@ class tx_enetcacheanalytics_bemodule_cacheanalyzer_extjs implements tx_enetcache
 		$pageRenderer->addJsFile(
 			'../t3lib/js/extjs/ux/Ext.ux.FitToParent.js'
 		);
+		$pageRenderer->addJsFile(t3lib_extMgm::extRelPath('enetcacheanalytics') . 'res/js/ux/RowPanelExpander.js');
 		$pageRenderer->addJsFile(
 			t3lib_extMgm::extRelPath('enetcacheanalytics') . 'res/js/enetcacheAnalyticsAnalyze.js'
 		);
