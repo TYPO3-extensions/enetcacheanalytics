@@ -55,11 +55,11 @@ class tx_enetcacheanalytics_bemodule_cacheanalyzer_extjs implements tx_enetcache
 		$pageRenderer->addExtDirectCode();
 		$pageRenderer->addJsFile('ajax.php?ajaxID=ExtDirect::getAPI&namespace=' . 'TYPO3.EnetcacheAnalytics', NULL, FALSE);
 		$pageRenderer->addJsFile(
+			'../t3lib/js/extjs/ux/Ext.ux.FitToParent.js'
+		);
+		$pageRenderer->addJsFile(
 			t3lib_extMgm::extRelPath('enetcacheanalytics') . 'res/js/enetcacheAnalyticsAnalyze.js'
 		);
-		$pageRenderer->addExtOnReadyCode('
-			TYPO3.EnetcacheAnalytics.Analyze.init();
-		');
 	}
 
 	/**
