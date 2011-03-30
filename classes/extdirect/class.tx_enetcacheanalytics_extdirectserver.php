@@ -222,5 +222,21 @@ class tx_enetcacheanalytics_ExtDirectServer {
 			'data' => $data,
 		);
 	}
+
+	/**
+	 * Method concerning performance tab to get all available backends
+	 *
+	 * @return array
+	 */
+	public function getBackends() {
+		$data = array();
+		$data[] = array('uid' => 0, 'name' => 'dbBackend');
+		$data[] = array('uid' => 1, 'name' => 'redisBackend');
+
+		return array(
+			'length' => count($data),
+			'data' => $data,
+		);
+	}
 }
 ?>

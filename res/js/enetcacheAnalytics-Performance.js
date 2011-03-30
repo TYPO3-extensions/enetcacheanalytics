@@ -1,72 +1,7 @@
-Ext.ns('TYPO3.EnetcacheAnalytics', 'Example', 'TYPO3.EnetcacheAnalytics.PerformancecenterGrid');
-
-
-
-
-TYPO3.EnetcacheAnalytics.PerformancecenterGrid = Ext.extend(Ext.grid.GridPanel, {
-	layout: 'fit',
-	border: false,
-	defaults: {autoScroll: false},
-	plain: true,
-
-	initComponent:function() {
-		this.testEntryStore = new Ext.data.DirectStore({
-			storeId: 'testEntry',
-			idProperty: 'uid',
-			directFn: TYPO3.EnetcacheAnalytics.Analyzer.getTestEntries,
-			root: 'data',
-			totalProperty: 'length',
-			fields: [
-				'uid', 'name'
-			],
-			paramsAsHash: true,
-			paramNames: {
-				unique_id: 'uid'
-			}
-		});
-
-
-		Ext.apply(this, {
-			store: this.testEntryStore,
-			cm: cm,
-			viewConfig: {
-				forceFit: true,
-				scrollOffset: 0
-			}
-		});
-
-		TYPO3.EnetcacheAnalytics.PerformancecenterGrid.superclass.initComponent.apply(this, arguments);
-	},
-
-	onRender:function() {
-		this.testEntryStore.load();
-		TYPO3.EnetcacheAnalytics.PerformancecenterGrid.superclass.onRender.apply(this, arguments);
-	}
-});
-Ext.reg('TYPO3.EnetcacheAnalytics.PerformancecenterGrid', TYPO3.EnetcacheAnalytics.PerformancecenterGrid);
-
-
-
-//TYPO3.EnetcacheAnalytics.Performance.availableTestGrid
-
-
-
-
-
-
-
 TYPO3.EnetcacheAnalytics.Performance = Ext.extend(Ext.Panel, {
 	layout: 'border',
 
 	initComponent:function() {
-
-	    var myData = {
-			data: [
-				{ uid: 1, name : "Rec 0"},
-				{ uid: 2, name : "Rec 1"}
-			]
-		};
-
 		this.storeFields = [
 			'uid', 'name'
 		];
@@ -89,7 +24,6 @@ TYPO3.EnetcacheAnalytics.Performance = Ext.extend(Ext.Panel, {
 			root: 'data'
 		});
 
-
 		var cm = new Ext.grid.ColumnModel({
 			columns: [
 				{id: 'uid', header: 'UID', dataIndex: 'uid', width: 16},
@@ -101,8 +35,9 @@ TYPO3.EnetcacheAnalytics.Performance = Ext.extend(Ext.Panel, {
 				hideable: false
 			}
 		});
+
 		var cols = [
-			{id: 'uid', header: "uid", sortable: true, dataIndex: 'uid'},
+			{id: 'uid', header: "uid", dataIndex: 'uid'},
 			{id: 'name', header: 'Name', dataIndex: 'name'}
 		];
 
@@ -112,8 +47,10 @@ TYPO3.EnetcacheAnalytics.Performance = Ext.extend(Ext.Panel, {
 			cm: cm,
 			enableDragDrop: true,
 			stripeRows: true,
-			autoExpandColumn: 'name'
-/*
+			autoExpandColumn: 'name',
+			autoHeight: true,
+
+
 			listeners: {
 				scope: this,
 				afterRender: function(grid) {
@@ -130,7 +67,7 @@ TYPO3.EnetcacheAnalytics.Performance = Ext.extend(Ext.Panel, {
                     });
 				}
 			}
-*/
+
 		});
 
 		TYPO3.EnetcacheAnalytics.Performance.selectedTestsGrid = new Ext.grid.GridPanel({
@@ -159,8 +96,45 @@ TYPO3.EnetcacheAnalytics.Performance = Ext.extend(Ext.Panel, {
 			}
 		});
 
+		this.backendsSelectionModel  = new Ext.grid.CheckboxSelectionModel({
+			singleSelect: false,
+			header: '',
+			dataIndex: 'selected',
+			checkOnly: false
 
-
+		});
+		var backendsGridCM = new Ext.grid.ColumnModel({
+			columns: [
+				this.backendsSelectionModel,
+				{id: 'uid', header: "uid", dataIndex: 'uid'},
+				{id: 'name', header: 'Name', dataIndex: 'name'}
+			],
+			defaults: {
+				sortable: false,
+				menuDisabled: true,
+				hideable: false
+			}
+		});
+		this.backendsStore = new Ext.data.DirectStore({
+			storeId: 'backends',
+			idProperty: 'uid',
+			directFn: TYPO3.EnetcacheAnalytics.Analyzer.getBackends,
+			root: 'data',
+			totalProperty: 'length',
+			fields: ['uid', 'name'],
+			paramsAsHash: true,
+			paramNames: {
+				unique_id: 'uid'
+			}
+		});
+		TYPO3.EnetcacheAnalytics.Performance.backendsGrid = new Ext.grid.GridPanel({
+			store: this.backendsStore,
+			cm: backendsGridCM,
+			sm: this.backendsSelectionModel,
+			autoExpandColumn: 'name',
+			autoHeight: true
+//			onRowClick: Ext.emptyFn
+		});
 
 
 		Ext.apply(this, {
@@ -174,6 +148,7 @@ TYPO3.EnetcacheAnalytics.Performance = Ext.extend(Ext.Panel, {
 				collapsible: true,
 				collapseMode: 'mini',
 				items: [
+					TYPO3.EnetcacheAnalytics.Performance.backendsGrid,
 					TYPO3.EnetcacheAnalytics.Performance.availableTestsGrid
 				]
 			},{
@@ -192,12 +167,10 @@ TYPO3.EnetcacheAnalytics.Performance = Ext.extend(Ext.Panel, {
 
 	onRender:function() {
 		this.availableTestsStore.load();
+		this.backendsStore.load();
 
 		TYPO3.EnetcacheAnalytics.Performance.superclass.onRender.apply(this, arguments);
 	}
 });
 
 Ext.reg('TYPO3.EnetcacheAnalytics.Performance', TYPO3.EnetcacheAnalytics.Performance);
-
-
-
