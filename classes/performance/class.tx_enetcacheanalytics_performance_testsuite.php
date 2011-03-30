@@ -90,7 +90,7 @@ class tx_enetcacheanalytics_performance_TestSuite {
 	/**
 	 * @var integer Scale factor in percent: If start value is 40, with scale 400 -> next value will be 160
 	 */
-	protected $scaleFactor = 400;
+	protected $scaleFactor = 200;
 
 	/**
 	 * @var integer Number of data points to calculate
@@ -130,7 +130,7 @@ class tx_enetcacheanalytics_performance_TestSuite {
 			}
 
 			unset($backend);
-			sleep(1);
+//			sleep(1);
 		}
 		$this->runtime['value'] = (microtime(1) - $timeStart);
 	}

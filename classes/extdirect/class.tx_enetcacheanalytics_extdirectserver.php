@@ -249,7 +249,9 @@ class tx_enetcacheanalytics_ExtDirectServer {
 			}
 			if (!$enabled) {
 				$data[] = array(
-					'name' => $testcase
+					'name' => $testcase,
+					'table' => '',
+					'graph' => '',
 				);
 			}
 		}
@@ -278,7 +280,9 @@ class tx_enetcacheanalytics_ExtDirectServer {
 			}
 			if ($enabled) {
 				$data[] = array(
-					'name' => $testcase
+					'name' => $testcase,
+					'table' => '',
+					'graph' => '',
 				);
 			}
 		}
@@ -315,6 +319,49 @@ class tx_enetcacheanalytics_ExtDirectServer {
 			'length' => count($data),
 			'data' => $data,
 		);
+	}
+
+	/**
+	 * Method concerning performance tab to run a specific test
+	 *
+	 * @return array
+	 */
+	public function runPerformanceTest($test) {
+		/** @var $testSuite tx_enetcacheanalytics_performance_TestSuite */
+		$testSuite = t3lib_div::makeInstance('tx_enetcacheanalytics_performance_TestSuite');
+
+		$testSuite->setSelectedTestcases(array($test));
+
+		$settings = $GLOBALS['BE_USER']->getModuleData('enetcacheanalytics');
+		$selectedBackends = array();
+		foreach (self::$backends as $backend) {
+			if (isset($settings['performance']['enabledBackends'][$backend])
+				&& $settings['performance']['enabledBackends'][$backend]) {
+				$selectedBackends[] = $backend;
+			}
+		}
+		$testSuite->setSelectedBackends($selectedBackends);
+		
+		if (isset($settings['performance']['settings']['dataPoints'])) {
+			$testSuite->setNumberOfDataPoints($settings['performance']['settings']['dataPoints']);
+		}
+		if (isset($settings['performance']['settings']['scaleFactor'])) {
+			$testSuite->setScaleFactor($settings['performance']['settings']['scaleFactor']);
+		}
+
+		$testSuite->run();
+		$result = $testSuite->getTestResults();
+		/** @var $table tx_enetcacheanalytics_bemodule_performance_view_ResultTable */
+		$table = t3lib_div::makeInstance('tx_enetcacheanalytics_bemodule_performance_view_ResultTable', $result);
+		/** @var $grapher tx_enetcacheanalytics_bemodule_performance_view_ResultGraph */
+		$grapher = t3lib_div::makeInstance('tx_enetcacheanalytics_bemodule_performance_view_ResultGraph', $result);
+
+		$result = array();
+		$result['name'] = $test;
+		$result['graph'] = $grapher->render();
+		$result['table'] = $table->render();
+
+		return $result;
 	}
 }
 ?>

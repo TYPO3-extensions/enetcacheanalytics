@@ -1,7 +1,71 @@
 TYPO3.EnetcacheAnalytics.Performance = Ext.extend(Ext.Panel, {
 	layout: 'border',
+	autoScroll: true,
+
+	testArray: [],
+	testCount: 0,
+	callback: null,
 
 	initComponent:function() {
+		TYPO3.EnetcacheAnalytics.Performance.testExpander = new Ext.ux.grid.RowPanelExpander({
+			id: 'testExpander',
+			createExpandingRowPanelItems: function(record, rowIndex) {
+				var panelItems = [
+					new Ext.TabPanel({
+						plain: true,
+						activeTab: 0,
+//						enableTabScroll: true,
+//						autoWidth: true,
+//						plugins: [new Ext.ux.plugins.FitWidthToParent()],
+						defaults: {
+							autoHeight: true
+						},
+						record: record,
+						items:[
+							{title: 'Graph', html: record.data.graph},
+							{title: 'Table', html: record.data.table}
+						]
+					})
+				];
+				return panelItems;
+			},
+
+			getRowClass: function(record, rowIndex, p, ds) {
+				var cssClass = '';
+
+				p.cols = p.cols - 1;
+				var content = this.bodyContent[record.id];
+				if (!content && !this.lazyRender) {
+					content = this.getBodyContent(record, rowIndex);
+				}
+				if (content) {
+					p.body = content;
+				}
+				if (record.data.graph.length > 0 || record.data.table.length > 0) {
+					cssClass = 'x-grid3-row-expanded';
+				} else {
+					cssClass = 'x-grid3-row-collapsed';
+				}
+
+				return cssClass;
+			},
+
+			renderer : function(v, p, record) {
+				if (record.data.graph.length > 0 || record.data.table.length > 0) {
+					p.cellAttr = 'rowspan="2"';
+					var expanderHtml = '<div class="x-grid3-row-expander">&#160;</div>';
+				} else {
+					var expanderHtml = '';
+				}
+				return expanderHtml;
+			},
+
+			saveState: function(grid, state){
+			}
+		});
+
+
+
 		/**
 		 * Display and handle available and selected grids,
 		 * this is a drap + drop setup
@@ -12,7 +76,7 @@ TYPO3.EnetcacheAnalytics.Performance = Ext.extend(Ext.Panel, {
 			directFn: TYPO3.EnetcacheAnalytics.Analyzer.getNotEnabledTestEntries,
 			root: 'data',
 			totalProperty: 'length',
-			fields: ['name'],
+			fields: ['name', 'table', 'graph'],
 			paramsAsHash: true,
 			paramNames: {
 				unique_id: 'name'
@@ -24,15 +88,26 @@ TYPO3.EnetcacheAnalytics.Performance = Ext.extend(Ext.Panel, {
 			directFn: TYPO3.EnetcacheAnalytics.Analyzer.getEnabledTestEntries,
 			root: 'data',
 			totalProperty: 'length',
-			fields: ['name'],
+			fields: ['name', 'table', 'graph'],
 			paramsAsHash: true,
 			paramNames: {
 				unique_id: 'name'
 			}
 		});
-		var cm = new Ext.grid.ColumnModel({
+		var availableTestsColumnModel = new Ext.grid.ColumnModel({
 			columns: [
-				{id: 'name', header: 'Name', dataIndex: 'name'}
+				{id: 'name', header: 'Available Tests', dataIndex: 'name'}
+			],
+			defaults: {
+				sortable: false,
+				menuDisabled: true,
+				hideable: false
+			}
+		});
+		var selectedTestsColumnModel = new Ext.grid.ColumnModel({
+			columns: [
+				TYPO3.EnetcacheAnalytics.Performance.testExpander,
+				{id: 'name', header: 'Enabled Tests', dataIndex: 'name'}
 			],
 			defaults: {
 				sortable: false,
@@ -43,7 +118,7 @@ TYPO3.EnetcacheAnalytics.Performance = Ext.extend(Ext.Panel, {
 		TYPO3.EnetcacheAnalytics.Performance.availableTestsGrid = new Ext.grid.GridPanel({
 			ddGroup: 'selectedTestsGridDDGroup',
 			store: this.availableTestsStore,
-			cm: cm,
+			cm: availableTestsColumnModel,
 			enableDragDrop: true,
 			stripeRows: true,
 			autoExpandColumn: 'name',
@@ -71,12 +146,14 @@ TYPO3.EnetcacheAnalytics.Performance = Ext.extend(Ext.Panel, {
                     });
 				}
 			}
-
 		});
 		TYPO3.EnetcacheAnalytics.Performance.selectedTestsGrid = new Ext.grid.GridPanel({
+			autoHeight: true,
+			id: 'selectedTestsGrid',
 			ddGroup: 'availableTestsGridDDGroup',
 			store: this.selectedTestsStore,
-			cm: cm,
+			cm: selectedTestsColumnModel,
+			plugins: [TYPO3.EnetcacheAnalytics.Performance.testExpander],
 			enableDragDrop: true,
 			stripeRows: true,
 			autoExpandColumn: 'name',
@@ -228,19 +305,55 @@ TYPO3.EnetcacheAnalytics.Performance = Ext.extend(Ext.Panel, {
 			}]
 		});
 
+		TYPO3.EnetcacheAnalytics.Performance.actionProgressBar = new Ext.ProgressBar ({
+			id:  'actionProgressBar',
+			style: 'margin: 5px 2px 0 2px',
+			animate: true,
+			hidden: true,
+			defaults: {
+				flex: 1
+			}
+		});
+
+		TYPO3.EnetcacheAnalytics.Performance.actionPanel = {
+			xtype: 'container',
+			layout: 'hbox',
+			height: 24,
+			id: 'actionPanel',
+			defaults: {
+				flex: true
+			},
+			items: [{
+				xtype: 'button',
+				text: 'Run selected tests',
+				id: 'performance-runTests',
+				margins: '3 0 0 2'
+			}]
+		};
+
 		/**
 		 * Compile performance module
 		 */
 		Ext.apply(this, {
 			items: [{
+				region: 'north',
+				layout: 'fit',
+				border: false,
+				height: 30,
+				items: [
+					TYPO3.EnetcacheAnalytics.Performance.actionPanel,
+					TYPO3.EnetcacheAnalytics.Performance.actionProgressBar
+				]
+			},{
+				id: 'settingsPanel',
 				region: 'west',
 				layout: 'fit',
+				title: 'Settings',
 				frame: true,
 				border: false,
-				width: 400,
-				split: true,
+				autoScroll: true,
+				width: 250,
 				collapsible: true,
-				collapseMode: 'mini',
 				items: [
 					TYPO3.EnetcacheAnalytics.Performance.settingsForm,
 					TYPO3.EnetcacheAnalytics.Performance.backendsGrid,
@@ -251,6 +364,7 @@ TYPO3.EnetcacheAnalytics.Performance = Ext.extend(Ext.Panel, {
 				layout: 'fit',
 				frame: true,
 				border: false,
+				autoScroll: true,
 				items: [
 					TYPO3.EnetcacheAnalytics.Performance.selectedTestsGrid
 				]
@@ -258,6 +372,75 @@ TYPO3.EnetcacheAnalytics.Performance = Ext.extend(Ext.Panel, {
 		});
 
 		TYPO3.EnetcacheAnalytics.Performance.superclass.initComponent.apply(this, arguments);
+		Ext.getCmp('performance-runTests').handler = this.testsActionHandler.createDelegate(this);
+
+	},
+
+	testsActionHandler: function (button, event) {
+		var buttonPanel = Ext.getCmp('actionPanel');
+		var progressBar = Ext.getCmp('actionProgressBar');
+
+		buttonPanel.hide();
+		progressBar.show();
+
+		Ext.getCmp('settingsPanel').collapse(true);
+
+		if (button.id === 'performance-runTests') {
+			this.startRunTests(
+				Ext.StoreMgr.get('enabledTests'),
+				function() {
+					buttonPanel.show();
+					progressBar.hide();
+				}
+			);
+		}
+	},
+
+	startRunTests: function(store, callback) {
+		this.testCount = store.data.items.length;
+		this.callback = callback;
+
+		this.testArray = [];
+		for (var i = 0; i < this.testCount; i++) {
+			this.testArray.push(store.data.items[i].data.name);
+		}
+			// start process
+		this.executeTest();
+	},
+
+		// @TODO
+	executeTest: function(response) {
+		var grid = Ext.getCmp('selectedTestsGrid');
+		var row = this.testCount - this.testArray.length;
+		var record = grid.store.getAt(row);
+		var i;
+
+		if (response) {
+			var executedTest = grid.store.getAt(row - 1);
+			executedTest.set('table', response['table']);
+			executedTest.set('graph', response['graph']);
+			executedTest.commit();
+		}
+
+		if (this.testArray.length > 0) {
+			var test = this.testArray.shift();
+
+				// Update Progressbar
+			Ext.getCmp('actionProgressBar').updateProgress(
+				(row + 1) / this.testCount,
+				'Running test: ' + record.id + ' ' + (row+1) + ' of ' + this.testCount
+			);
+
+			TYPO3.EnetcacheAnalytics.Analyzer.runPerformanceTest(
+				test,
+				function(response) {
+					this.executeTest(response);
+				},
+				this
+			);
+		} else {
+			this.callback();
+		}
 	},
 
 	onRender:function() {

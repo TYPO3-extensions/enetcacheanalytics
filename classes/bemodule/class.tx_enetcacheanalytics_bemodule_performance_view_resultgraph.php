@@ -30,10 +30,6 @@
  * @author Christian Kuhn <lolli@schwarzbu.ch>
  */
 class tx_enetcacheanalytics_bemodule_performance_view_ResultGraph {
-	/**
-	 * @var tx_enetcacheanalytics_bemodule Default parent object
-	 */
-	protected $pObj = object;
 
 	/**
 	 * @var array Gathered output of performance tests
@@ -49,9 +45,8 @@ class tx_enetcacheanalytics_bemodule_performance_view_ResultGraph {
 	/**
 	 * Default constructor
 	 */
-	public function __construct($pObj) {
-		$this->pObj = $pObj;
-		$this->testStatistics = $pObj->getTestResults();
+	public function __construct($testResults) {
+		$this->testStatistics = $testResults;
 
 			// Add ezcomponents autoloader
 		require_once(t3lib_extMgm::extPath('enetcacheanalytics') . 'res/ezcomponents/Base/src/base.php');
@@ -161,7 +156,7 @@ class tx_enetcacheanalytics_bemodule_performance_view_ResultGraph {
 				foreach ($testcase as $testrunVariable => $testrunMessageList) {
 					foreach ($testrunMessageList as $message) {
 						if ($message instanceof tx_enetcacheanalytics_performance_message_TimeMessage) {
-							$chartsDataArray[$testcaseCounter]['xy'][$backendName][$testrunVariable] = $this->pObj->formatTimeMessage($message['value']);
+							$chartsDataArray[$testcaseCounter]['xy'][$backendName][$testrunVariable] = self::formatTimeMessage($message['value']);
 						}
 					}
 				}
@@ -171,6 +166,15 @@ class tx_enetcacheanalytics_bemodule_performance_view_ResultGraph {
 		}
 
 		return $chartsDataArray;
+	}
+
+	/**
+	 * Format time statistics
+	 *
+	 * @return string Formatted time
+	 */
+	protected static function formatTimeMessage($value) {
+		return sprintf("%.3f", $value);
 	}
 } // end of class
 ?>

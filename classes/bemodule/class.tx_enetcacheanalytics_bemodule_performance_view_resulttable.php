@@ -30,10 +30,6 @@
  * @author Christian Kuhn <lolli@schwarzbu.ch>
  */
 class tx_enetcacheanalytics_bemodule_performance_view_ResultTable {
-	/**
-	 * @var tx_enetcacheanalytics_bemodule Default parent object
-	 */
-	protected $pObj = object;
 
 	/**
 	 * @var array Gathered output of performance tests
@@ -43,9 +39,8 @@ class tx_enetcacheanalytics_bemodule_performance_view_ResultTable {
 	/**
 	 * Default constructor
 	 */
-	public function __construct($pObj) {
-		$this->pObj = $pObj;
-		$this->testStatistics = $pObj->getTestResults();
+	public function __construct($testResults) {
+		$this->testStatistics = $testResults;
 	}
 
 	/**
@@ -97,7 +92,8 @@ class tx_enetcacheanalytics_bemodule_performance_view_ResultTable {
 	protected function renderStatisticsTimeTakenForTestsHeaderRow() {
 		$headerTR = array();
 		$headerTR[] = '<td colspan="2">Test time</td>';
-		foreach ($this->testStatistics as $testRun) {
+		$testStatistics = $this->testStatistics;
+		foreach ($testStatistics as $testRun) {
 			$accumulatedTestTime = 0;
 			foreach ($testRun as $testStats) {
 				foreach ($testStats as $messageList) {
@@ -108,7 +104,7 @@ class tx_enetcacheanalytics_bemodule_performance_view_ResultTable {
 					}
 				}
 			}
-			$headerTR[] = '<td><p class="TimeMessage">' . $this->pObj->formatTimeMessage($accumulatedTestTime) . '</p></td>';
+			$headerTR[] = '<td><p class="TimeMessage">' . self::formatTimeMessage($accumulatedTestTime) . '</p></td>';
 		}
 		$content = array();
 		$content[] = '<tr class="user">';
@@ -125,6 +121,7 @@ class tx_enetcacheanalytics_bemodule_performance_view_ResultTable {
 
 		$backendNames = array_keys($this->testStatistics);
 		$aBackendName = current($backendNames);
+		reset($this->testStatistics);
 		$testNames = array_keys(current($this->testStatistics));
 
 		foreach ($testNames as $testName) {
@@ -166,14 +163,17 @@ class tx_enetcacheanalytics_bemodule_performance_view_ResultTable {
 		$content = array();
 		$content[] = '<td>';
 		$row = array();
-		$enabledMessageTypes = t3lib_div::makeInstance('tx_enetcacheanalytics_utility_UserData')->getEnabledMessages();
+
+		/** @var $userData tx_enetcacheanalytics_utility_UserData */
+		$userData = t3lib_div::makeInstance('tx_enetcacheanalytics_utility_UserData');
+		$enabledMessageTypes = $userData->getEnabledMessages();
 		foreach ($messageList as $message) {
 			$messageType = str_replace('tx_enetcacheanalytics_performance_message_', '', get_class($message));
 			$showMessage = in_array($messageType, $enabledMessageTypes) ? TRUE : FALSE;
 			if ($showMessage) {
 					// Special hack for TimeMessage to crop data at some position after decimal point
 				if ($messageType === 'TimeMessage') {
-					$value = $this->pObj->formatTimeMessage($message['value']);
+					$value = self::formatTimeMessage($message['value']);
 				} else {
 					$value = $message['value'];
 				}
@@ -183,6 +183,15 @@ class tx_enetcacheanalytics_bemodule_performance_view_ResultTable {
 		$content[] = implode(chr(10), $row);
 		$content[] = '</td>';
 		return implode(chr(10), $content);
+	}
+
+	/**
+	 * Format time statistics
+	 *
+	 * @return string Formatted time
+	 */
+	protected static function formatTimeMessage($value) {
+		return sprintf("%.3f", $value);
 	}
 } // end of class
 ?>

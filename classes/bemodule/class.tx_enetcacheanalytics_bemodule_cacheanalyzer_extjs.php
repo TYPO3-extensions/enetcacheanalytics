@@ -86,7 +86,7 @@ class tx_enetcacheanalytics_bemodule_cacheanalyzer_extjs implements tx_enetcache
 			$settings['performance']['settings']['dataPoints'] = 3;
 		}
 		if (!isset($settings['performance']['settings']['scaleFactor'])) {
-			$settings['performance']['settings']['scaleFactor'] = 150;
+			$settings['performance']['settings']['scaleFactor'] = 200;
 		}
 		if (!is_array($settings['performance']['enabledBackends'])) {
 			$settings['performance']['enabledBackends'] = array();
