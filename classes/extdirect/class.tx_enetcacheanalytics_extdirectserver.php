@@ -1,7 +1,42 @@
 <?php
+/***************************************************************
+*  Copyright notice
+*
+*  (c) 2011 Christian Kuhn <lolli@schwarzbu.ch>
+*  All rights reserved
+*
+*  This script is part of the TYPO3 project. The TYPO3 project is
+*  free software; you can redistribute it and/or modify
+*  it under the terms of the GNU General Public License as published by
+*  the Free Software Foundation; either version 2 of the License, or
+*  (at your option) any later version.
+*
+*  The GNU General Public License can be found at
+*  http://www.gnu.org/copyleft/gpl.html.
+*
+*  This script is distributed in the hope that it will be useful,
+*  but WITHOUT ANY WARRANTY; without even the implied warranty of
+*  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+*  GNU General Public License for more details.
+*
+*  This copyright notice MUST APPEAR in all copies of the script!
+***************************************************************/
 
-class tx_enetcacheanalytics_ExtDirectAnalyze {
+/**
+ * Class ExtDirectServer of backend module to fetch data.
+ *
+ * @package TYPO3
+ * @subpackage tx_enetcacheanalytics
+ * @author Christian Kuhn <lolli@schwarzbu.ch>
+ */
+class tx_enetcacheanalytics_ExtDirectServer {
 
+	/**
+	 * Method concerning cache log analyzer tab to get log entries
+	 *
+	 * @param  $parameters array
+	 * @return array
+	 */
 	public function getLogEntries($parameters) {
 		$where = '';
 		if (strlen($parameters->unique_id) > 0) {
@@ -65,6 +100,11 @@ class tx_enetcacheanalytics_ExtDirectAnalyze {
 		);
 	}
 
+	/**
+	 * Method concerning cache log analyzer tab to get log group for group drop down
+	 *
+	 * @return array
+	 */
 	public function getLogGroups() {
 		$groupRows = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows(
 			'DISTINCT unique_id, tstamp, page_uid',
@@ -92,6 +132,12 @@ class tx_enetcacheanalytics_ExtDirectAnalyze {
 		);
 	}
 
+	/**
+	 * Method concerning cache log analyzer tab to get stats of a specific log group
+	 *
+	 * @param  $parameters array
+	 * @return array
+	 */
 	public function getLogStats($parameters) {
 		$where = '';
 		if (strlen($parameters->unique_id) > 0) {
@@ -134,6 +180,13 @@ class tx_enetcacheanalytics_ExtDirectAnalyze {
 		);
 	}
 
+	/**
+	 * Helper method of cache log tab to unserialize a log entry backtrace
+	 *
+	 * @static
+	 * @param  $callerField String serialized backtrace
+	 * @return string
+	 */
 	protected static function unserializeCallerField($callerField) {
 		$callerField = unserialize($callerField);
 

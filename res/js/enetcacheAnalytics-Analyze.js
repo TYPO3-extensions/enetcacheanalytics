@@ -1,32 +1,5 @@
 Ext.ns('TYPO3.EnetcacheAnalytics');
 
-
-Ext.onReady(function() {
-		// Fire app
-	var EnetcacheAnalytics = new TYPO3.EnetcacheAnalytics.App.init();
-});
-
-
-TYPO3.EnetcacheAnalytics.App = {
-	init: function() {
-		new Ext.TabPanel({
-			renderTo: 'tx-enetcacheanalytics-mod-grid',
-			activeTab: 0,
-			plugins: [new Ext.ux.plugins.FitToParent()],
-			items: [
-				{
-					title : 'Cache log analyzer',
-					xtype: 'TYPO3.EnetcacheAnalytics.Analyze'
-				},{
-					title: 'Performance tests',
-					html: 'foo'
-				}
-			]
-		});
-	}
-};
-
-
 TYPO3.EnetcacheAnalytics.Analyze = Ext.extend(Ext.grid.GridPanel, {
 	layout: 'fit',
 	border: false,
@@ -230,31 +203,5 @@ TYPO3.EnetcacheAnalytics.Analyze = Ext.extend(Ext.grid.GridPanel, {
 		TYPO3.EnetcacheAnalytics.Analyze.superclass.onRender.apply(this, arguments);
 	}
 });
+
 Ext.reg('TYPO3.EnetcacheAnalytics.Analyze', TYPO3.EnetcacheAnalytics.Analyze);
-
-
-TYPO3.EnetcacheAnalytics.logGroupCombo = new Ext.form.ComboBox({
-	id: 'logEntryCombo',
-	mode: 'local',
-	triggerAction: 'all',
-	forceSelection: true,
-	editable: false,
-	name: 'selectedLogGroup',
-	hiddenName: 'selectedLogGroup',
-	displayField: 'title',
-	valueField: 'unique_id',
-	store: null,
-	width: 200
-});
-
-TYPO3.EnetcacheAnalytics.Layouts = {
-	logStats: function() {
-		return new Ext.XTemplate(
-			'Plugins rendered:{numberOfPlugins}',
-			' ',
-			'Using enetcache:{numberOfEnetcachePlugins}',
-			' ',
-			'Successful Gets:{numberOfSuccessfulGets}'
-		);
-	}
-}

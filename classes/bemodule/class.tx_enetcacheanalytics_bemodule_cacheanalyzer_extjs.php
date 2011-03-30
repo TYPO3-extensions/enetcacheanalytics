@@ -54,13 +54,16 @@ class tx_enetcacheanalytics_bemodule_cacheanalyzer_extjs implements tx_enetcache
 		$pageRenderer->loadExtJS();
 		$pageRenderer->addExtDirectCode();
 		$pageRenderer->addJsFile('ajax.php?ajaxID=ExtDirect::getAPI&namespace=' . 'TYPO3.EnetcacheAnalytics', NULL, FALSE);
-		$pageRenderer->addJsFile(
-			'../t3lib/js/extjs/ux/Ext.ux.FitToParent.js'
-		);
+
+		$pageRenderer->addJsFile('../t3lib/js/extjs/ux/Ext.ux.FitToParent.js');
+
 		$pageRenderer->addJsFile(t3lib_extMgm::extRelPath('enetcacheanalytics') . 'res/js/ux/RowPanelExpander.js');
-		$pageRenderer->addJsFile(
-			t3lib_extMgm::extRelPath('enetcacheanalytics') . 'res/js/enetcacheAnalyticsAnalyze.js'
-		);
+
+		$pageRenderer->addJsFile(t3lib_extMgm::extRelPath('enetcacheanalytics') . 'res/js/enetcacheAnalytics-Components.js');
+		$pageRenderer->addJsFile(t3lib_extMgm::extRelPath('enetcacheanalytics') . 'res/js/enetcacheAnalytics-Layouts.js');
+		$pageRenderer->addJsFile(t3lib_extMgm::extRelPath('enetcacheanalytics') . 'res/js/enetcacheAnalytics-Analyze.js');
+		$pageRenderer->addJsFile(t3lib_extMgm::extRelPath('enetcacheanalytics') . 'res/js/enetcacheAnalytics-Performance.js');
+		$pageRenderer->addJsFile(t3lib_extMgm::extRelPath('enetcacheanalytics') . 'res/js/enetcacheAnalytics-App.js');
 	}
 
 	/**
