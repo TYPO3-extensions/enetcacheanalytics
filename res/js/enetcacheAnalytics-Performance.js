@@ -136,6 +136,53 @@ TYPO3.EnetcacheAnalytics.Performance = Ext.extend(Ext.Panel, {
 //			onRowClick: Ext.emptyFn
 		});
 
+		TYPO3.EnetcacheAnalytics.Performance.parameterForm = new Ext.form.FormPanel({
+			autoHeight: true,
+			id: 'parameterForm',
+			items: [{
+				name: 'dataPoints',
+				fieldLabel: 'Number of data points',
+				xtype: 'numberfield',
+				allowBlank: true,
+				listeners: {
+					change: function(field, newValue, oldValue) {
+						TYPO3.EnetcacheAnalytics.Performance.selectedTestsGrid.disable();
+						TYPO3.EnetcacheAnalytics.Analyzer.saveSetting(
+							'dataPoints',
+							newValue,
+							function(){
+								TYPO3.EnetcacheAnalytics.Performance.selectedTestsGrid.enable();
+							}
+						);
+					},
+					beforerender: function(field) {
+						field.value = TYPO3.settings.enetcacheAnalytics.dataPoints;
+					},
+					scope: this
+				}
+			},{
+				name: 'scaleFactor',
+				fieldLabel: 'Scale factor',
+				xtype: 'numberfield',
+				allowBlank: true,
+				listeners: {
+					change: function(field, newValue, oldValue) {
+						TYPO3.EnetcacheAnalytics.Performance.selectedTestsGrid.disable();
+						TYPO3.EnetcacheAnalytics.Analyzer.saveSetting(
+							'scaleFactor',
+							newValue,
+							function(){
+								TYPO3.EnetcacheAnalytics.Performance.selectedTestsGrid.enable();
+							}
+						);
+					},
+					beforerender: function(field) {
+						field.value = TYPO3.settings.enetcacheAnalytics.scaleFactor;
+					},
+					scope: this
+				}
+			}]
+		});
 
 		Ext.apply(this, {
 			items: [{
@@ -148,6 +195,7 @@ TYPO3.EnetcacheAnalytics.Performance = Ext.extend(Ext.Panel, {
 				collapsible: true,
 				collapseMode: 'mini',
 				items: [
+					TYPO3.EnetcacheAnalytics.Performance.parameterForm,
 					TYPO3.EnetcacheAnalytics.Performance.backendsGrid,
 					TYPO3.EnetcacheAnalytics.Performance.availableTestsGrid
 				]

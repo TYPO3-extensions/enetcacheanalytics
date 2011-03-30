@@ -238,5 +238,35 @@ class tx_enetcacheanalytics_ExtDirectServer {
 			'data' => $data,
 		);
 	}
+
+	/**
+	 * Get a setting from user UC
+	 *
+	 * @param  $name Setting name
+	 * @return mixed Value on success, else false
+	 */
+	public function loadSetting($name) {
+		$value = FALSE;
+		$settings = $GLOBALS['BE_USER']->getModuleData('tools_enetcacheanalytics');
+		if (isset($settings[$name])) {
+			$value = $settings[$name];
+		}
+		
+		return $value;
+	}
+
+	/**
+	 * Save setting in user UC
+	 *
+	 * @param string $name Setting index
+	 * @param mixed $value The value
+	 * @return boolean True on success
+	 */
+	public function saveSetting($name, $value) {
+		$settings = $GLOBALS['BE_USER']->getModuleData('tools_enetcacheanalytics');
+		$settings[$name] = $value;
+		$GLOBALS['BE_USER']->pushModuleData('tools_enetcacheanalytics', $settings);
+		return TRUE;
+	}
 }
 ?>

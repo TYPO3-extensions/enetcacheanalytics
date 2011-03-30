@@ -76,6 +76,12 @@ class tx_enetcacheanalytics_bemodule_cacheanalyzer_extjs implements tx_enetcache
 		if (!is_array($settings['State'])) {
 			$settings['State'] = array();
 		}
+		if (!isset($settings['dataPoints'])) {
+			$settings['dataPoints'] = 3;
+		}
+		if (!isset($settings['scaleFactor'])) {
+			$settings['scaleFactor'] = 150;
+		}
 		$pageRenderer->addInlineSettingArray('enetcacheAnalytics', $settings);
 	}
 

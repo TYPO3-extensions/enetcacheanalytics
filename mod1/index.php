@@ -179,6 +179,7 @@ class tx_enetcacheanalytics_module1 extends t3lib_SCbase {
 
 			// Default form tag
 		$this->doc->form = '<form action="" method="post" name="' . self::extKey . '" enctype="multipart/form-data">';
+		$this->doc->form = '';
 
 			// JavaScript for main function selector
 		$this->doc->JScodeArray[] = '
