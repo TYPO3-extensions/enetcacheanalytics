@@ -2,31 +2,36 @@ TYPO3.EnetcacheAnalytics.Performance = Ext.extend(Ext.Panel, {
 	layout: 'border',
 
 	initComponent:function() {
-		this.storeFields = [
-			'uid', 'name'
-		];
-
+		/**
+		 * Display and handle available and selected grids,
+		 * this is a drap + drop setup
+		 */
 		this.availableTestsStore = new Ext.data.DirectStore({
 			storeId: 'availableTests',
-			idProperty: 'uid',
-			directFn: TYPO3.EnetcacheAnalytics.Analyzer.getTestEntries,
+			idProperty: 'name',
+			directFn: TYPO3.EnetcacheAnalytics.Analyzer.getNotEnabledTestEntries,
 			root: 'data',
 			totalProperty: 'length',
-			fields: this.storeFields,
+			fields: ['name'],
 			paramsAsHash: true,
 			paramNames: {
-				unique_id: 'uid'
+				unique_id: 'name'
 			}
 		});
-		
-		this.selectedTestsStore = new Ext.data.JsonStore({
-			fields: this.storeFields,
-			root: 'data'
+		this.selectedTestsStore = new Ext.data.DirectStore({
+			storeId: 'enabledTests',
+			idProperty: 'name',
+			directFn: TYPO3.EnetcacheAnalytics.Analyzer.getEnabledTestEntries,
+			root: 'data',
+			totalProperty: 'length',
+			fields: ['name'],
+			paramsAsHash: true,
+			paramNames: {
+				unique_id: 'name'
+			}
 		});
-
 		var cm = new Ext.grid.ColumnModel({
 			columns: [
-				{id: 'uid', header: 'UID', dataIndex: 'uid', width: 16},
 				{id: 'name', header: 'Name', dataIndex: 'name'}
 			],
 			defaults: {
@@ -35,12 +40,6 @@ TYPO3.EnetcacheAnalytics.Performance = Ext.extend(Ext.Panel, {
 				hideable: false
 			}
 		});
-
-		var cols = [
-			{id: 'uid', header: "uid", dataIndex: 'uid'},
-			{id: 'name', header: 'Name', dataIndex: 'name'}
-		];
-
 		TYPO3.EnetcacheAnalytics.Performance.availableTestsGrid = new Ext.grid.GridPanel({
 			ddGroup: 'selectedTestsGridDDGroup',
 			store: this.availableTestsStore,
@@ -50,7 +49,6 @@ TYPO3.EnetcacheAnalytics.Performance = Ext.extend(Ext.Panel, {
 			autoExpandColumn: 'name',
 			autoHeight: true,
 
-
 			listeners: {
 				scope: this,
 				afterRender: function(grid) {
@@ -58,10 +56,16 @@ TYPO3.EnetcacheAnalytics.Performance = Ext.extend(Ext.Panel, {
                     var availableTestsGridDropTarget = new Ext.dd.DropTarget(availableTestsGridDropTargetEl, {
                         ddGroup    : 'availableTestsGridDDGroup',
                         notifyDrop : function(ddSource, e, data) {
-							var records =  ddSource.dragData.selections;
-							Ext.each(records, ddSource.grid.store.remove, ddSource.grid.store);
-							TYPO3.EnetcacheAnalytics.Performance.availableTestsGrid.store.add(records);
+							var record =  ddSource.dragData.selections;
+							Ext.each(record, ddSource.grid.store.remove, ddSource.grid.store);
+							TYPO3.EnetcacheAnalytics.Performance.availableTestsGrid.store.add(record);
 							TYPO3.EnetcacheAnalytics.Performance.availableTestsGrid.store.sort('uid', 'ASC');
+	                        var ucName = 'moduleData.enetcacheanalytics.performance.enabledTests.' + record[0].data.name;
+							TYPO3.BackendUserSettings.ExtDirect.set(
+								ucName,
+								0,
+								function(response) {}
+							);
 							return true
                         }
                     });
@@ -69,7 +73,6 @@ TYPO3.EnetcacheAnalytics.Performance = Ext.extend(Ext.Panel, {
 			}
 
 		});
-
 		TYPO3.EnetcacheAnalytics.Performance.selectedTestsGrid = new Ext.grid.GridPanel({
 			ddGroup: 'availableTestsGridDDGroup',
 			store: this.selectedTestsStore,
@@ -85,10 +88,16 @@ TYPO3.EnetcacheAnalytics.Performance = Ext.extend(Ext.Panel, {
                     var selectedTestsGridDropTarget = new Ext.dd.DropTarget(selectedTestsGridDropTargetEl, {
                         ddGroup: 'selectedTestsGridDDGroup',
                         notifyDrop: function(ddSource, e, data) {
-							var records =  ddSource.dragData.selections;
-							Ext.each(records, ddSource.grid.store.remove, ddSource.grid.store);
-							TYPO3.EnetcacheAnalytics.Performance.selectedTestsGrid.store.add(records);
+							var record =  ddSource.dragData.selections;
+							Ext.each(record, ddSource.grid.store.remove, ddSource.grid.store);
+							TYPO3.EnetcacheAnalytics.Performance.selectedTestsGrid.store.add(record);
 							TYPO3.EnetcacheAnalytics.Performance.selectedTestsGrid.store.sort('uid', 'ASC');
+	                        var ucName = 'moduleData.enetcacheanalytics.performance.enabledTests.' + record[0].data.name;
+							TYPO3.BackendUserSettings.ExtDirect.set(
+								ucName,
+								1,
+								function(response) {}
+							);
 							return true
                         }
                     });
@@ -96,17 +105,37 @@ TYPO3.EnetcacheAnalytics.Performance = Ext.extend(Ext.Panel, {
 			}
 		});
 
+		/**
+		 * Display and handle events on available backends
+		 */
 		this.backendsSelectionModel  = new Ext.grid.CheckboxSelectionModel({
 			singleSelect: false,
 			header: '',
 			dataIndex: 'selected',
-			checkOnly: false
-
+			checkOnly: false,
+			listeners: {
+				rowselect: function(sm, index, record) {
+					var name = 'moduleData.enetcacheanalytics.performance.enabledBackends.' + record.data.name;
+					TYPO3.BackendUserSettings.ExtDirect.set(
+						name,
+                        1,
+                        function(response) {}
+					);
+				},
+				rowdeselect: function(sm, index, record) {
+					var name = 'moduleData.enetcacheanalytics.performance.enabledBackends.' + record.data.name;
+						// @TODO: Use unsetKey, but core doesn't handle dotted notation for this method
+					TYPO3.BackendUserSettings.ExtDirect.set(
+						name,
+                        0,
+                        function(response) {}
+					);
+				}
+			}
 		});
 		var backendsGridCM = new Ext.grid.ColumnModel({
 			columns: [
 				this.backendsSelectionModel,
-				{id: 'uid', header: "uid", dataIndex: 'uid'},
 				{id: 'name', header: 'Name', dataIndex: 'name'}
 			],
 			defaults: {
@@ -121,10 +150,23 @@ TYPO3.EnetcacheAnalytics.Performance = Ext.extend(Ext.Panel, {
 			directFn: TYPO3.EnetcacheAnalytics.Analyzer.getBackends,
 			root: 'data',
 			totalProperty: 'length',
-			fields: ['uid', 'name'],
+			fields: ['selected', 'name'],
 			paramsAsHash: true,
 			paramNames: {
-				unique_id: 'uid'
+				unique_id: 'name'
+			},
+			listeners : {
+				'load': function(store, records) {
+						// get selected backends to update selection
+					var a = [];
+					for (var i=0; i<records.length; i++) {
+						if(records[i].data.selected) {
+							a.push(records[i]);
+						}
+					}
+					this.backendsSelectionModel.selectRecords(a);
+				},
+				scope: this
 			}
 		});
 		TYPO3.EnetcacheAnalytics.Performance.backendsGrid = new Ext.grid.GridPanel({
@@ -133,10 +175,12 @@ TYPO3.EnetcacheAnalytics.Performance = Ext.extend(Ext.Panel, {
 			sm: this.backendsSelectionModel,
 			autoExpandColumn: 'name',
 			autoHeight: true
-//			onRowClick: Ext.emptyFn
 		});
 
-		TYPO3.EnetcacheAnalytics.Performance.parameterForm = new Ext.form.FormPanel({
+		/**
+		 * Display and handle events on settings (scaleFactor and dataPoints)
+		 */
+		TYPO3.EnetcacheAnalytics.Performance.settingsForm = new Ext.form.FormPanel({
 			autoHeight: true,
 			id: 'parameterForm',
 			items: [{
@@ -147,16 +191,16 @@ TYPO3.EnetcacheAnalytics.Performance = Ext.extend(Ext.Panel, {
 				listeners: {
 					change: function(field, newValue, oldValue) {
 						TYPO3.EnetcacheAnalytics.Performance.selectedTestsGrid.disable();
-						TYPO3.EnetcacheAnalytics.Analyzer.saveSetting(
-							'dataPoints',
-							newValue,
-							function(){
-								TYPO3.EnetcacheAnalytics.Performance.selectedTestsGrid.enable();
-							}
+						TYPO3.BackendUserSettings.ExtDirect.set(
+							'moduleData.enetcacheanalytics.performance.settings.dataPoints',
+                            newValue,
+                            function(response) {
+	                            TYPO3.EnetcacheAnalytics.Performance.selectedTestsGrid.enable();
+                            }
 						);
 					},
 					beforerender: function(field) {
-						field.value = TYPO3.settings.enetcacheAnalytics.dataPoints;
+						field.value = TYPO3.settings.enetcacheAnalytics.performance.settings.dataPoints;
 					},
 					scope: this
 				}
@@ -168,22 +212,25 @@ TYPO3.EnetcacheAnalytics.Performance = Ext.extend(Ext.Panel, {
 				listeners: {
 					change: function(field, newValue, oldValue) {
 						TYPO3.EnetcacheAnalytics.Performance.selectedTestsGrid.disable();
-						TYPO3.EnetcacheAnalytics.Analyzer.saveSetting(
-							'scaleFactor',
-							newValue,
-							function(){
-								TYPO3.EnetcacheAnalytics.Performance.selectedTestsGrid.enable();
-							}
+						TYPO3.BackendUserSettings.ExtDirect.set(
+							'moduleData.enetcacheanalytics.performance.settings.scaleFactor',
+                            newValue,
+                            function(response) {
+	                            TYPO3.EnetcacheAnalytics.Performance.selectedTestsGrid.enable();
+                            }
 						);
 					},
 					beforerender: function(field) {
-						field.value = TYPO3.settings.enetcacheAnalytics.scaleFactor;
+						field.value = TYPO3.settings.enetcacheAnalytics.performance.settings.scaleFactor;
 					},
 					scope: this
 				}
 			}]
 		});
 
+		/**
+		 * Compile performance module
+		 */
 		Ext.apply(this, {
 			items: [{
 				region: 'west',
@@ -195,7 +242,7 @@ TYPO3.EnetcacheAnalytics.Performance = Ext.extend(Ext.Panel, {
 				collapsible: true,
 				collapseMode: 'mini',
 				items: [
-					TYPO3.EnetcacheAnalytics.Performance.parameterForm,
+					TYPO3.EnetcacheAnalytics.Performance.settingsForm,
 					TYPO3.EnetcacheAnalytics.Performance.backendsGrid,
 					TYPO3.EnetcacheAnalytics.Performance.availableTestsGrid
 				]
@@ -215,6 +262,7 @@ TYPO3.EnetcacheAnalytics.Performance = Ext.extend(Ext.Panel, {
 
 	onRender:function() {
 		this.availableTestsStore.load();
+		this.selectedTestsStore.load();
 		this.backendsStore.load();
 
 		TYPO3.EnetcacheAnalytics.Performance.superclass.onRender.apply(this, arguments);

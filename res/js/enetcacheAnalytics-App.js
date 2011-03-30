@@ -3,7 +3,7 @@ Ext.ns('TYPO3.EnetcacheAnalytics');
 Ext.onReady(function() {
 		// Save stateful components in BE_USER->uc moduleData.tools_enetcacheanalytics.States
 	Ext.state.Manager.setProvider(new TYPO3.state.ExtDirectProvider({
-		key: 'moduleData.tools_enetcacheanalytics.States',
+		key: 'moduleData.enetcacheanalytics.States',
 		autoRead: false
 	}));
 

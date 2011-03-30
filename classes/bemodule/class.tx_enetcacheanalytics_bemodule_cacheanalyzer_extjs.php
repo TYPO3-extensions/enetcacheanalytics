@@ -69,18 +69,27 @@ class tx_enetcacheanalytics_bemodule_cacheanalyzer_extjs implements tx_enetcache
 		$pageRenderer->addJsFile(t3lib_extMgm::extRelPath('enetcacheanalytics') . 'res/js/enetcacheAnalytics-App.js');
 
 
-		$settings = $GLOBALS['BE_USER']->uc['moduleData']['tools_enetcacheanalytics'];
+		$settings = $GLOBALS['BE_USER']->uc['moduleData']['enetcacheanalytics'];
 		if (!is_array($settings)) {
 			$settings = array();
 		}
 		if (!is_array($settings['State'])) {
 			$settings['State'] = array();
 		}
-		if (!isset($settings['dataPoints'])) {
-			$settings['dataPoints'] = 3;
+		if (!is_array($settings['performance'])) {
+			$settings['performance'] = array();
 		}
-		if (!isset($settings['scaleFactor'])) {
-			$settings['scaleFactor'] = 150;
+		if (!is_array($settings['performance']['settings'])) {
+			$settings['performance']['settings'] = array();
+		}
+		if (!isset($settings['performance']['settings']['dataPoints'])) {
+			$settings['performance']['settings']['dataPoints'] = 3;
+		}
+		if (!isset($settings['performance']['settings']['scaleFactor'])) {
+			$settings['performance']['settings']['scaleFactor'] = 150;
+		}
+		if (!is_array($settings['performance']['enabledBackends'])) {
+			$settings['performance']['enabledBackends'] = array();
 		}
 		$pageRenderer->addInlineSettingArray('enetcacheAnalytics', $settings);
 	}

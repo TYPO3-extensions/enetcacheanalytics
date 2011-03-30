@@ -32,6 +32,39 @@
 class tx_enetcacheanalytics_ExtDirectServer {
 
 	/**
+	 * @var array All available backends
+	 */
+	protected static $backends = array(
+		'ApcBackend',
+		'DbBackend',
+		'DbBackendCompressed',
+		'DbBackendCompressedEnetcache',
+		'FileBackend',
+		'MemcachedBackend',
+		'MemcachedBackendCompressed',
+		'PdoBackendSqlite',
+		'PhpredisRedisBackend',
+		'RedisBackendRediscache',
+	);
+
+	/**
+	 * @var array All available test cases
+	 */
+	protected static $testcases = array(
+		'SetMultipleTimes',
+		'GetMultipleTimes',
+		'SetSingleTag',
+		'GetByIdentifier',
+		'DropBySingleTag',
+		'SetKiloBytesOfData',
+		'GetKiloBytesOfData',
+		'SetMultipleTags',
+		'DropMultipleTags',
+		'FlushSingleTag',
+		'FlushMultipleTags',
+	);
+
+	/**
 	 * Method concerning cache log analyzer tab to get log entries
 	 *
 	 * @param  $parameters array
@@ -203,19 +236,52 @@ class tx_enetcacheanalytics_ExtDirectServer {
 	 *
 	 * @return array
 	 */
-	public function getTestEntries() {
+	public function getNotEnabledTestEntries() {
+		$settings = $GLOBALS['BE_USER']->getModuleData('enetcacheanalytics');
+
 		$data = array();
-		$data[] = array('uid' => 0, 'name' => 'SetMultipleTimes');
-		$data[] = array('uid' => 1, 'name' => 'GetMultipleTimes');
-		$data[] = array('uid' => 2, 'name' => 'SetSingleTag');
-		$data[] = array('uid' => 3, 'name' => 'GetByIdentifier');
-		$data[] = array('uid' => 4, 'name' => 'DropBySingleTag');
-		$data[] = array('uid' => 5, 'name' => 'SetKiloBytesOfData');
-		$data[] = array('uid' => 6, 'name' => 'GetKiloBytesOfData');
-		$data[] = array('uid' => 7, 'name' => 'SetMultipleTags');
-		$data[] = array('uid' => 8, 'name' => 'DropMultipleTags');
-		$data[] = array('uid' => 9, 'name' => 'FlushSingleTag');
-		$data[] = array('uid' => 10, 'name' => 'FlushMultipleTags');
+		foreach (self::$testcases as $testcase) {
+			$enabled = FALSE;
+			if (isset($settings['performance']['enabledTests'][$testcase])
+				&& $settings['performance']['enabledTests'][$testcase]
+			) {
+				$enabled = TRUE;
+			}
+			if (!$enabled) {
+				$data[] = array(
+					'name' => $testcase
+				);
+			}
+		}
+
+		return array(
+			'length' => count($data),
+			'data' => $data,
+		);
+	}
+
+	/**
+	 * Method concerning performance tab to get all enabled test entries
+	 *
+	 * @return array
+	 */
+	public function getEnabledTestEntries() {
+		$settings = $GLOBALS['BE_USER']->getModuleData('enetcacheanalytics');
+
+		$data = array();
+		foreach (self::$testcases as $testcase) {
+			$enabled = FALSE;
+			if (isset($settings['performance']['enabledTests'][$testcase])
+				&& $settings['performance']['enabledTests'][$testcase]
+			) {
+				$enabled = TRUE;
+			}
+			if ($enabled) {
+				$data[] = array(
+					'name' => $testcase
+				);
+			}
+		}
 
 		return array(
 			'length' => count($data),
@@ -229,44 +295,26 @@ class tx_enetcacheanalytics_ExtDirectServer {
 	 * @return array
 	 */
 	public function getBackends() {
+		$settings = $GLOBALS['BE_USER']->getModuleData('enetcacheanalytics');
+
 		$data = array();
-		$data[] = array('uid' => 0, 'name' => 'dbBackend');
-		$data[] = array('uid' => 1, 'name' => 'redisBackend');
+		foreach (self::$backends as $backend) {
+			$selected = FALSE;
+			if (
+				isset($settings['performance']['enabledBackends'][$backend])
+				&& $settings['performance']['enabledBackends'][$backend]) {
+				$selected = TRUE;
+			}
+			$data[] = array(
+				'name' => $backend,
+				'selected' => $selected
+			);
+		}
 
 		return array(
 			'length' => count($data),
 			'data' => $data,
 		);
-	}
-
-	/**
-	 * Get a setting from user UC
-	 *
-	 * @param  $name Setting name
-	 * @return mixed Value on success, else false
-	 */
-	public function loadSetting($name) {
-		$value = FALSE;
-		$settings = $GLOBALS['BE_USER']->getModuleData('tools_enetcacheanalytics');
-		if (isset($settings[$name])) {
-			$value = $settings[$name];
-		}
-		
-		return $value;
-	}
-
-	/**
-	 * Save setting in user UC
-	 *
-	 * @param string $name Setting index
-	 * @param mixed $value The value
-	 * @return boolean True on success
-	 */
-	public function saveSetting($name, $value) {
-		$settings = $GLOBALS['BE_USER']->getModuleData('tools_enetcacheanalytics');
-		$settings[$name] = $value;
-		$GLOBALS['BE_USER']->pushModuleData('tools_enetcacheanalytics', $settings);
-		return TRUE;
 	}
 }
 ?>
