@@ -197,5 +197,30 @@ class tx_enetcacheanalytics_ExtDirectServer {
 
 		return implode(chr(10), $result);
 	}
+
+	/**
+	 * Method concerning performance tab to get all available test entries
+	 *
+	 * @return array
+	 */
+	public function getTestEntries() {
+		$data = array();
+		$data[] = array('uid' => 0, 'name' => 'SetMultipleTimes');
+		$data[] = array('uid' => 1, 'name' => 'GetMultipleTimes');
+		$data[] = array('uid' => 2, 'name' => 'SetSingleTag');
+		$data[] = array('uid' => 3, 'name' => 'GetByIdentifier');
+		$data[] = array('uid' => 4, 'name' => 'DropBySingleTag');
+		$data[] = array('uid' => 5, 'name' => 'SetKiloBytesOfData');
+		$data[] = array('uid' => 6, 'name' => 'GetKiloBytesOfData');
+		$data[] = array('uid' => 7, 'name' => 'SetMultipleTags');
+		$data[] = array('uid' => 8, 'name' => 'DropMultipleTags');
+		$data[] = array('uid' => 9, 'name' => 'FlushSingleTag');
+		$data[] = array('uid' => 10, 'name' => 'FlushMultipleTags');
+
+		return array(
+			'length' => count($data),
+			'data' => $data,
+		);
+	}
 }
 ?>

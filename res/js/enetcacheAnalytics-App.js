@@ -33,6 +33,9 @@ TYPO3.EnetcacheAnalytics.App = {
 				},{
 					title: 'Performance tests',
 					xtype: 'TYPO3.EnetcacheAnalytics.Performance'
+//				},{
+//					title: 'test',
+//					xtype: 'TYPO3.EnetcacheAnalytics.PerformancecenterGrid'
 				}
 			],
 			getState: function() {

@@ -51,8 +51,10 @@ class tx_enetcacheanalytics_bemodule_cacheanalyzer_extjs implements tx_enetcache
 
 			// @TODO: Write API for index.php
 		$pageRenderer = $this->pObj->doc->getPageRenderer();
+//		$pageRenderer->enableDebugMode();
 		$pageRenderer->loadExtJS();
 		$pageRenderer->addExtDirectCode();
+
 		$this->pObj->doc->setExtDirectStateProvider();
 		$pageRenderer->addJsFile('ajax.php?ajaxID=ExtDirect::getAPI&namespace=' . 'TYPO3.EnetcacheAnalytics', NULL, FALSE);
 
