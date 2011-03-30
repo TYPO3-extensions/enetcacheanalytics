@@ -53,6 +53,7 @@ class tx_enetcacheanalytics_bemodule_cacheanalyzer_extjs implements tx_enetcache
 		$pageRenderer = $this->pObj->doc->getPageRenderer();
 		$pageRenderer->loadExtJS();
 		$pageRenderer->addExtDirectCode();
+		$this->pObj->doc->setExtDirectStateProvider();
 		$pageRenderer->addJsFile('ajax.php?ajaxID=ExtDirect::getAPI&namespace=' . 'TYPO3.EnetcacheAnalytics', NULL, FALSE);
 
 		$pageRenderer->addJsFile('../t3lib/js/extjs/ux/Ext.ux.FitToParent.js');
@@ -64,6 +65,16 @@ class tx_enetcacheanalytics_bemodule_cacheanalyzer_extjs implements tx_enetcache
 		$pageRenderer->addJsFile(t3lib_extMgm::extRelPath('enetcacheanalytics') . 'res/js/enetcacheAnalytics-Analyze.js');
 		$pageRenderer->addJsFile(t3lib_extMgm::extRelPath('enetcacheanalytics') . 'res/js/enetcacheAnalytics-Performance.js');
 		$pageRenderer->addJsFile(t3lib_extMgm::extRelPath('enetcacheanalytics') . 'res/js/enetcacheAnalytics-App.js');
+
+
+		$settings = $GLOBALS['BE_USER']->uc['moduleData']['tools_enetcacheanalytics'];
+		if (!is_array($settings)) {
+			$settings = array();
+		}
+		if (!is_array($settings['State'])) {
+			$settings['State'] = array();
+		}
+		$pageRenderer->addInlineSettingArray('enetcacheAnalytics', $settings);
 	}
 
 	/**
