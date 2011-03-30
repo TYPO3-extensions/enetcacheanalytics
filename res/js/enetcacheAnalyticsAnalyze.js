@@ -47,6 +47,10 @@ TYPO3.EnetcacheAnalytics.Analyze = Ext.extend(Ext.grid.GridPanel, {
 					items:[
 						{
 							title: 'Identifier',
+							html: record.data.identifier
+						},
+						{
+							title: 'Identifier Array',
 							html: record.data.identifier_source
 						},
 						{
@@ -64,7 +68,7 @@ TYPO3.EnetcacheAnalytics.Analyze = Ext.extend(Ext.grid.GridPanel, {
 			var type = record.get('request_type');
 			switch (type) {
 				case 'GET':
-					if (record.get('data') == null) {
+					if (record.get('data') == '') {
 						cssClass = 'cache-get-failed';
 					} else {
 						cssClass = 'cache-get-successful';
@@ -93,7 +97,7 @@ TYPO3.EnetcacheAnalytics.Analyze = Ext.extend(Ext.grid.GridPanel, {
 		},
 
 		renderer : function(v, p, record) {
-			if (record.data.data.length > 0 && record.data.identifier_source.length > 0) {
+			if (record.data.identifier.length > 0 || record.data.data.length > 0 || record.data.identifier_source.length > 0) {
 				p.cellAttr = 'rowspan="2"';
 				var expanderHtml = '<div class="x-grid3-row-expander">&#160;</div>';
 			} else {
@@ -112,12 +116,33 @@ TYPO3.EnetcacheAnalytics.Analyze = Ext.extend(Ext.grid.GridPanel, {
 			totalProperty: 'length',
 			fields: [
 				'uid', 'unique_id', 'page_uid', 'content_uid', 'user',
-				'tstamp', 'microtime',
+				'time',
 				'request_type', 'caller', 'data', 'identifier', 'identifier_source', 'lifetime', 'tags'
 			],
 			paramsAsHash: true,
 			paramNames: {
 				unique_id: 'unique_id'
+			}
+		});
+
+		TYPO3.EnetcacheAnalytics.Analyze.logStatsStore = new Ext.data.DirectStore({
+			storeId: 'logStats',
+			idProperty: 'unique_id',
+			directFn: TYPO3.EnetcacheAnalytics.Analyzer.getLogStats,
+			root: 'data',
+			totalProperty: 'length',
+			fields: [
+				'unique_id', 'numberOfPlugins', 'numberOfEnetcachePlugins', 'numberOfSuccessfulGets'
+			],
+			paramsAsHash: true,
+			paramNames: {
+				unique_id: 'unique_id'
+			},
+			listeners: {
+				load: function(store, records) {
+					Ext.getCmp('logGroupInfo').update(TYPO3.EnetcacheAnalytics.Layouts.logStats().applyTemplate(records[0]['data']));
+				},
+				scope: this
 			}
 		});
 
@@ -134,13 +159,13 @@ TYPO3.EnetcacheAnalytics.Analyze = Ext.extend(Ext.grid.GridPanel, {
 		var cm = new Ext.grid.ColumnModel({
 			columns: [
 				this.expander,
-				{id: 'page_uid', header: 'PID', dataIndex: 'page_uid', width: 20},
-				{id: 'content_uid', header: 'UID', dataIndex: 'content_uid', width: 20},
-				{id: 'request_type', header: 'type', dataIndex: 'request_type', width: 40},
+				{id: 'page_uid', header: 'PID', dataIndex: 'page_uid', width: 16},
+				{id: 'content_uid', header: 'UID', dataIndex: 'content_uid', width: 16},
+				{id: 'request_type', header: 'Type', dataIndex: 'request_type', width: 30},
+				{id: 'time', header: 'Time', dataIndex: 'time', width: 16},
 				{id: 'user', header: 'User', dataIndex: 'user', width: 20},
-				{id: 'caller', header: 'Caller', dataIndex: 'caller'},
-				{id: 'identifier', header: 'Identifier', dataIndex: 'identifier'},
-				{id: 'tags', header: 'Tags', dataIndex: 'tags'},
+				{id: 'caller', header: 'Caller', dataIndex: 'caller', width: 200},
+				{id: 'tags', header: 'Tags', dataIndex: 'tags'}
 			],
 			defaults: {
 				sortable: false,
@@ -159,15 +184,21 @@ TYPO3.EnetcacheAnalytics.Analyze = Ext.extend(Ext.grid.GridPanel, {
 					text: 'Log entry:'
 				},
 				TYPO3.EnetcacheAnalytics.logGroupCombo,
-				' ',
 				new Ext.Button({
-            		overflowText: 'Refresh',
+            		tooltip: 'Refresh',
+					tooltipType: 'title',
             		iconCls: 'x-tbar-loading',
 					scope: this,
             		handler: function() {
 						TYPO3.EnetcacheAnalytics.logGroupCombo.store.reload();
 					}
-        		})
+        		}),
+				'-',
+				{
+					xtype: 'container',
+					id: 'logGroupInfo',
+					html: ''
+				}
 			],
 			viewConfig: {
 				forceFit: true,
@@ -182,6 +213,7 @@ TYPO3.EnetcacheAnalytics.Analyze = Ext.extend(Ext.grid.GridPanel, {
 		TYPO3.EnetcacheAnalytics.logGroupCombo.store = this.logGroupStore;
 		TYPO3.EnetcacheAnalytics.logGroupCombo.on('select', function(comboBox, newValue, oldValue) {
 			TYPO3.EnetcacheAnalytics.Analyze.logEntryStore.reload({ params: {unique_id: newValue.data.unique_id} });
+			TYPO3.EnetcacheAnalytics.Analyze.logStatsStore.reload({ params: {unique_id: newValue.data.unique_id} });
 		}, this);
 		this.logGroupStore.load({
 			callback: function() {
@@ -190,6 +222,7 @@ TYPO3.EnetcacheAnalytics.Analyze = Ext.extend(Ext.grid.GridPanel, {
 				} else {
 					TYPO3.EnetcacheAnalytics.logGroupCombo.setValue(this.getAt(0).data.unique_id);
 					TYPO3.EnetcacheAnalytics.Analyze.logEntryStore.reload({ params: {unique_id: this.getAt(0).data.unique_id} });
+					TYPO3.EnetcacheAnalytics.Analyze.logStatsStore.reload({ params: {unique_id: this.getAt(0).data.unique_id} });
 				}
 			}
 		});
@@ -213,3 +246,15 @@ TYPO3.EnetcacheAnalytics.logGroupCombo = new Ext.form.ComboBox({
 	store: null,
 	width: 200
 });
+
+TYPO3.EnetcacheAnalytics.Layouts = {
+	logStats: function() {
+		return new Ext.XTemplate(
+			'Plugins rendered:{numberOfPlugins}',
+			' ',
+			'Using enetcache:{numberOfEnetcachePlugins}',
+			' ',
+			'Successful Gets:{numberOfSuccessfulGets}'
+		);
+	}
+}

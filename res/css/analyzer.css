@@ -1,0 +1,19 @@
+.cache-get-successful {
+	background-color: rgb(230, 255, 230);
+}
+
+.cache-get-failed {
+	background-color: rgb(255, 230, 230);
+}
+
+.cache-set {
+	background-color: rgb(255, 255, 230);
+}
+
+.x-grid3-row-over {
+	background-color: #DEDEDE;
+}
+
+.enetcacheanalytics-tbar-info {
+	background-image: url('../images/icon-info.gif');
+}
