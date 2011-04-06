@@ -46,6 +46,7 @@ class tx_enetcacheanalytics_performance_view_ResultTable {
 	/**
 	 * Render result table
 	 *
+	 * @TODO: Cleanup styles if moving to better render engine
 	 * @return string HTML
 	 */
 	public function render() {
