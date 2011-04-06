@@ -81,8 +81,6 @@ class tx_enetcacheanalytics_module1 extends t3lib_SCbase {
 	public function menuConfig() {
 		$this->MOD_MENU = Array (
 			'function' => Array (
-				'cacheanalyzer' => 'Cache analyzer',
-				'performance' => 'Backend performance tests',
 				'cacheanalyzer extjs' => 'Cache analyzer extJS',
 			)
 		);
@@ -103,7 +101,7 @@ class tx_enetcacheanalytics_module1 extends t3lib_SCbase {
 
 			// Set markers for template file
 		$markers = array(
-			'CSH' => $docHeaderButtons['csh'],
+			'CSH' => '',
 			'FUNCTION_MENU' => t3lib_BEfunc::getFuncMenu(0, 'SET[function]', $this->MOD_SETTINGS['function'], $this->MOD_MENU['function']),
 			'ADDITIONAL_FUNCTIONS' => $this->additionalDocHeaderMarker,
 			'CONTENT' => $this->contentMarker,
@@ -169,7 +167,7 @@ class tx_enetcacheanalytics_module1 extends t3lib_SCbase {
 		}
 		$pageRenderer->addInlineSettingArray('enetcacheAnalytics', $settings);
 
-		$this->setContentMarker('<div id="tx-enetcacheanalytics-mod-grid"></div>');
+		$this->contentMarker = '<div id="tx-enetcacheanalytics-mod-grid"></div>';
 	}
 
 	/**
@@ -196,107 +194,7 @@ class tx_enetcacheanalytics_module1 extends t3lib_SCbase {
 		$this->doc->docType='xhtml_trans';
 
 			// Default form tag
-		$this->doc->form = '<form action="" method="post" name="' . self::extKey . '" enctype="multipart/form-data">';
 		$this->doc->form = '';
-
-			// JavaScript for main function selector
-		$this->doc->JScodeArray[] = '
-			script_ended = 0;
-			function jumpToUrl(URL)	{
-				document.location = URL;
-			}
-		';
-
-			// JavaScript to set post var data and handle data fields
-		$this->doc->JScodeArray[] = '
-			function setAction(action) {
-				setFieldValue(\'action\', action);
-			}
-			function setFieldValue(name, value) {
-					// Check for existing element, enable it and set value. else add new element as hidden input element
-				if ( document.forms["' . self::extKey . '"].elements["DATA[tx_' . self::extKey . '_"+name+"]"] ) {
-					document.forms["' . self::extKey . '"].elements["DATA[tx_' . self::extKey . '_"+name+"]"].disabled = false;
-					document.forms["' . self::extKey . '"].elements["DATA[tx_' . self::extKey . '_"+name+"]"].value = value;
-				} else {
-					var newElement = document.createElement("input");
-					newElement.setAttribute("name", "DATA[tx_' . self::extKey . '_"+name+"]");
-					newElement.setAttribute("type", "hidden");
-					newElement.setAttribute("value", value);
-					document.forms["' . self::extKey . '"].appendChild(newElement);
-				}
-			}
-		';
-	}
-
-	/**
-	 * Get extension key
-	 *
-	 * @return string Extension key
-	 */
-	public function getExtKey() {
-		return self::extKey;
-	}
-
-	/**
-	 * Get absolute path to this extension
-	 *
-	 * @return string Path to this extension
-	 */
-	public function getExtPath() {
-		return $this->extPath;
-	}
-
-	/**
-	 * Get all Get / Post vars of the extension namespace
-	 *
-	 * @return array GPvars
-	 */
-	public function getGPvars() {
-		return $this->GPvars;
-	}
-
-	/**
-	 * Set additional JS to doc
-	 *
-	 * @param string Javascript to include
-	 * @return void
-	 */
-	public function setAdditionalJavascript($javascript) {
-		$this->doc->JScodeArray[] = $javascript;
-	}
-
-	/**
-	 * Load additional javascript files
-	 *
-	 * @param array Javascript files to include, relative to extension base path
-	 * @return void
-	 */
-	public function setAdditionalJavascriptFiles(array $files = array()) {
-		foreach ($files as $file) {
-			if (strlen($file)) {
-				$this->doc->getPageRenderer()->addJsFile(t3lib_extMgm::extRelPath(self::extKey) . $file);
-			}
-		}
-	}
-
-	/**
-	 * Set additional function marker in doc header
-	 *
-	 * @param string HTML of marker
-	 * @return void
-	 */
-	public function setAdditionalDocHeaderMarker($html) {
-		$this->additionalDocHeaderMarker = $html;
-	}
-
-	/**
-	 * Set main content marker
-	 *
-	 * @param string HTML of marker
-	 * @return void
-	 */
-	public function setContentMarker($html) {
-		$this->contentMarker = $html;
 	}
 } // End of class
 
