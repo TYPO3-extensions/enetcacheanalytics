@@ -46,11 +46,6 @@ class tx_enetcacheanalytics_module1 extends t3lib_SCbase {
 	protected $GPvars = array();
 
 	/**
-	 * @var string HTML of additional functions in docheader
-	 */
-	protected $additionalDocHeaderMarker = '';
-
-	/**
 	 * @var string HTML of main content marker
 	 */
 	protected $contentMarker = '';
@@ -74,20 +69,6 @@ class tx_enetcacheanalytics_module1 extends t3lib_SCbase {
 	}
 
 	/**
-	 * Function drop down in docheader
-	 *
-	 * @return	void
-	 */
-	public function menuConfig() {
-		$this->MOD_MENU = Array (
-			'function' => Array (
-				'cacheanalyzer extjs' => 'Cache analyzer extJS',
-			)
-		);
-		parent::menuConfig();
-	}
-
-	/**
 	 * Render and echo out module content
 	 *
 	 * @return	void
@@ -102,8 +83,7 @@ class tx_enetcacheanalytics_module1 extends t3lib_SCbase {
 			// Set markers for template file
 		$markers = array(
 			'CSH' => '',
-			'FUNCTION_MENU' => t3lib_BEfunc::getFuncMenu(0, 'SET[function]', $this->MOD_SETTINGS['function'], $this->MOD_MENU['function']),
-			'ADDITIONAL_FUNCTIONS' => $this->additionalDocHeaderMarker,
+			'FUNCTION_MENU' => '',
 			'CONTENT' => $this->contentMarker,
 		);
 
@@ -192,7 +172,7 @@ class tx_enetcacheanalytics_module1 extends t3lib_SCbase {
 			// Default form tag
 		$this->doc->form = '';
 	}
-} // End of class
+}
 
 	// Standard XCLASS definition
 if (defined('TYPO3_MODE') && $TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/enetcacheanalytics/mod1/index.php'])	{
