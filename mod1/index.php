@@ -82,14 +82,12 @@ class tx_enetcacheanalytics_module1 extends t3lib_SCbase {
 
 			// Set markers for template file
 		$markers = array(
-			'CSH' => '',
-			'FUNCTION_MENU' => '',
 			'CONTENT' => $this->contentMarker,
 		);
 
 			// Render full page content
 		$content = $this->doc->startPage('enet content cache analytics tool');
-		$content .= $this->doc->moduleBody(array(), array('csh' => ''), $markers);
+		$content .= $this->doc->moduleBody(array(), array(), $markers);
 		$content .= $this->doc->endPage();
 
 		echo $content;
