@@ -351,10 +351,10 @@ class tx_enetcacheanalytics_ExtDirectServer {
 
 		$testSuite->run();
 		$result = $testSuite->getTestResults();
-		/** @var $table tx_enetcacheanalytics_bemodule_performance_view_ResultTable */
-		$table = t3lib_div::makeInstance('tx_enetcacheanalytics_bemodule_performance_view_ResultTable', $result);
-		/** @var $grapher tx_enetcacheanalytics_bemodule_performance_view_ResultGraph */
-		$grapher = t3lib_div::makeInstance('tx_enetcacheanalytics_bemodule_performance_view_ResultGraph', $result);
+		/** @var $table tx_enetcacheanalytics_performance_view_ResultTable */
+		$table = t3lib_div::makeInstance('tx_enetcacheanalytics_performance_view_ResultTable', $result);
+		/** @var $grapher tx_enetcacheanalytics_performance_view_ResultGraph */
+		$grapher = t3lib_div::makeInstance('tx_enetcacheanalytics_performance_view_ResultGraph', $result);
 
 		$result = array();
 		$result['name'] = $test;

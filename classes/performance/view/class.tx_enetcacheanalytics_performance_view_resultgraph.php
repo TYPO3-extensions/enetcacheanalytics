@@ -29,7 +29,7 @@
  * @subpackage tx_enetcacheanalytics
  * @author Christian Kuhn <lolli@schwarzbu.ch>
  */
-class tx_enetcacheanalytics_bemodule_performance_view_ResultGraph {
+class tx_enetcacheanalytics_performance_view_ResultGraph {
 
 	/**
 	 * @var array Gathered output of performance tests
