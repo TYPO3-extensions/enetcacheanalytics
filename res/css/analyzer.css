@@ -17,3 +17,7 @@
 .enetcacheanalytics-tbar-info {
 	background-image: url('../images/icon-info.gif');
 }
+
+div#typo3-docbody {
+	top: 0;
+}
