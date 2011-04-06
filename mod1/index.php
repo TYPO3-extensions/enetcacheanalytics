@@ -81,8 +81,6 @@ class tx_enetcacheanalytics_module1 extends t3lib_SCbase {
 	public function menuConfig() {
 		$this->MOD_MENU = Array (
 			'function' => Array (
-				'cacheanalyzer' => 'Cache analyzer',
-				'performance' => 'Backend performance tests',
 				'cacheanalyzer extjs' => 'Cache analyzer extJS',
 			)
 		);
@@ -128,26 +126,7 @@ class tx_enetcacheanalytics_module1 extends t3lib_SCbase {
 	 * @return string HTML of submodule
 	 */
 	protected function renderSubModule() {
-		$module = '';
-		$moduleGP = t3lib_div::_GP('SET');
-		if ($moduleGP['function']) {
-			$module = $moduleGP['function'];
-		} else {
-			$moduleUC = $GLOBALS['BE_USER']->getModuleData('tools_tx' . self::extKey . 'M1');
-			if (strlen($moduleUC['function']) > 0) {
-				$module = $moduleUC['function'];
-			}
-		}
-		switch ($module) {
-			case 'performance':
-				$moduleObject = t3lib_div::makeInstance('tx_enetcacheanalytics_bemodule_performance');
-				break;
-			case 'cacheanalyzer extjs':
-				$moduleObject = t3lib_div::makeInstance('tx_enetcacheanalytics_bemodule_cacheanalyzer_extjs');
-				break;
-			default:
-				$moduleObject = t3lib_div::makeInstance('tx_enetcacheanalytics_bemodule_cacheanalyzer');
-		}
+		$moduleObject = t3lib_div::makeInstance('tx_enetcacheanalytics_bemodule_cacheanalyzer_extjs');
 		if ($moduleObject instanceof tx_enetcacheanalytics_bemodule) {
 			$moduleObject->init($this);
 			$moduleObject->execute();
@@ -178,36 +157,7 @@ class tx_enetcacheanalytics_module1 extends t3lib_SCbase {
 		$this->doc->docType='xhtml_trans';
 
 			// Default form tag
-		$this->doc->form = '<form action="" method="post" name="' . self::extKey . '" enctype="multipart/form-data">';
 		$this->doc->form = '';
-
-			// JavaScript for main function selector
-		$this->doc->JScodeArray[] = '
-			script_ended = 0;
-			function jumpToUrl(URL)	{
-				document.location = URL;
-			}
-		';
-
-			// JavaScript to set post var data and handle data fields
-		$this->doc->JScodeArray[] = '
-			function setAction(action) {
-				setFieldValue(\'action\', action);
-			}
-			function setFieldValue(name, value) {
-					// Check for existing element, enable it and set value. else add new element as hidden input element
-				if ( document.forms["' . self::extKey . '"].elements["DATA[tx_' . self::extKey . '_"+name+"]"] ) {
-					document.forms["' . self::extKey . '"].elements["DATA[tx_' . self::extKey . '_"+name+"]"].disabled = false;
-					document.forms["' . self::extKey . '"].elements["DATA[tx_' . self::extKey . '_"+name+"]"].value = value;
-				} else {
-					var newElement = document.createElement("input");
-					newElement.setAttribute("name", "DATA[tx_' . self::extKey . '_"+name+"]");
-					newElement.setAttribute("type", "hidden");
-					newElement.setAttribute("value", value);
-					document.forms["' . self::extKey . '"].appendChild(newElement);
-				}
-			}
-		';
 	}
 
 	/**
