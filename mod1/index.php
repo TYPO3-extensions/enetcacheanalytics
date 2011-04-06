@@ -107,10 +107,6 @@ class tx_enetcacheanalytics_module1 extends t3lib_SCbase {
 			'CONTENT' => $this->contentMarker,
 		);
 
-			// Persist user data be_module data
-			// @TODO: restructure weird array value handling
-		t3lib_div::makeInstance('tx_enetcacheanalytics_utility_UserData')->persist();
-
 			// Render full page content
 		$content = $this->doc->startPage('enet content cache analytics tool');
 		$content .= $this->doc->moduleBody(array(), array('csh' => ''), $markers);

@@ -46,8 +46,6 @@ return array(
 	'tx_enetcacheanalytics_performance_testsuite' => $extensionPath . 'classes/performance/class.tx_enetcacheanalytics_performance_testsuite.php',
 	'tx_enetcacheanalytics_performance_utility_mockfrontend' => $extensionPath . 'classes/performance/utility/class.tx_enetcacheanalytics_performance_utility_mockfrontend.php',
 	'tx_enetcacheanalytics_utility_data' => $extensionPath . 'classes/utility/class.tx_enetcacheanalytics_utility_data.php',
-	'tx_enetcacheanalytics_utility_formhelper' => $extensionPath . 'classes/utility/class.tx_enetcacheanalytics_utility_formhelper.php',
 	'tx_enetcacheanalytics_utility_list' => $extensionPath . 'classes/utility/class.tx_enetcacheanalytics_utility_list.php',
-	'tx_enetcacheanalytics_utility_userdata' => $extensionPath . 'classes/utility/class.tx_enetcacheanalytics_utility_userdata.php',
 );
 ?>

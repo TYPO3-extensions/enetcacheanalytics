@@ -164,21 +164,15 @@ class tx_enetcacheanalytics_bemodule_performance_view_ResultTable {
 		$content[] = '<td>';
 		$row = array();
 
-		/** @var $userData tx_enetcacheanalytics_utility_UserData */
-		$userData = t3lib_div::makeInstance('tx_enetcacheanalytics_utility_UserData');
-		$enabledMessageTypes = $userData->getEnabledMessages();
 		foreach ($messageList as $message) {
 			$messageType = str_replace('tx_enetcacheanalytics_performance_message_', '', get_class($message));
-			$showMessage = in_array($messageType, $enabledMessageTypes) ? TRUE : FALSE;
-			if ($showMessage) {
-					// Special hack for TimeMessage to crop data at some position after decimal point
-				if ($messageType === 'TimeMessage') {
-					$value = self::formatTimeMessage($message['value']);
-				} else {
-					$value = $message['value'];
-				}
-				$row[] = '<p class="' . $messageType . '">' . $value . '</p>';
+				// Special hack for TimeMessage to crop data at some position after decimal point
+			if ($messageType === 'TimeMessage') {
+				$value = self::formatTimeMessage($message['value']);
+			} else {
+				$value = $message['value'];
 			}
+			$row[] = '<p class="' . $messageType . '">' . $value . '</p>';
 		}
 		$content[] = implode(chr(10), $row);
 		$content[] = '</td>';
