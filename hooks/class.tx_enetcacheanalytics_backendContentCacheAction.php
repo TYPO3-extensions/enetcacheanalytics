@@ -33,7 +33,7 @@ class tx_enetcacheanalytics_backendContentCacheAction implements backend_cacheAc
 			'id'	=>	'truncateLogTables',
 			'title'	=>	'Truncate cache logs',
 			'href'  =>  $GLOBALS['BACK_PATH'].'ajax.php?ajaxID=enetcacheanalytics::truncateLogTables',
-			'icon'	=>	'<img width="16" height="16" title="Truncate cache analytics logs" alt="Truncate cache analytics logs" src="../typo3conf/ext/enetcacheanalytics/res/delete_log.gif" />'
+			'icon'	=>	'<img width="16" height="16" title="Truncate cache analytics logs" alt="Truncate cache analytics logs" src="../typo3conf/ext/enetcacheanalytics/res/img/delete_log.gif" />'
 		);
 		$optionValues[] = 'truncateLogTables';
 	}

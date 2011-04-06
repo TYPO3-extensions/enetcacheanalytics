@@ -160,10 +160,9 @@ class tx_enetcacheanalytics_module1 extends t3lib_SCbase {
 		$this->doc->backPath = $GLOBALS['BACK_PATH'];
 
 			// Main template
-		$this->doc->setModuleTemplate('EXT:' . self::extKey . '/res/mod1_template.html');
+		$this->doc->setModuleTemplate('EXT:' . self::extKey . '/res/templates/mod1.html');
 
 			// Additional styles
-		$this->doc->addStyleSheet(self::extKey . '_css', t3lib_extMgm::extRelPath(self::extKey) . 'res/mod1.css');
 		$this->doc->addStyleSheet(self::extKey . '_css', t3lib_extMgm::extRelPath(self::extKey) . 'res/css/analyzer.css');
 
 			// Default docType
