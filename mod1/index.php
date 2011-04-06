@@ -81,6 +81,8 @@ class tx_enetcacheanalytics_module1 extends t3lib_SCbase {
 	public function menuConfig() {
 		$this->MOD_MENU = Array (
 			'function' => Array (
+				'cacheanalyzer' => 'Cache analyzer',
+				'performance' => 'Backend performance tests',
 				'cacheanalyzer extjs' => 'Cache analyzer extJS',
 			)
 		);
@@ -97,7 +99,7 @@ class tx_enetcacheanalytics_module1 extends t3lib_SCbase {
 		$this->setDocDefaults();
 
 			// Call submodule
-		$this->renderSubModule();
+		$this->renderMainModule();
 
 			// Set markers for template file
 		$markers = array(
@@ -125,12 +127,49 @@ class tx_enetcacheanalytics_module1 extends t3lib_SCbase {
 	 *
 	 * @return string HTML of submodule
 	 */
-	protected function renderSubModule() {
-		$moduleObject = t3lib_div::makeInstance('tx_enetcacheanalytics_bemodule_cacheanalyzer_extjs');
-		if ($moduleObject instanceof tx_enetcacheanalytics_bemodule) {
-			$moduleObject->init($this);
-			$moduleObject->execute();
+	protected function renderMainModule() {
+		$pageRenderer = $this->doc->getPageRenderer();
+		$pageRenderer->loadExtJS();
+		$pageRenderer->addExtDirectCode();
+
+		$this->doc->setExtDirectStateProvider();
+		$pageRenderer->addJsFile('ajax.php?ajaxID=ExtDirect::getAPI&namespace=' . 'TYPO3.EnetcacheAnalytics', NULL, FALSE);
+
+		$pageRenderer->addJsFile('../t3lib/js/extjs/ux/Ext.ux.FitToParent.js');
+
+		$pageRenderer->addJsFile(t3lib_extMgm::extRelPath('enetcacheanalytics') . 'res/js/ux/RowPanelExpander.js');
+
+		$pageRenderer->addJsFile(t3lib_extMgm::extRelPath('enetcacheanalytics') . 'res/js/enetcacheAnalytics-Components.js');
+		$pageRenderer->addJsFile(t3lib_extMgm::extRelPath('enetcacheanalytics') . 'res/js/enetcacheAnalytics-Layouts.js');
+		$pageRenderer->addJsFile(t3lib_extMgm::extRelPath('enetcacheanalytics') . 'res/js/enetcacheAnalytics-Analyze.js');
+		$pageRenderer->addJsFile(t3lib_extMgm::extRelPath('enetcacheanalytics') . 'res/js/enetcacheAnalytics-Performance.js');
+		$pageRenderer->addJsFile(t3lib_extMgm::extRelPath('enetcacheanalytics') . 'res/js/enetcacheAnalytics-App.js');
+
+		$settings = $GLOBALS['BE_USER']->uc['moduleData']['enetcacheanalytics'];
+		if (!is_array($settings)) {
+			$settings = array();
 		}
+		if (!is_array($settings['State'])) {
+			$settings['State'] = array();
+		}
+		if (!is_array($settings['performance'])) {
+			$settings['performance'] = array();
+		}
+		if (!is_array($settings['performance']['settings'])) {
+			$settings['performance']['settings'] = array();
+		}
+		if (!isset($settings['performance']['settings']['dataPoints'])) {
+			$settings['performance']['settings']['dataPoints'] = 3;
+		}
+		if (!isset($settings['performance']['settings']['scaleFactor'])) {
+			$settings['performance']['settings']['scaleFactor'] = 200;
+		}
+		if (!is_array($settings['performance']['enabledBackends'])) {
+			$settings['performance']['enabledBackends'] = array();
+		}
+		$pageRenderer->addInlineSettingArray('enetcacheAnalytics', $settings);
+
+		$this->setContentMarker('<div id="tx-enetcacheanalytics-mod-grid"></div>');
 	}
 
 	/**
@@ -157,7 +196,36 @@ class tx_enetcacheanalytics_module1 extends t3lib_SCbase {
 		$this->doc->docType='xhtml_trans';
 
 			// Default form tag
+		$this->doc->form = '<form action="" method="post" name="' . self::extKey . '" enctype="multipart/form-data">';
 		$this->doc->form = '';
+
+			// JavaScript for main function selector
+		$this->doc->JScodeArray[] = '
+			script_ended = 0;
+			function jumpToUrl(URL)	{
+				document.location = URL;
+			}
+		';
+
+			// JavaScript to set post var data and handle data fields
+		$this->doc->JScodeArray[] = '
+			function setAction(action) {
+				setFieldValue(\'action\', action);
+			}
+			function setFieldValue(name, value) {
+					// Check for existing element, enable it and set value. else add new element as hidden input element
+				if ( document.forms["' . self::extKey . '"].elements["DATA[tx_' . self::extKey . '_"+name+"]"] ) {
+					document.forms["' . self::extKey . '"].elements["DATA[tx_' . self::extKey . '_"+name+"]"].disabled = false;
+					document.forms["' . self::extKey . '"].elements["DATA[tx_' . self::extKey . '_"+name+"]"].value = value;
+				} else {
+					var newElement = document.createElement("input");
+					newElement.setAttribute("name", "DATA[tx_' . self::extKey . '_"+name+"]");
+					newElement.setAttribute("type", "hidden");
+					newElement.setAttribute("value", value);
+					document.forms["' . self::extKey . '"].appendChild(newElement);
+				}
+			}
+		';
 	}
 
 	/**
@@ -229,54 +297,6 @@ class tx_enetcacheanalytics_module1 extends t3lib_SCbase {
 	 */
 	public function setContentMarker($html) {
 		$this->contentMarker = $html;
-	}
-
-	/**
-	 * Get divider HTML
-	 *
-	 * @param integer Height of divider
-	 * @return HTML of divider
-	 */
-	public function getDivider($height = 5) {
-		return $this->doc->divider($height);
-	}
-
-	/**
-	 * Get section HTML
-	 *
-	 * @param string Title of section
-	 * @param string HTML of section content
-	 * @return string HTML section
-	 */
-	public function getSection($title, $sectionHTML) {
-		return $this->doc->section($title, $sectionHTML, FALSE, TRUE, 0, TRUE);
-	}
-
-	/**
-	 * Get header HTML
-	 *
-	 * @param string Header title
-	 * @return string HTML of doc title
-	 */
-	public function getHeader($title) {
-		return $this->doc->header($title);
-	}
-
-	/**
-	 * This method is used to add a message to the internal flash message queue
-	 *
-	 * @param string The message itself
-	 * @param integer integer message level (-1 = success (default), 0 = info, 1 = notice, 2 = warning, 3 = error)
-	 * @return void
-	 */
-	public function addMessage($message, $severity = t3lib_FlashMessage::OK) {
-		$message = t3lib_div::makeInstance(
-			't3lib_FlashMessage',
-			$message,
-			'',
-			$severity
-		);
-		t3lib_FlashMessageQueue::addMessage($message);
 	}
 } // End of class
 

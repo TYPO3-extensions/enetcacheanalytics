@@ -49,9 +49,7 @@ class tx_enetcacheanalytics_bemodule_cacheanalyzer_extjs implements tx_enetcache
 		$this->pObj = $pObj;
 		$this->GPvars = $pObj->getGPvars();
 
-			// @TODO: Write API for index.php
 		$pageRenderer = $this->pObj->doc->getPageRenderer();
-//		$pageRenderer->enableDebugMode();
 		$pageRenderer->loadExtJS();
 		$pageRenderer->addExtDirectCode();
 
