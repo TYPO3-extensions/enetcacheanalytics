@@ -1,3 +1,18 @@
+
+/** override mousedown for grid to select checkbox respecting singleSelect */
+Ext.override(Ext.grid.CheckboxSelectionModel, {
+	handleMouseDown: function(g, rowIndex, e) {
+		e.stopEvent();
+		if (this.isSelected(rowIndex)) {
+			this.deselectRow(rowIndex);
+		} else {
+			this.selectRow(rowIndex, true);
+			this.grid.getView().focusRow(rowIndex);
+		}
+	}
+});
+
+
 TYPO3.EnetcacheAnalytics.Performance = Ext.extend(Ext.Panel, {
 	layout: 'border',
 	autoScroll: true,
@@ -78,6 +93,12 @@ TYPO3.EnetcacheAnalytics.Performance = Ext.extend(Ext.Panel, {
 			paramsAsHash: true,
 			paramNames: {
 				unique_id: 'name'
+			},
+			listeners: {
+				scope: this,
+				'load': function(store, records) {
+					store.sort('name', 'ASC');
+				}
 			}
 		});
 		this.selectedTestsStore = new Ext.data.DirectStore({
@@ -90,6 +111,15 @@ TYPO3.EnetcacheAnalytics.Performance = Ext.extend(Ext.Panel, {
 			paramsAsHash: true,
 			paramNames: {
 				unique_id: 'name'
+			},
+			listeners: {
+				scope: this,
+				'load': function(store, records) {
+					store.sort('name', 'ASC');
+					if (store.getCount() == 0) {
+						TYPO3.Flashmessage.display(TYPO3.Severity.information, 'Information', 'Please drag a test from "Available tests" section to "Enabled tests" section. Next select a backend to run the tests on and hit the "Run selected tests" button.', 10);
+					}
+				}
 			}
 		});
 		var availableTestsColumnModel = new Ext.grid.ColumnModel({
@@ -127,7 +157,7 @@ TYPO3.EnetcacheAnalytics.Performance = Ext.extend(Ext.Panel, {
 							var record =  ddSource.dragData.selections;
 							Ext.each(record, ddSource.grid.store.remove, ddSource.grid.store);
 							TYPO3.EnetcacheAnalytics.Performance.availableTestsGrid.store.add(record);
-							TYPO3.EnetcacheAnalytics.Performance.availableTestsGrid.store.sort('uid', 'ASC');
+							TYPO3.EnetcacheAnalytics.Performance.availableTestsGrid.store.sort('name', 'ASC');
 	                        var ucName = 'moduleData.enetcacheanalytics.performance.enabledTests.' + record[0].data.name;
 							TYPO3.BackendUserSettings.ExtDirect.set(
 								ucName,
@@ -160,7 +190,7 @@ TYPO3.EnetcacheAnalytics.Performance = Ext.extend(Ext.Panel, {
 							var record =  ddSource.dragData.selections;
 							Ext.each(record, ddSource.grid.store.remove, ddSource.grid.store);
 							TYPO3.EnetcacheAnalytics.Performance.selectedTestsGrid.store.add(record);
-							TYPO3.EnetcacheAnalytics.Performance.selectedTestsGrid.store.sort('uid', 'ASC');
+							TYPO3.EnetcacheAnalytics.Performance.selectedTestsGrid.store.sort('name', 'ASC');
 	                        var ucName = 'moduleData.enetcacheanalytics.performance.enabledTests.' + record[0].data.name;
 							TYPO3.BackendUserSettings.ExtDirect.set(
 								ucName,
@@ -222,7 +252,8 @@ TYPO3.EnetcacheAnalytics.Performance = Ext.extend(Ext.Panel, {
 			paramNames: {
 				unique_id: 'name'
 			},
-			listeners : {
+			listeners: {
+				scope: this,
 				'load': function(store, records) {
 						// get selected backends to update selection
 					var a = [];
@@ -232,8 +263,8 @@ TYPO3.EnetcacheAnalytics.Performance = Ext.extend(Ext.Panel, {
 						}
 					}
 					this.backendsSelectionModel.selectRecords(a);
-				},
-				scope: this
+					store.sort('name', 'ASC');
+				}
 			}
 		});
 		TYPO3.EnetcacheAnalytics.Performance.backendsGrid = new Ext.grid.GridPanel({
