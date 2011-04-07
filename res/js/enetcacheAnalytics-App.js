@@ -18,6 +18,8 @@ Ext.onReady(function() {
 });
 
 TYPO3.EnetcacheAnalytics.App = {
+
+
 	init: function() {
 		new Ext.TabPanel({
 			renderTo: 'tx-enetcacheanalytics-mod-grid',
@@ -25,7 +27,10 @@ TYPO3.EnetcacheAnalytics.App = {
 			stateful: true,
 			stateId: 'mainTab',
 			stateEvents:['tabchange'],
+
+			heightOffset: 40,
 			plugins: [new Ext.ux.plugins.FitToParent()],
+
 			items: [
 				{
 					title : 'Cache log analyzer',

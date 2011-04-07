@@ -111,7 +111,6 @@ class tx_enetcacheanalytics_module1 extends t3lib_SCbase {
 
 		$pageRenderer->addJsFile(t3lib_extMgm::extRelPath('enetcacheanalytics') . 'res/js/ux/RowPanelExpander.js');
 
-		$pageRenderer->addJsFile(t3lib_extMgm::extRelPath('enetcacheanalytics') . 'res/js/enetcacheAnalytics-Components.js');
 		$pageRenderer->addJsFile(t3lib_extMgm::extRelPath('enetcacheanalytics') . 'res/js/enetcacheAnalytics-Layouts.js');
 		$pageRenderer->addJsFile(t3lib_extMgm::extRelPath('enetcacheanalytics') . 'res/js/enetcacheAnalytics-Analyze.js');
 		$pageRenderer->addJsFile(t3lib_extMgm::extRelPath('enetcacheanalytics') . 'res/js/enetcacheAnalytics-Performance.js');
@@ -161,7 +160,7 @@ class tx_enetcacheanalytics_module1 extends t3lib_SCbase {
 		$this->doc->setModuleTemplate('EXT:' . self::extKey . '/res/templates/mod1.html');
 
 			// Additional styles
-		$this->doc->addStyleSheet(self::extKey . '_css', t3lib_extMgm::extRelPath(self::extKey) . 'res/css/analyzer.css');
+		$this->doc->addStyleSheet(self::extKey . '_css', t3lib_extMgm::extRelPath(self::extKey) . 'res/css/mod1.css');
 
 			// Default docType
 		$this->doc->docType='xhtml_trans';

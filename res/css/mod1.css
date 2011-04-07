@@ -18,8 +18,12 @@
 	background-image: url('../images/icon-info.gif');
 }
 
+/* main module options */
 div#typo3-docbody {
 	top: 0;
+}
+div#typo3-inner-docbody {
+	padding: 2px;
 }
 
 
@@ -46,10 +50,6 @@ div#typo3-docbody {
 
 .endrow {
 	clear: left;
-}
-
-td, th {
-	padding: 3px !important;
 }
 
 .TimeMessage {

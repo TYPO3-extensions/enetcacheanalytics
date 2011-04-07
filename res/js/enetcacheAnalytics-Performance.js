@@ -7,6 +7,9 @@ TYPO3.EnetcacheAnalytics.Performance = Ext.extend(Ext.Panel, {
 	callback: null,
 
 	initComponent:function() {
+		/**
+		 * Enabled test expander for result graph and table
+		 */
 		TYPO3.EnetcacheAnalytics.Performance.testExpander = new Ext.ux.grid.RowPanelExpander({
 			id: 'testExpander',
 			createExpandingRowPanelItems: function(record, rowIndex) {
@@ -14,9 +17,6 @@ TYPO3.EnetcacheAnalytics.Performance = Ext.extend(Ext.Panel, {
 					new Ext.TabPanel({
 						plain: true,
 						activeTab: 0,
-//						enableTabScroll: true,
-//						autoWidth: true,
-//						plugins: [new Ext.ux.plugins.FitWidthToParent()],
 						defaults: {
 							autoHeight: true
 						},
@@ -64,10 +64,8 @@ TYPO3.EnetcacheAnalytics.Performance = Ext.extend(Ext.Panel, {
 			}
 		});
 
-
-
 		/**
-		 * Display and handle available and selected grids,
+		 * Display and handle available and selected tests
 		 * this is a drap + drop setup
 		 */
 		this.availableTestsStore = new Ext.data.DirectStore({
@@ -99,9 +97,7 @@ TYPO3.EnetcacheAnalytics.Performance = Ext.extend(Ext.Panel, {
 				{id: 'name', header: 'Available Tests', dataIndex: 'name'}
 			],
 			defaults: {
-				sortable: false,
-				menuDisabled: true,
-				hideable: false
+				sortable: true
 			}
 		});
 		var selectedTestsColumnModel = new Ext.grid.ColumnModel({
@@ -110,9 +106,7 @@ TYPO3.EnetcacheAnalytics.Performance = Ext.extend(Ext.Panel, {
 				{id: 'name', header: 'Enabled Tests', dataIndex: 'name'}
 			],
 			defaults: {
-				sortable: false,
-				menuDisabled: true,
-				hideable: false
+				sortable: true
 			}
 		});
 		TYPO3.EnetcacheAnalytics.Performance.availableTestsGrid = new Ext.grid.GridPanel({
@@ -122,7 +116,6 @@ TYPO3.EnetcacheAnalytics.Performance = Ext.extend(Ext.Panel, {
 			enableDragDrop: true,
 			stripeRows: true,
 			autoExpandColumn: 'name',
-			autoHeight: true,
 
 			listeners: {
 				scope: this,
@@ -148,7 +141,6 @@ TYPO3.EnetcacheAnalytics.Performance = Ext.extend(Ext.Panel, {
 			}
 		});
 		TYPO3.EnetcacheAnalytics.Performance.selectedTestsGrid = new Ext.grid.GridPanel({
-			autoHeight: true,
 			id: 'selectedTestsGrid',
 			ddGroup: 'availableTestsGridDDGroup',
 			store: this.selectedTestsStore,
@@ -210,15 +202,13 @@ TYPO3.EnetcacheAnalytics.Performance = Ext.extend(Ext.Panel, {
 				}
 			}
 		});
-		var backendsGridCM = new Ext.grid.ColumnModel({
+		var backendsGridColumnModel = new Ext.grid.ColumnModel({
 			columns: [
 				this.backendsSelectionModel,
 				{id: 'name', header: 'Name', dataIndex: 'name'}
 			],
 			defaults: {
-				sortable: false,
-				menuDisabled: true,
-				hideable: false
+				sortable: true
 			}
 		});
 		this.backendsStore = new Ext.data.DirectStore({
@@ -247,11 +237,13 @@ TYPO3.EnetcacheAnalytics.Performance = Ext.extend(Ext.Panel, {
 			}
 		});
 		TYPO3.EnetcacheAnalytics.Performance.backendsGrid = new Ext.grid.GridPanel({
+			id: 'backendsGrid',
 			store: this.backendsStore,
-			cm: backendsGridCM,
+			cm: backendsGridColumnModel,
 			sm: this.backendsSelectionModel,
 			autoExpandColumn: 'name',
-			autoHeight: true
+			autoHeight: true,
+			stripeRows: true
 		});
 
 		/**
@@ -263,8 +255,10 @@ TYPO3.EnetcacheAnalytics.Performance = Ext.extend(Ext.Panel, {
 			items: [{
 				name: 'dataPoints',
 				fieldLabel: 'Number of data points',
+				labelStyle: 'font-weight:bold; width: 150px;',
 				xtype: 'numberfield',
 				allowBlank: true,
+				width: 40,
 				listeners: {
 					change: function(field, newValue, oldValue) {
 						TYPO3.EnetcacheAnalytics.Performance.selectedTestsGrid.disable();
@@ -284,8 +278,10 @@ TYPO3.EnetcacheAnalytics.Performance = Ext.extend(Ext.Panel, {
 			},{
 				name: 'scaleFactor',
 				fieldLabel: 'Scale factor',
+				labelStyle: 'font-weight:bold; width: 150px;',
 				xtype: 'numberfield',
 				allowBlank: true,
+				width: 40,
 				listeners: {
 					change: function(field, newValue, oldValue) {
 						TYPO3.EnetcacheAnalytics.Performance.selectedTestsGrid.disable();
@@ -305,6 +301,9 @@ TYPO3.EnetcacheAnalytics.Performance = Ext.extend(Ext.Panel, {
 			}]
 		});
 
+		/**
+		 * Progress bar when running tests
+		 */
 		TYPO3.EnetcacheAnalytics.Performance.actionProgressBar = new Ext.ProgressBar ({
 			id:  'actionProgressBar',
 			style: 'margin: 5px 2px 0 2px',
@@ -315,6 +314,9 @@ TYPO3.EnetcacheAnalytics.Performance = Ext.extend(Ext.Panel, {
 			}
 		});
 
+		/**
+		 * Button to run tests
+		 */
 		TYPO3.EnetcacheAnalytics.Performance.actionPanel = {
 			xtype: 'container',
 			layout: 'hbox',
@@ -347,24 +349,35 @@ TYPO3.EnetcacheAnalytics.Performance = Ext.extend(Ext.Panel, {
 			},{
 				id: 'settingsPanel',
 				region: 'west',
-				layout: 'fit',
+				layout: 'border',
 				title: 'Settings',
-				frame: true,
 				border: false,
+				frame: true,
 				autoScroll: true,
 				width: 250,
 				collapsible: true,
-				items: [
-					TYPO3.EnetcacheAnalytics.Performance.settingsForm,
-					TYPO3.EnetcacheAnalytics.Performance.backendsGrid,
-					TYPO3.EnetcacheAnalytics.Performance.availableTestsGrid
-				]
+				items: [{
+					region: 'north',
+					layout: 'fit',
+					height: 60,
+					items: TYPO3.EnetcacheAnalytics.Performance.settingsForm
+				},{
+					region: 'center',
+					border: false,
+					autoScroll: true,
+					items: TYPO3.EnetcacheAnalytics.Performance.backendsGrid
+				},{
+					region: 'south',
+					layout: 'fit',
+					height: 250,
+					items: TYPO3.EnetcacheAnalytics.Performance.availableTestsGrid
+				}]
 			},{
 				region: 'center',
 				layout: 'fit',
-				frame: true,
 				border: false,
 				autoScroll: true,
+
 				items: [
 					TYPO3.EnetcacheAnalytics.Performance.selectedTestsGrid
 				]
@@ -408,7 +421,6 @@ TYPO3.EnetcacheAnalytics.Performance = Ext.extend(Ext.Panel, {
 		this.executeTest();
 	},
 
-		// @TODO
 	executeTest: function(response) {
 		var grid = Ext.getCmp('selectedTestsGrid');
 		var row = this.testCount - this.testArray.length;

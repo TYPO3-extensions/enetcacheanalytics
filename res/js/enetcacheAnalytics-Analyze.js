@@ -119,6 +119,20 @@ TYPO3.EnetcacheAnalytics.Analyze = Ext.extend(Ext.grid.GridPanel, {
 			}
 		});
 
+		TYPO3.EnetcacheAnalytics.Analyze.logGroupCombo = new Ext.form.ComboBox({
+			id: 'logEntryCombo',
+			mode: 'local',
+			triggerAction: 'all',
+			forceSelection: true,
+			editable: false,
+			name: 'selectedLogGroup',
+			hiddenName: 'selectedLogGroup',
+			displayField: 'title',
+			valueField: 'unique_id',
+			store: null,
+			width: 200
+		});
+
 		this.logGroupStore = new Ext.data.DirectStore({
 			storeId: 'logGroup',
 			idProperty: 'unique_id',
@@ -141,9 +155,7 @@ TYPO3.EnetcacheAnalytics.Analyze = Ext.extend(Ext.grid.GridPanel, {
 				{id: 'tags', header: 'Tags', dataIndex: 'tags'}
 			],
 			defaults: {
-				sortable: false,
-				menuDisabled: true,
-				hideable: false
+				sortable: true
 			}
 		});
 
@@ -156,14 +168,14 @@ TYPO3.EnetcacheAnalytics.Analyze = Ext.extend(Ext.grid.GridPanel, {
 					xtype: 'tbtext',
 					text: 'Log entry:'
 				},
-				TYPO3.EnetcacheAnalytics.logGroupCombo,
+				TYPO3.EnetcacheAnalytics.Analyze.logGroupCombo,
 				new Ext.Button({
             		tooltip: 'Refresh',
 					tooltipType: 'title',
             		iconCls: 'x-tbar-loading',
 					scope: this,
             		handler: function() {
-						TYPO3.EnetcacheAnalytics.logGroupCombo.store.reload();
+						TYPO3.EnetcacheAnalytics.Analyze.logGroupCombo.store.reload();
 					}
         		}),
 				'-',
@@ -183,8 +195,8 @@ TYPO3.EnetcacheAnalytics.Analyze = Ext.extend(Ext.grid.GridPanel, {
 	},
 
 	onRender:function() {
-		TYPO3.EnetcacheAnalytics.logGroupCombo.store = this.logGroupStore;
-		TYPO3.EnetcacheAnalytics.logGroupCombo.on('select', function(comboBox, newValue, oldValue) {
+		TYPO3.EnetcacheAnalytics.Analyze.logGroupCombo.store = this.logGroupStore;
+		TYPO3.EnetcacheAnalytics.Analyze.logGroupCombo.on('select', function(comboBox, newValue, oldValue) {
 			TYPO3.EnetcacheAnalytics.Analyze.logEntryStore.reload({ params: {unique_id: newValue.data.unique_id} });
 			TYPO3.EnetcacheAnalytics.Analyze.logStatsStore.reload({ params: {unique_id: newValue.data.unique_id} });
 		}, this);
@@ -193,7 +205,7 @@ TYPO3.EnetcacheAnalytics.Analyze = Ext.extend(Ext.grid.GridPanel, {
 				if (this.getCount() == 0) {
 					TYPO3.Flashmessage.display(TYPO3.Severity.warning, 'Warning', 'No log entries found.', 4);
 				} else {
-					TYPO3.EnetcacheAnalytics.logGroupCombo.setValue(this.getAt(0).data.unique_id);
+					TYPO3.EnetcacheAnalytics.Analyze.logGroupCombo.setValue(this.getAt(0).data.unique_id);
 					TYPO3.EnetcacheAnalytics.Analyze.logEntryStore.reload({ params: {unique_id: this.getAt(0).data.unique_id} });
 					TYPO3.EnetcacheAnalytics.Analyze.logStatsStore.reload({ params: {unique_id: this.getAt(0).data.unique_id} });
 				}
