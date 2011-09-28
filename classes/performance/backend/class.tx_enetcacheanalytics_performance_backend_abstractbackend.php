@@ -205,7 +205,13 @@ abstract class tx_enetcacheanalytics_performance_backend_AbstractBackend impleme
 	 * @return tx_enetcacheanalytics_performance_utility_MockFrontend
 	 */
 	protected function getMockFrontend() {
-		return t3lib_div::makeInstance('tx_enetcacheanalytics_performance_utility_MockFrontend');
+		$classInstance = NULL;
+		if (t3lib_div::int_from_ver(TYPO3_version) <= '4005999') {
+			$classInstance = t3lib_div::makeInstance('tx_enetcacheanalytics_performance_utility_MockFrontend_45');
+		} else {
+			$classInstance = t3lib_div::makeInstance('tx_enetcacheanalytics_performance_utility_MockFrontend');
+		}
+		return $classInstance;
 	}
 
 	protected function getTimeTakenMessage() {

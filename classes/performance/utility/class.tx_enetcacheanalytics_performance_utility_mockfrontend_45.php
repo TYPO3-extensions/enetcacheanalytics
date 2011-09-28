@@ -29,18 +29,18 @@
  *
  * @package enetcacheanalytices
  */
-class tx_enetcacheanalytics_performance_utility_MockFrontend implements t3lib_cache_frontend_Frontend {
+class tx_enetcacheanalytics_performance_utility_MockFrontend_45 implements t3lib_cache_frontend_Frontend {
 	public function getIdentifier() {
 		return 'enetcacheanalyticsTest';
 	}
 
 	public function getBackend() {}
-	public function set($entryIdentifier, $data, array $tags = array(), $lifetime = NULL) {}
+	public function set($entryIdentifier, $data, $tags = array(), $lifetime = NULL) {}
 	public function get($entryIdentifier) {}
 	public function getByTag($tag) {}
 	public function has($entryIdentifier) {}
 	public function remove($entryIdentifier) {}
-	public function flush() {}
+	function flush() {}
 	public function flushByTag($tag) {}
 	public function flushByTags(array $tags) {}
 	public function collectGarbage() {}
