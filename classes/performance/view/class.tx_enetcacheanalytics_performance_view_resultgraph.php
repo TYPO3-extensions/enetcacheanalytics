@@ -44,8 +44,10 @@ class tx_enetcacheanalytics_performance_view_ResultGraph {
 
 	/**
 	 * Default constructor
+	 *
+	 * @param array $testResults Result array
 	 */
-	public function __construct($testResults) {
+	public function __construct(array $testResults = array()) {
 		$this->testStatistics = $testResults;
 
 			// Add ezcomponents autoloader
