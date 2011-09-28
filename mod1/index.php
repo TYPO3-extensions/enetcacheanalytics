@@ -105,7 +105,7 @@ class tx_enetcacheanalytics_module1 extends t3lib_SCbase {
 		$pageRenderer->addExtDirectCode();
 
 		$this->doc->setExtDirectStateProvider();
-		$pageRenderer->addJsFile('ajax.php?ajaxID=ExtDirect::getAPI&namespace=' . 'TYPO3.EnetcacheAnalytics', NULL, FALSE);
+		$pageRenderer->addJsFile('ajax.php?ajaxID=ExtDirect::getAPI&namespace=' . 'TYPO3.EnetcacheAnalytics', NULL, FALSE, FALSE, '', TRUE);
 
 		$pageRenderer->addJsFile('../t3lib/js/extjs/ux/Ext.ux.FitToParent.js');
 
