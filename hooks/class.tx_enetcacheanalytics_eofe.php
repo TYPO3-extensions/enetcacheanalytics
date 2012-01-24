@@ -48,7 +48,7 @@ class tx_enetcacheanalytics_eofe {
 		$getCount = $enetCacheAnalyticsObj->getGetCount();
 		$getCountSuccessful = $enetCacheAnalyticsObj->getGetCountSuccessful();
 
-		echo '<!-- enetcache stats: Content element Engine was asked ' .
+		$GLOBALS['TSFE']->content .= '<!-- enetcache stats: Content element Engine was asked ' .
 			$getCount .
 			' times for elements, ' .
 			$getCountSuccessful .
